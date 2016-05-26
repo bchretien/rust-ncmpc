@@ -1,0 +1,8 @@
+[package]
+name = "ncmpc"
+version = "0.1.0"
+authors = ["Benjamin Chrétien <chretien.b@gmail.com>"]
+
+[dependencies]
+mpd = "0.0.11"
+ncurses = "5.80.0"
