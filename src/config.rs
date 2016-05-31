@@ -11,8 +11,12 @@ pub enum ControlKey
 #[derive(Clone,Copy)]
 pub struct KeyConfig
 {
-    play_pause: ControlKey,
-    quit: ControlKey,
+    pub clear: ControlKey,
+    pub next_song: ControlKey,
+    pub play_pause: ControlKey,
+    pub previous_song: ControlKey,
+    pub quit: ControlKey,
+    pub stop: ControlKey,
 }
 
 #[derive(Clone,Copy)]
@@ -36,8 +40,45 @@ impl KeyConfig
     {
         KeyConfig
         {
+            clear: ControlKey::Char('c'),
+            next_song: ControlKey::Char('>'),
             play_pause: ControlKey::Char('p'),
+            previous_song: ControlKey::Char('<'),
             quit: ControlKey::Char('q'),
+            stop: ControlKey::Char('s'),
+        }
+    }
+}
+
+pub trait toKeyCode
+{
+    fn keycode(&self) -> i32;
+}
+
+impl toKeyCode for i32
+{
+    fn keycode(&self) -> i32
+    {
+        *self
+    }
+}
+
+impl toKeyCode for char
+{
+    fn keycode(&self) -> i32
+    {
+        *self as i32
+    }
+}
+
+impl toKeyCode for ControlKey
+{
+    fn keycode(&self) -> i32
+    {
+        match *self
+        {
+            ControlKey::KeyCode(c) => return c,
+            ControlKey::Char(c) => return c.keycode(),
         }
     }
 }
@@ -68,11 +109,13 @@ impl Config
             .parse::<u16>().unwrap_or(6600);
         println!("MPD: {}:{}", mpd_ip, mpd_port);
 
+        let keys = KeyConfig::new();
+
         Config
         {
             colors: ColorConfig::new(),
             addr: SocketAddr::new(mpd_ip, mpd_port),
-            keys: KeyConfig::new(),
+            keys: keys,
         }
     }
 }

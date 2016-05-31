@@ -21,6 +21,9 @@ impl View
         nc::keypad(nc::stdscr, true);
         nc::noecho();
 
+        // Set timeout.
+        nc::timeout(0);
+
         // Enable mouse events.
         nc::mousemask(nc::ALL_MOUSE_EVENTS as u64, None);
 
@@ -30,20 +33,32 @@ impl View
         nc::getmaxyx(nc::stdscr, &mut max_y, &mut max_x);
 
         // Print intro + controls
-        nc::clear();
-        nc::mvprintw(2, 4, "Welcome to Rust MPD client for ncurses");
-        nc::mvprintw(9, 4, "Press any key to begin...");
-        nc::refresh();
-        nc::getch();
+        // nc::clear();
+        // nc::mvprintw(2, 4, "Welcome to Rust MPD client for ncurses");
+        // nc::mvprintw(9, 4, "Press any key to begin...");
+        // nc::refresh();
+        // nc::getch();
         nc::clear();
     }
 
-    pub fn playlist_play(&mut self) {
-        // TODO
+    pub fn set_playing_line(&mut self, msg: &str)
+    {
+        // Move to line above bottom line.
+        nc::mv(nc::LINES-2, 0);
+        // Clear line.
+        nc::clrtoeol();
+        // Print message.
+        nc::mvprintw(nc::LINES-2, 0, msg);
     }
 
-    pub fn playlist_stop(&mut self) {
-        // TODO
+    pub fn set_debug_prompt(&mut self, msg: &str)
+    {
+        // Move to bottom line.
+        nc::mv(nc::LINES-1, 0);
+        // Clear line.
+        nc::clrtoeol();
+        // Print message.
+        nc::mvprintw(nc::LINES-1, 0, &format!("[Debug] {}", msg));
     }
 
     pub fn exit(&mut self)
