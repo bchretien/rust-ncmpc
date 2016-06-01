@@ -9,6 +9,7 @@ use time::Duration;
 use view::*;
 use config::*;
 use mpd::status::State as State;
+use mpd::status::Status as Status;
 use mpd::song::Song as Song;
 
 pub type SharedModel<'m> = Arc<Mutex<Model<'m>>>;
@@ -69,6 +70,11 @@ fn get_song_info(song: &Song, tag: &String) -> String
     }
 }
 
+fn get_song_time(status: &Status) -> (Duration, Duration)
+{
+    status.time.unwrap_or((Duration::seconds(0), Duration::seconds(0)))
+}
+
 impl<'m> Model<'m>
 {
     pub fn new(view: &'m mut View, config: &'m Config) -> Model<'m>
@@ -90,7 +96,6 @@ impl<'m> Model<'m>
 
     pub fn init(&mut self)
     {
-        self.view.init();
         self.display_now_playing();
     }
 
@@ -156,7 +161,7 @@ impl<'m> Model<'m>
         let playlist = self.client.queue().unwrap();
 
         let columns = [("Artist".to_string(), 20),
-                       ("Track".to_string(), 3),
+                       ("Track".to_string(), 2),
                        ("Title".to_string(), 40),
                        ("Album".to_string(), 40),
                        ("Time".to_string(), 5)];
@@ -175,6 +180,20 @@ impl<'m> Model<'m>
         }
 
         self.view.set_playlist(&columns, grid);
+    }
+
+    pub fn display_play_bar(&mut self)
+    {
+        let (e, d) = get_song_time(&self.client.status().unwrap());
+        let elapsed = e.num_seconds();
+        let duration = d.num_seconds();
+
+        let mut pct: f32 = 0.;
+        if duration > 0
+        {
+            pct = (100*elapsed/duration) as f32;
+        }
+        self.view.set_play_bar(pct);
     }
 
     pub fn display_now_playing(&mut self)
@@ -225,10 +244,5 @@ impl<'m> Model<'m>
     pub fn display_message(&mut self, msg: &str)
     {
         self.view.set_debug_prompt(msg);
-    }
-
-    pub fn deinit(&mut self)
-    {
-        self.view.exit();
     }
 }

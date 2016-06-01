@@ -7,7 +7,6 @@ use ncurses as nc;
 use std::thread;
 use std::time::Duration;
 use std::sync::{Arc, Mutex};
-use std::sync::mpsc::{self, TryRecvError};
 
 
 fn main() {
@@ -27,7 +26,6 @@ fn main() {
     let mut controller = Controller::new(&mut model, &config);
 
     // Start the TUI loop (automatic refresh).
-    let (tx, rx) = mpsc::channel::<bool>();
     loop {
         // Process user input.
         if controller.process_input()
@@ -39,12 +37,12 @@ fn main() {
         {
             let mut m = shared_model.lock().unwrap();
             m.display_playlist();
+            m.display_play_bar();
             m.display_now_playing();
         }
     }
 
     {
         let mut m = shared_model.lock().unwrap();
-        m.deinit();
     }
 }

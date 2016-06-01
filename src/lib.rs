@@ -5,6 +5,7 @@ extern crate mpd;
 extern crate crossbeam;
 extern crate time;
 
+pub mod constants;
 pub mod config;
 pub mod controller;
 pub mod model;
