@@ -38,6 +38,7 @@ fn main() {
         // Refresh TUI.
         {
             let mut m = shared_model.lock().unwrap();
+            m.display_playlist();
             m.display_now_playing();
         }
     }

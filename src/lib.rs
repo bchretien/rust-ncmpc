@@ -3,6 +3,7 @@
 extern crate ncurses;
 extern crate mpd;
 extern crate crossbeam;
+extern crate time;
 
 pub mod config;
 pub mod controller;

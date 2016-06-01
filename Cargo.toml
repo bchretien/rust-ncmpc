@@ -7,6 +7,7 @@ authors = ["Benjamin Chrétien <chretien.b@gmail.com>"]
 mpd = "0.0.11"
 ncurses = "5.80.0"
 crossbeam = "0.2"
+time = "0.1.34"
 
 [lib]
 name = "ncmpc"

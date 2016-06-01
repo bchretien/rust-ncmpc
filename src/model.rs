@@ -1,11 +1,15 @@
+extern crate time;
 extern crate mpd;
 
 use std::process;
 use std::net::TcpStream;
 use std::sync::{Arc, Mutex};
+use time::Duration;
 
 use view::*;
 use config::*;
+use mpd::status::State as State;
+use mpd::song::Song as Song;
 
 pub type SharedModel<'m> = Arc<Mutex<Model<'m>>>;
 
@@ -41,6 +45,30 @@ fn start_client(config: &Config) -> Result<mpd::Client, mpd::error::Error>
     mpd::Client::connect(config.addr)
 }
 
+fn get_song_info(song: &Song, tag: &String) -> String
+{
+    let unknown = "unknown".to_string();
+    let zero = "0".to_string();
+    if tag == "Title" {
+        return song.clone().title.unwrap_or(unknown);
+    }
+    else if tag == "Time" || tag == "Duration" {
+        let dur = song.clone().duration.unwrap_or(Duration::seconds(0));
+        let min = dur.num_minutes();
+        let sec = dur.num_seconds()%60;
+        return format!("{min}:{sec:>02}", min=min, sec=sec);
+    }
+    else if tag == "Track" {
+        let track = song.tags.get(tag).unwrap_or(&zero).to_string();
+        let track_s = track.parse::<u32>().unwrap_or(0);
+        return format!("{:>02}", track_s);
+    }
+    else // Use tags as is
+    {
+        return song.tags.get(tag).unwrap_or(&unknown).to_string();
+    }
+}
+
 impl<'m> Model<'m>
 {
     pub fn new(view: &'m mut View, config: &'m Config) -> Model<'m>
@@ -74,8 +102,6 @@ impl<'m> Model<'m>
 
     pub fn playlist_pause(&mut self)
     {
-        use mpd::status::State as State;
-
         let status = self.client.status();
         if status.is_err()
         {
@@ -124,6 +150,33 @@ impl<'m> Model<'m>
         self.view.set_debug_prompt("Cleared playlist");
     }
 
+    pub fn display_playlist(&mut self)
+    {
+        // Get playlist
+        let playlist = self.client.queue().unwrap();
+
+        let columns = [("Artist".to_string(), 20),
+                       ("Track".to_string(), 3),
+                       ("Title".to_string(), 40),
+                       ("Album".to_string(), 40),
+                       ("Time".to_string(), 5)];
+        let n_cols = columns.len();
+        let n_entries = playlist.len();
+        let mut grid_raw = vec![String::from("a"); n_cols * n_entries];
+        let mut grid_base: Vec<_> = grid_raw.as_mut_slice().chunks_mut(n_cols).collect();
+        let mut grid: &mut [&mut [String]] = grid_base.as_mut_slice();
+
+        for i in 0..n_entries {
+            grid[i][0] = get_song_info(&playlist[i], &"Artist".to_string());
+            grid[i][1] = get_song_info(&playlist[i], &"Track".to_string());
+            grid[i][2] = get_song_info(&playlist[i], &"Title".to_string());
+            grid[i][3] = get_song_info(&playlist[i], &"Album".to_string());
+            grid[i][4] = get_song_info(&playlist[i], &"Time".to_string());
+        }
+
+        self.view.set_playlist(&columns, grid);
+    }
+
     pub fn display_now_playing(&mut self)
     {
         use mpd::status::State as State;
@@ -136,9 +189,6 @@ impl<'m> Model<'m>
             let data = query.unwrap();
             if data.is_some()
             {
-                let unknown_artist = "Unknown artist".to_string();
-                let unknown_album = "Unknown album".to_string();
-
                 let state = self.client.status().unwrap().state;
                 let mut state_msg = String::from("");
                 match state
@@ -155,13 +205,9 @@ impl<'m> Model<'m>
                 }
 
                 let song = data.unwrap();
-                let artist = song.tags
-                                 .get(&"Artist".to_string())
-                                 .unwrap_or(&unknown_artist);
+                let artist = get_song_info(&song, &"Artist".to_string());
+                let album = get_song_info(&song, &"Album".to_string());
                 let title = song.title.unwrap_or("Unknown title".to_string());
-                let album = song.tags
-                                .get(&"Album".to_string())
-                                .unwrap_or(&unknown_album);
                 msg = format!("{}: {} - {} - {}", state_msg, artist, title, album);
             }
             else
