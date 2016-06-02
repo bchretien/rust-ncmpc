@@ -35,6 +35,7 @@ fn init_colors(colors: &ColorConfig) {
     nc::init_pair(COLOR_PAIR_HEADER, nc::COLOR_WHITE, color_bg);
     nc::init_pair(COLOR_PAIR_PROGRESSBAR, colors.progressbar, color_bg);
     nc::init_pair(COLOR_PAIR_PROGRESSBAR_ELAPSED, colors.progressbar_elapsed, color_bg);
+    nc::init_pair(COLOR_PAIR_STATUSBAR, colors.statusbar, color_bg);
     nc::init_pair(COLOR_PAIR_BOTTOM, nc::COLOR_BLUE, color_bg);
     nc::init_pair(COLOR_PAIR_DEBUG, nc::COLOR_GREEN, color_bg);
 }
@@ -211,16 +212,27 @@ impl View
         nc::wrefresh(self.play_bar);
     }
 
-    pub fn set_playing_line(&mut self, msg: &str)
+    pub fn set_statusbar(&mut self, mode: &str, msg: &str)
     {
         // Clear line.
         nc::wmove(self.bottom_row, 0, 0);
         nc::wclrtoeol(self.bottom_row);
-        // Print message.
-        let color = get_color(COLOR_PAIR_BOTTOM);
+
+        // Print mode.
+        let color = get_color(COLOR_PAIR_STATUSBAR);
         nc::wattron(self.bottom_row, color);
-        nc::mvwprintw(self.bottom_row, 0, 0, msg);
+        nc::wattron(self.bottom_row, bold());
+        nc::mvwprintw(self.bottom_row, 0, 0, &format!("{}:", mode));
+        nc::wattroff(self.bottom_row, bold());
         nc::wattroff(self.bottom_row, color);
+
+        // Print message.
+        let color = get_color(COLOR_PAIR_DEFAULT);
+        nc::wattron(self.bottom_row, color);
+        let offset = mode.len()+2;
+        nc::mvwprintw(self.bottom_row, 0, offset as i32, msg);
+        nc::wattroff(self.bottom_row, color);
+
         nc::wrefresh(self.bottom_row);
     }
 

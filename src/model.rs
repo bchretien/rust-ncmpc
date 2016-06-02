@@ -200,6 +200,7 @@ impl<'m> Model<'m>
     {
         use mpd::status::State as State;
 
+        let mut mode = String::from("");
         let mut msg = String::from("");
 
         let query = self.client.currentsong();
@@ -213,13 +214,13 @@ impl<'m> Model<'m>
                 match state
                 {
                     State::Play => {
-                        state_msg = "Playing".to_string();
+                        mode = "Playing".to_string();
                     }
                     State::Pause => {
-                        state_msg = "Paused".to_string();
+                        mode = "Paused".to_string();
                     }
                     State::Stop => {
-                        state_msg = "Stopped".to_string();
+                        mode = "Stopped".to_string();
                     }
                 }
 
@@ -227,18 +228,20 @@ impl<'m> Model<'m>
                 let artist = get_song_info(&song, &"Artist".to_string());
                 let album = get_song_info(&song, &"Album".to_string());
                 let title = song.title.unwrap_or("Unknown title".to_string());
-                msg = format!("{}: {} - {} - {}", state_msg, artist, title, album);
+                msg = format!("{} - {} - {}", artist, title, album);
             }
             else
             {
-                msg = "No song playing".to_string();
+                mode = "".to_string();
+                msg = "".to_string();
             }
         }
         else
         {
-            msg = "No MPD status available".to_string();
+            mode = "No MPD status available".to_string();
+            msg = "".to_string();
         }
-        self.view.set_playing_line(&msg);
+        self.view.set_statusbar(&mode, &msg);
     }
 
     pub fn display_message(&mut self, msg: &str)
