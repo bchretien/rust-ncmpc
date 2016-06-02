@@ -26,11 +26,17 @@ pub struct KeyConfig {
 
 #[derive(Clone,Copy)]
 pub struct ColorConfig {
-  pub bg: i16,
-  pub fg: i16,
-  pub statusbar: i16,
+  pub color1: i16,
+  pub color2: i16,
+  pub header_window: i16,
+  pub main_window: i16,
+  pub main_window_highlight: i16,
   pub progressbar: i16,
   pub progressbar_elapsed: i16,
+  pub state_flags: i16,
+  pub state_line: i16,
+  pub statusbar: i16,
+  pub volume: i16,
 }
 
 #[derive(Clone,Copy)]
@@ -85,11 +91,17 @@ impl toKeyCode for ControlKey {
 impl ColorConfig {
   pub fn new() -> ColorConfig {
     ColorConfig {
-      bg: 0,
-      fg: 0,
-      statusbar: 0,
-      progressbar_elapsed: 0,
+      color1: 0,
+      color2: 0,
+      header_window: 0,
+      main_window: 0,
+      main_window_highlight: 0,
       progressbar: 0,
+      progressbar_elapsed: 0,
+      state_flags: 0,
+      state_line: 0,
+      statusbar: 0,
+      volume: 0,
     }
   }
 }
@@ -133,9 +145,17 @@ fn parse_color(s: &str) -> i16 {
 
 fn assign(key: &str, val: &str, config: &mut Config) -> bool {
   match key {
-    "statusbar_color" => config.colors.statusbar = parse_color(val),
+    "color1" => config.colors.color1 = parse_color(val),
+    "color2" => config.colors.color2 = parse_color(val),
+    "header_window_color" => config.colors.header_window = parse_color(val),
     "progressbar_color" => config.colors.progressbar = parse_color(val),
     "progressbar_elapsed_color" => config.colors.progressbar_elapsed = parse_color(val),
+    "main_window_color" => config.colors.main_window = parse_color(val),
+    "main_window_highlight_color" => config.colors.main_window_highlight = parse_color(val),
+    "state_flags_color" => config.colors.state_flags = parse_color(val),
+    "state_line_color" => config.colors.state_line = parse_color(val),
+    "statusbar_color" => config.colors.statusbar = parse_color(val),
+    "volume_color" => config.colors.volume = parse_color(val),
     _ => return false,
   }
   return true;
