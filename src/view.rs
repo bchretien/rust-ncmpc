@@ -240,10 +240,12 @@ impl View {
     nc::mvwprintw(self.debug_row, 0, 0, &format!("[Debug] {}", msg));
     nc::wrefresh(self.debug_row);
   }
+}
 
+impl Drop for View {
   fn drop(&mut self) {
     destroy_win(self.playlist_row);
-    destroy_win(self.parameters_row);
+    destroy_win(self.state_line);
     destroy_win(self.main_win);
     destroy_win(self.play_bar);
     destroy_win(self.bottom_row);
