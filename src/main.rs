@@ -1,22 +1,18 @@
 extern crate ncmpc;
-extern crate crossbeam;
 
-extern crate ncurses;
-use ncurses as nc;
-
-use std::thread;
-use std::time::Duration;
 use std::sync::{Arc, Mutex};
 
 
 fn main() {
-    use ncmpc::{Config,Controller,Model,View};
+    use ncmpc::{ConfigLoader,Controller,Model,View};
+
+    let config_loader = ConfigLoader::new();
 
     // Load config.
-    let config = Config::new();
+    let config = config_loader.load(None);
 
     // Instantiate view.
-    let mut view = View::new();
+    let mut view = View::new(&config.colors);
 
     // Instantiate model.
     let mut model = Arc::new(Mutex::new(Model::new(&mut view, &config)));
@@ -40,9 +36,5 @@ fn main() {
             m.display_play_bar();
             m.display_now_playing();
         }
-    }
-
-    {
-        let mut m = shared_model.lock().unwrap();
     }
 }
