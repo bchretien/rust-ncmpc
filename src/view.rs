@@ -11,7 +11,7 @@ use config::ColorConfig;
 pub struct View {
   colors: ColorConfig,
   playlist_row: nc::WINDOW,
-  parameters_row: nc::WINDOW,
+  state_line: nc::WINDOW,
   main_win: nc::WINDOW,
   play_bar: nc::WINDOW,
   bottom_row: nc::WINDOW,
@@ -102,14 +102,14 @@ impl View {
     let view = View {
       colors: colors,
       playlist_row: nc::newwin(1, max_x, 0, 0),
-      parameters_row: nc::newwin(1, max_x, 1, 0),
+      state_line: nc::newwin(1, max_x, 1, 0),
       main_win: nc::newwin(max_y - 5, max_x, 2, 0),
       play_bar: nc::newwin(1, max_x, max_y - 3, 0),
       bottom_row: nc::newwin(1, max_x, max_y - 2, 0),
       debug_row: nc::newwin(1, max_x, max_y - 1, 0),
     };
     nc::wrefresh(view.playlist_row);
-    nc::wrefresh(view.parameters_row);
+    nc::wrefresh(view.state_line);
     nc::wrefresh(view.main_win);
     nc::wrefresh(view.play_bar);
     nc::wrefresh(view.bottom_row);
@@ -118,7 +118,7 @@ impl View {
 
     // Set colors
     nc::wbkgd(view.playlist_row, nc::COLOR_PAIR(COLOR_PAIR_ARTIST) as nc::chtype);
-    nc::wbkgd(view.parameters_row, nc::COLOR_PAIR(COLOR_PAIR_DEFAULT) as nc::chtype);
+    nc::wbkgd(view.state_line, nc::COLOR_PAIR(COLOR_PAIR_DEFAULT) as nc::chtype);
     nc::wbkgd(view.debug_row, nc::COLOR_PAIR(COLOR_PAIR_DEBUG) as nc::chtype);
 
     return view;
@@ -193,20 +193,28 @@ impl View {
     nc::wattron(self.play_bar, color);
     nc::mvwprintw(self.play_bar, 0, 0, &sep);
 
-    // Tip of the bar
-    let tip = "╼";
-    nc::mvwprintw(self.play_bar, 0, tip_x, &tip);
-    nc::wattroff(self.play_bar, color);
+    if pct > 0. {
+      // Tip of the bar
+      let tip = "╼";
+      nc::mvwprintw(self.play_bar, 0, tip_x, &tip);
+      nc::wattroff(self.play_bar, color);
+    }
 
     // End of the bar
     let len_end: usize = (max_x - tip_x) as usize;
     let sep = iter::repeat('─').take(len_end).collect::<String>();
     color = get_color(COLOR_PAIR_PROGRESSBAR);
     nc::wattron(self.play_bar, color);
-    nc::mvwprintw(self.play_bar, 0, tip_x + 1, &sep);
+    nc::mvwprintw(self.play_bar, 0, if tip_x > 0 { tip_x + 1 } else { 0 }, &sep);
     nc::wattroff(self.play_bar, color);
 
     nc::wrefresh(self.play_bar);
+  }
+
+  pub fn set_state_line(&mut self, flags: Vec<&str>) {
+    // Clear line.
+    nc::wmove(self.bottom_row, 0, 0);
+    nc::wclrtoeol(self.bottom_row);
   }
 
   pub fn set_statusbar(&mut self, mode: &str, msg: &str) {
@@ -215,12 +223,14 @@ impl View {
     nc::wclrtoeol(self.bottom_row);
 
     // Print mode.
-    let color = get_color(COLOR_PAIR_STATUSBAR);
-    nc::wattron(self.bottom_row, color);
-    nc::wattron(self.bottom_row, bold());
-    nc::mvwprintw(self.bottom_row, 0, 0, &format!("{}:", mode));
-    nc::wattroff(self.bottom_row, bold());
-    nc::wattroff(self.bottom_row, color);
+    if mode.len() > 0 {
+      let color = get_color(COLOR_PAIR_STATUSBAR);
+      nc::wattron(self.bottom_row, color);
+      nc::wattron(self.bottom_row, bold());
+      nc::mvwprintw(self.bottom_row, 0, 0, &format!("{}:", mode));
+      nc::wattroff(self.bottom_row, bold());
+      nc::wattroff(self.bottom_row, color);
+    }
 
     // Print message.
     let color = get_color(COLOR_PAIR_DEFAULT);
