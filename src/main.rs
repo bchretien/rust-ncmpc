@@ -32,6 +32,7 @@ fn main() {
     {
       let mut m = shared_model.lock().unwrap();
       m.update_header();
+      m.update_stateline();
       m.update_playlist();
       m.update_progressbar();
       m.update_statusbar();

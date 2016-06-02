@@ -199,6 +199,33 @@ impl<'m> Model<'m> {
     self.view.display_header(&self.pl_data, vol);
   }
 
+  pub fn update_stateline(&mut self) {
+    let query = self.client.status();
+    if query.is_err() {
+      self.view.display_debug_prompt(&format!("{}", query.unwrap_err()));
+      return;
+    }
+    let status = query.unwrap();
+
+    let mut flags = Vec::<char>::new();
+    if status.repeat {
+      flags.push('r');
+    }
+    if status.random {
+      flags.push('z');
+    }
+    if status.single {
+      flags.push('s');
+    }
+    if status.consume {
+      flags.push('c');
+    }
+    if status.crossfade.unwrap_or(Duration::seconds(0)).num_seconds() > 0 {
+      flags.push('x');
+    }
+    self.view.display_stateline(&flags);
+  }
+
   pub fn update_playlist(&mut self) {
     // Get playlist
     let playlist = self.client.queue().unwrap();

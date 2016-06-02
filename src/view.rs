@@ -48,7 +48,6 @@ impl Display for PlaylistData {
   }
 }
 
-
 pub struct View {
   header: nc::WINDOW,
   state: nc::WINDOW,
@@ -77,6 +76,8 @@ fn init_colors(colors: &ColorConfig) {
   nc::init_pair(COLOR_PAIR_STATUSBAR, colors.statusbar, color_bg);
   nc::init_pair(COLOR_PAIR_VOLUME, colors.volume, color_bg);
   nc::init_pair(COLOR_PAIR_DEBUG, nc::COLOR_GREEN, color_bg);
+  nc::init_pair(COLOR_PAIR_STATE_LINE, colors.state_line, color_bg);
+  nc::init_pair(COLOR_PAIR_STATE_FLAGS, colors.state_flags, color_bg);
 }
 
 fn init_ncurses(colors: &ColorConfig) {
@@ -277,10 +278,44 @@ impl View {
     nc::wrefresh(self.progressbar);
   }
 
-  pub fn display_stateline(&mut self, flags: Vec<&str>) {
+  pub fn display_stateline(&mut self, flags: &Vec<char>) {
     // Clear line.
-    nc::wmove(self.bottom_row, 0, 0);
-    nc::wclrtoeol(self.bottom_row);
+    nc::wmove(self.state, 0, 0);
+    nc::wclrtoeol(self.state);
+
+    let mut max_x = 0;
+    let mut max_y = 0;
+    nc::getmaxyx(nc::stdscr, &mut max_y, &mut max_x);
+
+    // Print the bar
+    let sep = iter::repeat('─').take(max_x as usize).collect::<String>();
+    let mut color = get_color(COLOR_PAIR_STATE_LINE);
+    nc::wattron(self.state, color);
+    nc::mvwprintw(self.state, 0, 0, &sep);
+    nc::wattroff(self.state, color);
+
+    if !flags.is_empty() {
+      let s: String = flags.iter().fold("".to_string(), |mut vec, val| {
+        vec.push(val.clone());
+        vec
+      });
+
+      // Print the brackets
+      nc::wattron(self.state, color);
+      nc::mvwprintw(self.state, 0, max_x - 3 - s.len() as i32, "[");
+      nc::mvwprintw(self.state, 0, max_x - 2, "]");
+      nc::wattroff(self.state, color);
+
+      // Print the flags
+      color = get_color(COLOR_PAIR_STATE_FLAGS);
+      nc::wattron(self.state, color);
+      nc::wattron(self.state, bold());
+      nc::mvwprintw(self.state, 0, max_x - 2 - s.len() as i32, &s);
+      nc::wattroff(self.state, bold());
+      nc::wattroff(self.state, color);
+    }
+
+    nc::wrefresh(self.state);
   }
 
   pub fn display_statusbar(&mut self, mode: &str, msg: &str) {
