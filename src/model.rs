@@ -27,7 +27,7 @@ fn get_song_info(song: &Song, tag: &String) -> String {
     let dur = song.clone().duration.unwrap_or(Duration::seconds(0));
     let min = dur.num_minutes();
     let sec = dur.num_seconds() % 60;
-    return format!("{min}:{sec:>02}", min=min, sec=sec);
+    return format!("{min}:{sec:>02}", min = min, sec = sec);
   } else if tag == "Track" {
     let track = song.tags.get(tag).unwrap_or(&zero).to_string();
     let track_s = track.parse::<u32>().unwrap_or(0);
@@ -72,6 +72,8 @@ pub struct Model<'m> {
   view: &'m mut View,
   /// Configuration.
   config: &'m Config,
+  /// Data relative to the current playlist.
+  pl_data: PlaylistData,
 }
 
 impl<'m> Model<'m> {
@@ -88,6 +90,7 @@ impl<'m> Model<'m> {
       client: client,
       view: view,
       config: config,
+      pl_data: PlaylistData::new(),
     }
   }
 
@@ -177,6 +180,23 @@ impl<'m> Model<'m> {
     let vol = self.get_volume();
     let step = self.config.params.volume_change_step;
     self.set_volume(vol - step);
+  }
+
+  fn reload_playlist_data(&mut self) {
+    let queue = self.client.queue().unwrap_or(Vec::<Song>::default());
+    self.pl_data.size = queue.len() as u32;
+    let sum = queue.iter().fold(0i64,
+                                |sum, val| sum + val.duration.unwrap_or(Duration::seconds(0)).num_seconds());
+    self.pl_data.duration = Duration::seconds(sum);
+  }
+
+  pub fn update_header(&mut self) {
+    let vol = self.get_volume();
+    // TODO: select when to reload data
+    if self.pl_data.size == 0 {
+      self.reload_playlist_data();
+    }
+    self.view.display_header(&self.pl_data, vol);
   }
 
   pub fn update_playlist(&mut self) {

@@ -4,9 +4,50 @@ use ncurses as nc;
 
 use std::cmp;
 use std::iter;
+use std::fmt::{self, Display, Formatter};
+use time::Duration;
 
 use constants::*;
 use config::ColorConfig;
+
+pub struct PlaylistData {
+  pub size: u32,
+  pub duration: Duration,
+}
+
+impl PlaylistData {
+  pub fn new() -> PlaylistData {
+    PlaylistData {
+      size: 0,
+      duration: Duration::seconds(0),
+    }
+  }
+}
+
+impl Display for PlaylistData {
+  fn fmt(&self, f: &mut Formatter) -> fmt::Result {
+    if self.size == 0 {
+      write!(f, "0 item")
+    } else {
+      let n_h = self.duration.num_hours();
+      let n_min = self.duration.num_minutes() % 60;
+      let n_sec = self.duration.num_seconds() % 60;
+      let s_h = if n_h > 1 { "s" } else { "" };
+      let s_min = if n_min > 1 { "s" } else { "" };
+      let s_sec = if n_sec > 1 { "s" } else { "" };
+      write!(f,
+             "{} items, length: {} hour{}, {} minute{}, {} second{}",
+             self.size,
+             n_h,
+             s_h,
+             n_min,
+             s_min,
+             n_sec,
+             s_sec)
+    }
+  }
+}
+
 
 pub struct View {
   header: nc::WINDOW,
@@ -30,7 +71,7 @@ fn init_colors(colors: &ColorConfig) {
 
   nc::init_pair(COLOR_PAIR_DEFAULT, color_fg, color_bg);
   nc::init_pair(COLOR_PAIR_ARTIST, nc::COLOR_YELLOW, color_bg);
-  nc::init_pair(COLOR_PAIR_HEADER, nc::COLOR_WHITE, color_bg);
+  nc::init_pair(COLOR_PAIR_HEADER, colors.header_window, color_bg);
   nc::init_pair(COLOR_PAIR_PROGRESSBAR, colors.progressbar, color_bg);
   nc::init_pair(COLOR_PAIR_PROGRESSBAR_ELAPSED, colors.progressbar_elapsed, color_bg);
   nc::init_pair(COLOR_PAIR_STATUSBAR, colors.statusbar, color_bg);
@@ -120,6 +161,36 @@ impl View {
     return view;
   }
 
+  pub fn display_header(&mut self, pl_data: &PlaylistData, volume: i8) {
+    let mut max_x = 0;
+    let mut max_y = 0;
+    nc::getmaxyx(nc::stdscr, &mut max_y, &mut max_x);
+
+    // Start of the header
+    let title = "Playlist";
+    let mut color = get_color(COLOR_PAIR_HEADER);
+    nc::wattron(self.header, color);
+    nc::wattron(self.header, bold());
+    nc::mvwprintw(self.header, 0, 0, &title);
+
+    // Playlist details
+    nc::wmove(self.header, 0, title.len() as i32);
+    nc::wclrtoeol(self.header);
+    let mut s = format!("({})", pl_data);
+    nc::mvwprintw(self.header, 0, 1 + title.len() as i32, s.as_str());
+    nc::wattroff(self.header, bold());
+    nc::wattroff(self.header, color);
+
+    // Volume
+    color = get_color(COLOR_PAIR_VOLUME);
+    nc::wattron(self.header, color);
+    s = format!("Volume: {}%%", volume);
+    nc::mvwprintw(self.header, 0, max_x - s.len() as i32, s.as_str());
+    nc::wattroff(self.header, color);
+
+    nc::wrefresh(self.header);
+  }
+
   // TODO: data should not be mutable
   pub fn display_main_playlist(&mut self, desc: &[(String, u32)], data: &mut [&mut [String]]) {
     // Get the screen bounds.
@@ -127,7 +198,7 @@ impl View {
     let mut max_y = 0;
     nc::getmaxyx(nc::stdscr, &mut max_y, &mut max_x);
 
-    let mut color = get_color(COLOR_PAIR_HEADER);
+    let mut color = get_color(COLOR_PAIR_DEFAULT);
 
     nc::wattron(self.main_win, bold());
     nc::wattron(self.main_win, color);
