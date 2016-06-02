@@ -57,9 +57,9 @@ impl<'c, 'm> Controller<'c, 'm> {
         let mut model = self.model.lock().unwrap();
         let c = char::from_u32(ch as u32);
         if c.is_some() {
-          model.display_message(&format!("Pressed unmapped '{}'", c.unwrap()));
+          model.update_message(&format!("Pressed unmapped '{}'", c.unwrap()));
         } else {
-          model.display_message(&format!("Pressed unmapped key (code = {})", ch));
+          model.update_message(&format!("Pressed unmapped key (code = {})", ch));
         }
       }
       return false;

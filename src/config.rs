@@ -3,7 +3,7 @@ extern crate ini;
 
 use std::net::SocketAddr;
 use std::env;
-use std::path::{Path, PathBuf};
+use std::path::PathBuf;
 
 use ini::Ini;
 use ncurses as nc;
@@ -63,23 +63,23 @@ impl KeyConfig {
   }
 }
 
-pub trait toKeyCode {
+pub trait ToKeyCode {
   fn keycode(&self) -> i32;
 }
 
-impl toKeyCode for i32 {
+impl ToKeyCode for i32 {
   fn keycode(&self) -> i32 {
     *self
   }
 }
 
-impl toKeyCode for char {
+impl ToKeyCode for char {
   fn keycode(&self) -> i32 {
     *self as i32
   }
 }
 
-impl toKeyCode for ControlKey {
+impl ToKeyCode for ControlKey {
   fn keycode(&self) -> i32 {
     match *self {
       ControlKey::KeyCode(c) => return c,
@@ -109,7 +109,7 @@ impl ColorConfig {
 impl Config {
   pub fn new() -> Config {
     // TODO: support MPD_SOCK
-    let addr = env::var("MPD_SOCK").unwrap_or("127.0.0.1:6600".to_owned());
+    // let addr = env::var("MPD_SOCK").unwrap_or("127.0.0.1:6600".to_owned());
 
     // Search for the MPD_PORT environment variable
     let mpd_ip = "127.0.0.1".parse().unwrap();
@@ -167,24 +167,23 @@ impl ConfigLoader {
     let mut default_config_path = PathBuf::from("");
     match env::home_dir() {
       Some(path) => default_config_path = path.join(PathBuf::from(".config/ncmpcpp/config")),
-      None => default_config_path = PathBuf::from(""),
+      None => {}
     }
 
     ConfigLoader { default_config_path: default_config_path }
   }
 
   pub fn load(&self, opt_path: Option<PathBuf>) -> Config {
-    let mut path: PathBuf = PathBuf::from("");
-    match opt_path {
-      Some(x) => path = x,
-      None => path = self.default_config_path.clone(),
-    }
+    let path = match opt_path {
+      Some(x) => x,
+      None => self.default_config_path.clone(),
+    };
 
     let mut config = Config::new();
 
     // Read ncmpcpp configuration
     let i = Ini::load_from_file(path.to_str().unwrap()).unwrap();
-    for (sec, prop) in i.iter() {
+    for (_, prop) in i.iter() {
       for (k, v) in prop.iter() {
         // Remove quotes
         let fixed = v.trim_matches('\"');

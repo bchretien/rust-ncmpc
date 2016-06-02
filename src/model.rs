@@ -77,7 +77,7 @@ impl<'m> Model<'m> {
       println!("MPD not running. Exiting...");
       process::exit(2);
     }
-    let mut client = res.unwrap();
+    let client = res.unwrap();
 
     Model {
       client: client,
@@ -86,26 +86,29 @@ impl<'m> Model<'m> {
   }
 
   pub fn playlist_play(&mut self) {
-    self.client.play();
-    self.view.set_debug_prompt("Playing");
+    if self.client.play().is_ok() {
+      self.view.display_debug_prompt("Playing");
+    }
   }
 
   pub fn playlist_pause(&mut self) {
     let status = self.client.status();
     if status.is_err() {
-      self.view.set_debug_prompt(&format!("{}", status.unwrap_err()));
+      self.view.display_debug_prompt(&format!("{}", status.unwrap_err()));
       return;
     }
     let state = status.unwrap().state;
 
     match state {
       State::Play => {
-        self.client.pause(true);
-        self.view.set_debug_prompt("Pausing");
+        if self.client.pause(true).is_ok() {
+          self.view.display_debug_prompt("Pausing");
+        }
       }
       State::Pause => {
-        self.client.pause(false);
-        self.view.set_debug_prompt("Playing");
+        if self.client.pause(false).is_ok() {
+          self.view.display_debug_prompt("Playing");
+        }
       }
       State::Stop => {
         // do nothing
@@ -114,26 +117,30 @@ impl<'m> Model<'m> {
   }
 
   pub fn playlist_stop(&mut self) {
-    self.client.stop();
-    self.view.set_debug_prompt("Stopping");
+    if self.client.stop().is_ok() {
+      self.view.display_debug_prompt("Stopping");
+    }
   }
 
   pub fn playlist_previous(&mut self) {
-    self.client.prev();
-    self.view.set_debug_prompt("Previous song");
+    if self.client.prev().is_ok() {
+      self.view.display_debug_prompt("Previous song");
+    }
   }
 
   pub fn playlist_next(&mut self) {
-    self.client.next();
-    self.view.set_debug_prompt("Next song");
+    if self.client.next().is_ok() {
+      self.view.display_debug_prompt("Next song");
+    }
   }
 
   pub fn playlist_clear(&mut self) {
-    self.client.clear();
-    self.view.set_debug_prompt("Cleared playlist");
+    if self.client.clear().is_ok() {
+      self.view.display_debug_prompt("Cleared playlist");
+    }
   }
 
-  pub fn display_playlist(&mut self) {
+  pub fn update_playlist(&mut self) {
     // Get playlist
     let playlist = self.client.queue().unwrap();
 
@@ -153,10 +160,10 @@ impl<'m> Model<'m> {
       grid[i][4] = get_song_info(&playlist[i], &"Time".to_string());
     }
 
-    self.view.set_playlist(&columns, grid);
+    self.view.display_main_playlist(&columns, grid);
   }
 
-  pub fn display_play_bar(&mut self) {
+  pub fn update_progressbar(&mut self) {
     let (e, d) = get_song_time(&self.client.status().unwrap());
     let elapsed = e.num_seconds();
     let duration = d.num_seconds();
@@ -165,21 +172,20 @@ impl<'m> Model<'m> {
     if duration > 0 {
       pct = (100 * elapsed / duration) as f32;
     }
-    self.view.set_play_bar(pct);
+    self.view.display_progressbar(pct);
   }
 
-  pub fn display_now_playing(&mut self) {
+  pub fn update_statusbar(&mut self) {
     use mpd::status::State;
 
-    let mut mode = String::from("");
-    let mut msg = String::from("");
+    let mut mode = String::default();
+    let mut msg = String::default();
 
     let query = self.client.currentsong();
     if query.is_ok() {
       let data = query.unwrap();
       if data.is_some() {
         let state = self.client.status().unwrap().state;
-        let mut state_msg = String::from("");
         match state {
           State::Play => {
             mode = "Playing".to_string();
@@ -197,18 +203,14 @@ impl<'m> Model<'m> {
         let album = get_song_info(&song, &"Album".to_string());
         let title = song.title.unwrap_or("Unknown title".to_string());
         msg = format!("{} - {} - {}", artist, title, album);
-      } else {
-        mode = "".to_string();
-        msg = "".to_string();
       }
     } else {
       mode = "No MPD status available".to_string();
-      msg = "".to_string();
     }
-    self.view.set_statusbar(&mode, &msg);
+    self.view.display_statusbar(&mode, &msg);
   }
 
-  pub fn display_message(&mut self, msg: &str) {
-    self.view.set_debug_prompt(msg);
+  pub fn update_message(&mut self, msg: &str) {
+    self.view.display_debug_prompt(msg);
   }
 }

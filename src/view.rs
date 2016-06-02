@@ -9,11 +9,10 @@ use constants::*;
 use config::ColorConfig;
 
 pub struct View {
-  colors: ColorConfig,
-  playlist_row: nc::WINDOW,
-  state_line: nc::WINDOW,
+  header: nc::WINDOW,
+  state: nc::WINDOW,
   main_win: nc::WINDOW,
-  play_bar: nc::WINDOW,
+  progressbar: nc::WINDOW,
   bottom_row: nc::WINDOW,
   debug_row: nc::WINDOW,
 }
@@ -90,42 +89,39 @@ fn destroy_win(win: nc::WINDOW) {
 }
 
 impl View {
-  pub fn new(c: &ColorConfig) -> View {
-    let colors = c.clone();
-
-    init_ncurses(&colors);
+  pub fn new(colors: &ColorConfig) -> View {
+    init_ncurses(colors);
 
     let mut max_x = 0;
     let mut max_y = 0;
     nc::getmaxyx(nc::stdscr, &mut max_y, &mut max_x);
 
     let view = View {
-      colors: colors,
-      playlist_row: nc::newwin(1, max_x, 0, 0),
-      state_line: nc::newwin(1, max_x, 1, 0),
+      header: nc::newwin(1, max_x, 0, 0),
+      state: nc::newwin(1, max_x, 1, 0),
       main_win: nc::newwin(max_y - 5, max_x, 2, 0),
-      play_bar: nc::newwin(1, max_x, max_y - 3, 0),
+      progressbar: nc::newwin(1, max_x, max_y - 3, 0),
       bottom_row: nc::newwin(1, max_x, max_y - 2, 0),
       debug_row: nc::newwin(1, max_x, max_y - 1, 0),
     };
-    nc::wrefresh(view.playlist_row);
-    nc::wrefresh(view.state_line);
+    nc::wrefresh(view.header);
+    nc::wrefresh(view.state);
     nc::wrefresh(view.main_win);
-    nc::wrefresh(view.play_bar);
+    nc::wrefresh(view.progressbar);
     nc::wrefresh(view.bottom_row);
     nc::wrefresh(view.debug_row);
     nc::keypad(view.main_win, true);
 
     // Set colors
-    nc::wbkgd(view.playlist_row, nc::COLOR_PAIR(COLOR_PAIR_ARTIST) as nc::chtype);
-    nc::wbkgd(view.state_line, nc::COLOR_PAIR(COLOR_PAIR_DEFAULT) as nc::chtype);
+    nc::wbkgd(view.header, nc::COLOR_PAIR(COLOR_PAIR_ARTIST) as nc::chtype);
+    nc::wbkgd(view.state, nc::COLOR_PAIR(COLOR_PAIR_DEFAULT) as nc::chtype);
     nc::wbkgd(view.debug_row, nc::COLOR_PAIR(COLOR_PAIR_DEBUG) as nc::chtype);
 
     return view;
   }
 
   // TODO: data should not be mutable
-  pub fn set_playlist(&mut self, desc: &[(String, u32)], data: &mut [&mut [String]]) {
+  pub fn display_main_playlist(&mut self, desc: &[(String, u32)], data: &mut [&mut [String]]) {
     // Get the screen bounds.
     let mut max_x = 0;
     let mut max_y = 0;
@@ -157,7 +153,6 @@ impl View {
     // Playlist data
     let playlist_start_row = 2;
     let playlist_max_row = max_y - 3;
-    let height = cmp::min(playlist_max_row, data.len() as i32);
 
     color = get_color(COLOR_PAIR_ARTIST);
     nc::wattron(self.main_win, color);
@@ -179,7 +174,7 @@ impl View {
     nc::wrefresh(self.main_win);
   }
 
-  pub fn set_play_bar(&mut self, pct: f32) {
+  pub fn display_progressbar(&mut self, pct: f32) {
     let mut max_x = 0;
     let mut max_y = 0;
     nc::getmaxyx(nc::stdscr, &mut max_y, &mut max_x);
@@ -190,34 +185,34 @@ impl View {
     let len_start: usize = tip_x as usize;
     let sep = iter::repeat('─').take(len_start).collect::<String>();
     let mut color = get_color(COLOR_PAIR_PROGRESSBAR_ELAPSED);
-    nc::wattron(self.play_bar, color);
-    nc::mvwprintw(self.play_bar, 0, 0, &sep);
+    nc::wattron(self.progressbar, color);
+    nc::mvwprintw(self.progressbar, 0, 0, &sep);
 
     if pct > 0. {
       // Tip of the bar
       let tip = "╼";
-      nc::mvwprintw(self.play_bar, 0, tip_x, &tip);
-      nc::wattroff(self.play_bar, color);
+      nc::mvwprintw(self.progressbar, 0, tip_x, &tip);
+      nc::wattroff(self.progressbar, color);
     }
 
     // End of the bar
     let len_end: usize = (max_x - tip_x) as usize;
     let sep = iter::repeat('─').take(len_end).collect::<String>();
     color = get_color(COLOR_PAIR_PROGRESSBAR);
-    nc::wattron(self.play_bar, color);
-    nc::mvwprintw(self.play_bar, 0, if tip_x > 0 { tip_x + 1 } else { 0 }, &sep);
-    nc::wattroff(self.play_bar, color);
+    nc::wattron(self.progressbar, color);
+    nc::mvwprintw(self.progressbar, 0, if tip_x > 0 { tip_x + 1 } else { 0 }, &sep);
+    nc::wattroff(self.progressbar, color);
 
-    nc::wrefresh(self.play_bar);
+    nc::wrefresh(self.progressbar);
   }
 
-  pub fn set_state_line(&mut self, flags: Vec<&str>) {
+  pub fn display_stateline(&mut self, flags: Vec<&str>) {
     // Clear line.
     nc::wmove(self.bottom_row, 0, 0);
     nc::wclrtoeol(self.bottom_row);
   }
 
-  pub fn set_statusbar(&mut self, mode: &str, msg: &str) {
+  pub fn display_statusbar(&mut self, mode: &str, msg: &str) {
     // Clear line.
     nc::wmove(self.bottom_row, 0, 0);
     nc::wclrtoeol(self.bottom_row);
@@ -242,22 +237,23 @@ impl View {
     nc::wrefresh(self.bottom_row);
   }
 
-  pub fn set_debug_prompt(&mut self, msg: &str) {
+  pub fn display_debug_prompt(&mut self, msg: &str) {
     // Clear line.
     nc::wmove(self.debug_row, 0, 0);
     nc::wclrtoeol(self.debug_row);
     // Print message.
     nc::mvwprintw(self.debug_row, 0, 0, &format!("[Debug] {}", msg));
+
     nc::wrefresh(self.debug_row);
   }
 }
 
 impl Drop for View {
   fn drop(&mut self) {
-    destroy_win(self.playlist_row);
-    destroy_win(self.state_line);
+    destroy_win(self.header);
+    destroy_win(self.state);
     destroy_win(self.main_win);
-    destroy_win(self.play_bar);
+    destroy_win(self.progressbar);
     destroy_win(self.bottom_row);
     destroy_win(self.debug_row);
     deinit_ncurses();
