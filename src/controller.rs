@@ -30,6 +30,10 @@ impl<'c, 'm> Controller<'c, 'm> {
     callbacks.insert(config.keys.previous_song.keycode(), Box::new(playlist_previous));
     // Next song
     callbacks.insert(config.keys.next_song.keycode(), Box::new(playlist_next));
+    // Increase volume
+    callbacks.insert(config.keys.volume_up.keycode(), Box::new(volume_up));
+    // Decrease volume
+    callbacks.insert(config.keys.volume_down.keycode(), Box::new(volume_down));
 
     Controller {
       model: model,

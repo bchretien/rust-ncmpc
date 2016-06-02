@@ -22,6 +22,8 @@ pub struct KeyConfig {
   pub previous_song: ControlKey,
   pub quit: ControlKey,
   pub stop: ControlKey,
+  pub volume_down: ControlKey,
+  pub volume_up: ControlKey,
 }
 
 #[derive(Clone,Copy)]
@@ -40,10 +42,16 @@ pub struct ColorConfig {
 }
 
 #[derive(Clone,Copy)]
+pub struct ParamConfig {
+  pub volume_change_step: i8,
+}
+
+#[derive(Clone,Copy)]
 pub struct Config {
   pub addr: SocketAddr,
   pub colors: ColorConfig,
   pub keys: KeyConfig,
+  pub params: ParamConfig,
 }
 
 pub struct ConfigLoader {
@@ -59,6 +67,8 @@ impl KeyConfig {
       previous_song: ControlKey::Char('<'),
       quit: ControlKey::Char('q'),
       stop: ControlKey::Char('s'),
+      volume_down: ControlKey::KeyCode(nc::KEY_LEFT),
+      volume_up: ControlKey::KeyCode(nc::KEY_RIGHT),
     }
   }
 }
@@ -106,6 +116,12 @@ impl ColorConfig {
   }
 }
 
+impl ParamConfig {
+  pub fn new() -> ParamConfig {
+    ParamConfig { volume_change_step: 2 }
+  }
+}
+
 impl Config {
   pub fn new() -> Config {
     // TODO: support MPD_SOCK
@@ -120,11 +136,13 @@ impl Config {
     println!("MPD: {}:{}", mpd_ip, mpd_port);
 
     let keys = KeyConfig::new();
+    let params = ParamConfig::new();
 
     Config {
       colors: ColorConfig::new(),
       addr: SocketAddr::new(mpd_ip, mpd_port),
       keys: keys,
+      params: params,
     }
   }
 }

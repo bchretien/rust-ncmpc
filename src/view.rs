@@ -34,7 +34,7 @@ fn init_colors(colors: &ColorConfig) {
   nc::init_pair(COLOR_PAIR_PROGRESSBAR, colors.progressbar, color_bg);
   nc::init_pair(COLOR_PAIR_PROGRESSBAR_ELAPSED, colors.progressbar_elapsed, color_bg);
   nc::init_pair(COLOR_PAIR_STATUSBAR, colors.statusbar, color_bg);
-  nc::init_pair(COLOR_PAIR_BOTTOM, nc::COLOR_BLUE, color_bg);
+  nc::init_pair(COLOR_PAIR_VOLUME, colors.volume, color_bg);
   nc::init_pair(COLOR_PAIR_DEBUG, nc::COLOR_GREEN, color_bg);
 }
 

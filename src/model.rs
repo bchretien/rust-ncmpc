@@ -14,32 +14,6 @@ use mpd::song::Song;
 
 pub type SharedModel<'m> = Arc<Mutex<Model<'m>>>;
 
-// TODO: update names once concat_idents can be used here for the function name
-macro_rules! register_action(
-    ($model_fun:ident) => (
-        pub fn $model_fun(shared_model: &mut SharedModel)
-        {
-            let mut model = shared_model.lock().unwrap();
-            model.$model_fun();
-        }
-    )
-);
-
-// Register actions for closures
-register_action!(playlist_play);
-register_action!(playlist_pause);
-register_action!(playlist_stop);
-register_action!(playlist_clear);
-register_action!(playlist_previous);
-register_action!(playlist_next);
-
-pub struct Model<'m> {
-  /// MPD client.
-  client: mpd::Client<TcpStream>,
-  /// TUI view.
-  view: &'m mut View,
-}
-
 fn start_client(config: &Config) -> Result<mpd::Client, mpd::error::Error> {
   mpd::Client::connect(config.addr)
 }
@@ -69,6 +43,37 @@ fn get_song_time(status: &Status) -> (Duration, Duration) {
   status.time.unwrap_or((Duration::seconds(0), Duration::seconds(0)))
 }
 
+
+// TODO: update names once concat_idents can be used here for the function name
+macro_rules! register_action(
+    ($model_fun:ident) => (
+        pub fn $model_fun(shared_model: &mut SharedModel)
+        {
+            let mut model = shared_model.lock().unwrap();
+            model.$model_fun();
+        }
+    )
+);
+
+// Register actions for closures
+register_action!(playlist_play);
+register_action!(playlist_pause);
+register_action!(playlist_stop);
+register_action!(playlist_clear);
+register_action!(playlist_previous);
+register_action!(playlist_next);
+register_action!(volume_down);
+register_action!(volume_up);
+
+pub struct Model<'m> {
+  /// MPD client.
+  client: mpd::Client<TcpStream>,
+  /// TUI view.
+  view: &'m mut View,
+  /// Configuration.
+  config: &'m Config,
+}
+
 impl<'m> Model<'m> {
   pub fn new(view: &'m mut View, config: &'m Config) -> Model<'m> {
     // Instantiate client.
@@ -82,6 +87,7 @@ impl<'m> Model<'m> {
     Model {
       client: client,
       view: view,
+      config: config,
     }
   }
 
@@ -138,6 +144,39 @@ impl<'m> Model<'m> {
     if self.client.clear().is_ok() {
       self.view.display_debug_prompt("Cleared playlist");
     }
+  }
+
+  pub fn get_volume(&mut self) -> i8 {
+    let status = self.client.status();
+    if status.is_err() {
+      self.view.display_debug_prompt(&format!("{}", status.unwrap_err()));
+      return 0;
+    }
+    return status.unwrap().volume;
+  }
+
+  pub fn set_volume(&mut self, mut vol: i8) {
+    // Volume ∈ [0,100]
+    if vol < 0 {
+      vol = 0;
+    } else if vol > 100 {
+      vol = 100;
+    };
+    if self.client.volume(vol).is_ok() {
+      self.view.display_debug_prompt("Volume set");
+    }
+  }
+
+  pub fn volume_up(&mut self) {
+    let vol = self.get_volume();
+    let step = self.config.params.volume_change_step;
+    self.set_volume(vol + step);
+  }
+
+  pub fn volume_down(&mut self) {
+    let vol = self.get_volume();
+    let step = self.config.params.volume_change_step;
+    self.set_volume(vol - step);
   }
 
   pub fn update_playlist(&mut self) {
