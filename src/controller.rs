@@ -83,7 +83,6 @@ impl<'c, 'm> Controller<'c, 'm>
                     model.display_message(&format!("Pressed unmapped key (code = {})", ch));
                 }
             }
-            nc::refresh();
             return false;
         }
         else {
