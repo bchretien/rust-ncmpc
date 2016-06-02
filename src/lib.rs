@@ -9,7 +9,6 @@ pub mod constants;
 pub mod config;
 pub mod controller;
 pub mod model;
-pub mod util;
 pub mod view;
 
 pub use config::ConfigLoader;
