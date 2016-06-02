@@ -17,11 +17,6 @@ pub struct Controller<'c, 'm: 'c> {
 
 impl<'c, 'm> Controller<'c, 'm> {
   pub fn new(model: &'c mut SharedModel<'m>, config: &'c Config) -> Controller<'c, 'm> {
-    {
-      let mut m = model.lock().unwrap();
-      m.init();
-    }
-
     // Set callbacks
     let mut callbacks = ControllerCallbacks::new();
 

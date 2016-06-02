@@ -85,10 +85,6 @@ impl<'m> Model<'m> {
     }
   }
 
-  pub fn init(&mut self) {
-    self.display_now_playing();
-  }
-
   pub fn playlist_play(&mut self) {
     self.client.play();
     self.view.set_debug_prompt("Playing");
