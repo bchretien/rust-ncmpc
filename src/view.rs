@@ -373,6 +373,7 @@ impl View {
       nc::wattron(self.bottom_row, color);
       nc::wattron(self.bottom_row, bold());
       let offset = max_x - track.len() as i32;
+      nc::mvwprintw(self.bottom_row, 0, offset - 1, " ");
       nc::mvwprintw(self.bottom_row, 0, offset, track);
       nc::wattroff(self.bottom_row, bold());
       nc::wattroff(self.bottom_row, color);
