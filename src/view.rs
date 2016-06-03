@@ -228,8 +228,10 @@ impl View {
 
     color = get_color(COLOR_PAIR_ARTIST);
     nc::wattron(self.main_win, color);
+
+    let height = cmp::min(playlist_max_row - playlist_start_row, data.len() as i32);
     // For each song
-    for y in 0..cmp::min(playlist_max_row - playlist_start_row, data.len() as i32) {
+    for y in 0..height {
       // For each column
       x = 0;
       for i in 0..desc.len() {
@@ -253,6 +255,11 @@ impl View {
 
         x += 1 + desc[i].1 as i32;
       }
+    }
+    // Clear the rest of the lines
+    for y in height..max_y - 3 {
+      nc::wmove(self.main_win, playlist_start_row + y, 0);
+      nc::wclrtoeol(self.main_win);
     }
     nc::wattroff(self.main_win, color);
 
