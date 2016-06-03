@@ -193,7 +193,7 @@ impl View {
   }
 
   // TODO: data should not be mutable
-  pub fn display_main_playlist(&mut self, desc: &[(String, u32)], data: &mut [&mut [String]]) {
+  pub fn display_main_playlist(&mut self, desc: &[(String, u32)], data: &mut [&mut [String]], current_song: Option<u32>) {
     // Get the screen bounds.
     let mut max_x = 0;
     let mut max_y = 0;
@@ -228,16 +228,29 @@ impl View {
 
     color = get_color(COLOR_PAIR_ARTIST);
     nc::wattron(self.main_win, color);
+    // For each song
     for y in 0..cmp::min(playlist_max_row - playlist_start_row, data.len() as i32) {
       // For each column
       x = 0;
       for i in 0..desc.len() {
-        nc::wmove(self.main_win, playlist_start_row + y, x - 1);
+        nc::wmove(self.main_win, playlist_start_row + y, cmp::max(x - 1, 0));
         nc::wclrtoeol(self.main_win);
+
+        // Highlight current song
+        let is_current = current_song.is_some() && current_song.unwrap() == y as u32;
+        if is_current {
+          nc::wattron(self.main_win, bold());
+        }
         nc::mvwprintw(self.main_win,
                       playlist_start_row + y,
                       x,
                       &format!("{}", data[y as usize][i as usize]));
+
+        // Stop highlighting
+        if is_current {
+          nc::wattroff(self.main_win, bold());
+        }
+
         x += 1 + desc[i].1 as i32;
       }
     }

@@ -246,7 +246,14 @@ impl<'m> Model<'m> {
       grid[i][4] = get_song_info(&playlist[i], &"Time".to_string());
     }
 
-    self.view.display_main_playlist(&columns, grid);
+    // Get index of current song
+    let song = self.client.status().unwrap().song;
+    let mut pos: Option<u32> = None;
+    if song.is_some() {
+      pos = Some(song.unwrap().pos);
+    }
+
+    self.view.display_main_playlist(&columns, grid, pos);
   }
 
   pub fn update_progressbar(&mut self) {
