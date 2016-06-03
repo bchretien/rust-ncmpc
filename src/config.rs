@@ -22,6 +22,8 @@ pub struct KeyConfig {
   pub previous_song: ControlKey,
   pub quit: ControlKey,
   pub stop: ControlKey,
+  pub toggle_random: ControlKey,
+  pub toggle_repeat: ControlKey,
   pub volume_down: ControlKey,
   pub volume_up: ControlKey,
 }
@@ -67,6 +69,8 @@ impl KeyConfig {
       previous_song: ControlKey::Char('<'),
       quit: ControlKey::Char('q'),
       stop: ControlKey::Char('s'),
+      toggle_random: ControlKey::Char('z'),
+      toggle_repeat: ControlKey::Char('r'),
       volume_down: ControlKey::KeyCode(nc::KEY_LEFT),
       volume_up: ControlKey::KeyCode(nc::KEY_RIGHT),
     }

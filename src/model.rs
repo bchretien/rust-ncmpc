@@ -62,6 +62,8 @@ register_action!(playlist_stop);
 register_action!(playlist_clear);
 register_action!(playlist_previous);
 register_action!(playlist_next);
+register_action!(toggle_random);
+register_action!(toggle_repeat);
 register_action!(volume_down);
 register_action!(volume_up);
 
@@ -168,6 +170,26 @@ impl<'m> Model<'m> {
     if self.client.volume(vol).is_ok() {
       self.view.display_debug_prompt("Volume set");
     }
+  }
+
+  pub fn toggle_random(&mut self) {
+    let status = self.client.status();
+    if status.is_err() {
+      self.view.display_debug_prompt(&format!("{}", status.unwrap_err()));
+      return;
+    }
+    let random = status.unwrap().random;
+    self.client.random(!random);
+  }
+
+  pub fn toggle_repeat(&mut self) {
+    let status = self.client.status();
+    if status.is_err() {
+      self.view.display_debug_prompt(&format!("{}", status.unwrap_err()));
+      return;
+    }
+    let repeat = status.unwrap().repeat;
+    self.client.repeat(!repeat);
   }
 
   pub fn volume_up(&mut self) {

@@ -34,6 +34,10 @@ impl<'c, 'm> Controller<'c, 'm> {
     callbacks.insert(config.keys.volume_up.keycode(), Box::new(volume_up));
     // Decrease volume
     callbacks.insert(config.keys.volume_down.keycode(), Box::new(volume_down));
+    // Toggle random
+    callbacks.insert(config.keys.toggle_random.keycode(), Box::new(toggle_random));
+    // Toggle repeat
+    callbacks.insert(config.keys.toggle_repeat.keycode(), Box::new(toggle_repeat));
 
     Controller {
       model: model,
