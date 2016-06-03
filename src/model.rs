@@ -190,7 +190,9 @@ impl<'m> Model<'m> {
       return;
     }
     let random = status.unwrap().random;
-    self.client.random(!random);
+    if self.client.random(!random).is_err() {
+      self.view.display_debug_prompt("Failed to toggle random");
+    }
   }
 
   pub fn toggle_repeat(&mut self) {
@@ -200,7 +202,9 @@ impl<'m> Model<'m> {
       return;
     }
     let repeat = status.unwrap().repeat;
-    self.client.repeat(!repeat);
+    if self.client.repeat(!repeat).is_err() {
+      self.view.display_debug_prompt("Failed to toggle repeat");
+    }
   }
 
   pub fn volume_up(&mut self) {
