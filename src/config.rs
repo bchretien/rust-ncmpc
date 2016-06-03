@@ -3,6 +3,8 @@ extern crate ini;
 
 use std::net::SocketAddr;
 use std::env;
+use std::fmt::Debug;
+use std::str::FromStr;
 use std::path::PathBuf;
 
 use ini::Ini;
@@ -49,6 +51,7 @@ pub struct ParamConfig {
   pub display_bitrate: bool,
   pub display_remaining_time: bool,
   pub display_volume_level: bool,
+  pub header_text_scrolling: bool,
   pub volume_change_step: i8,
 }
 
@@ -131,6 +134,7 @@ impl ParamConfig {
       display_bitrate: false,
       display_remaining_time: false,
       display_volume_level: true,
+      header_text_scrolling: true,
       volume_change_step: 2,
     }
   }
@@ -175,8 +179,24 @@ fn parse_color(s: &str) -> i16 {
   }
 }
 
+fn parse_bool(s: &str) -> bool {
+  s == "yes"
+}
+
+fn parse_int<T>(s: &str) -> T
+  where T: FromStr,
+        <T as FromStr>::Err: Debug
+{
+  let res = s.parse::<T>();
+  if res.is_err() {
+    panic!(format!("Error while parsing \"{}\" as an integer", s));
+  }
+  res.unwrap()
+}
+
 fn assign(key: &str, val: &str, config: &mut Config) -> bool {
   match key {
+    // Colors
     "color1" => config.colors.color1 = parse_color(val),
     "color2" => config.colors.color2 = parse_color(val),
     "header_window_color" => config.colors.header_window = parse_color(val),
@@ -188,6 +208,12 @@ fn assign(key: &str, val: &str, config: &mut Config) -> bool {
     "state_line_color" => config.colors.state_line = parse_color(val),
     "statusbar_color" => config.colors.statusbar = parse_color(val),
     "volume_color" => config.colors.volume = parse_color(val),
+    // Parameters
+    "volume_change_step" => config.params.volume_change_step = parse_int(val),
+    "display_bitrate" => config.params.display_bitrate = parse_bool(val),
+    "display_remaining_time" => config.params.display_remaining_time = parse_bool(val),
+    "display_volume_level" => config.params.display_volume_level = parse_bool(val),
+    "header_text_scrolling" => config.params.header_text_scrolling = parse_bool(val),
     _ => return false,
   }
   return true;
