@@ -17,3 +17,4 @@ pub static COLOR_PAIR_VOLUME: i16 = 7;
 pub static COLOR_PAIR_DEBUG: i16 = 8;
 pub static COLOR_PAIR_STATE_LINE: i16 = 9;
 pub static COLOR_PAIR_STATE_FLAGS: i16 = 10;
+pub static COLOR_PAIR_TRACK: i16 = 11;

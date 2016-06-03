@@ -27,7 +27,7 @@ fn get_song_info(song: &Song, tag: &String) -> String {
     let dur = song.clone().duration.unwrap_or(Duration::seconds(0));
     let min = dur.num_minutes();
     let sec = dur.num_seconds() % 60;
-    return format!("{min}:{sec:>02}", min = min, sec = sec);
+    return format!("{min}:{sec:02}", min = min, sec = sec);
   } else if tag == "Track" {
     let track = song.tags.get(tag).unwrap_or(&zero).to_string();
     let track_s = track.parse::<u32>().unwrap_or(0);
@@ -43,6 +43,9 @@ fn get_song_time(status: &Status) -> (Duration, Duration) {
   status.time.unwrap_or((Duration::seconds(0), Duration::seconds(0)))
 }
 
+fn get_song_bitrate(status: &Status) -> u32 {
+  status.bitrate.unwrap_or(0u32)
+}
 
 // TODO: update names once concat_idents can be used here for the function name
 macro_rules! register_action(
@@ -62,6 +65,7 @@ register_action!(playlist_stop);
 register_action!(playlist_clear);
 register_action!(playlist_previous);
 register_action!(playlist_next);
+register_action!(toggle_bitrate_visibility);
 register_action!(toggle_random);
 register_action!(toggle_repeat);
 register_action!(volume_down);
@@ -72,8 +76,10 @@ pub struct Model<'m> {
   client: mpd::Client<TcpStream>,
   /// TUI view.
   view: &'m mut View,
-  /// Configuration.
+  /// Initial configuration.
   config: &'m Config,
+  /// Current state configuration.
+  params: ParamConfig,
   /// Data relative to the current playlist.
   pl_data: PlaylistData,
 }
@@ -92,6 +98,7 @@ impl<'m> Model<'m> {
       client: client,
       view: view,
       config: config,
+      params: config.params.clone(),
       pl_data: PlaylistData::new(),
     }
   }
@@ -170,6 +177,10 @@ impl<'m> Model<'m> {
     if self.client.volume(vol).is_ok() {
       self.view.display_debug_prompt("Volume set");
     }
+  }
+
+  pub fn toggle_bitrate_visibility(&mut self) {
+    self.params.display_bitrate = !self.params.display_bitrate;
   }
 
   pub fn toggle_random(&mut self) {
@@ -295,12 +306,14 @@ impl<'m> Model<'m> {
 
     let mut mode = String::default();
     let mut msg = String::default();
+    let mut track = String::default();
 
     let query = self.client.currentsong();
     if query.is_ok() {
       let data = query.unwrap();
       if data.is_some() {
-        let state = self.client.status().unwrap().state;
+        let status = self.client.status().unwrap();
+        let state = status.state;
         match state {
           State::Play => {
             mode = "Playing".to_string();
@@ -318,11 +331,25 @@ impl<'m> Model<'m> {
         let album = get_song_info(&song, &"Album".to_string());
         let title = song.title.unwrap_or("Unknown title".to_string());
         msg = format!("{} - {} - {}", artist, title, album);
+
+        let mut bitrate = String::default();
+        let (cur, total) = get_song_time(&status);
+        let cur_min = cur.num_minutes();
+        let cur_sec = cur.num_seconds() % 60;
+        let total_min = total.num_minutes();
+        let total_sec = total.num_seconds() % 60;
+        if self.params.display_bitrate {
+          let val = get_song_bitrate(&status);
+          if val > 0 {
+            bitrate = format!("({} kbps) ", val);
+          }
+        }
+        track = format!("{}[{}:{:02}/{}:{:02}]", bitrate, cur_min, cur_sec, total_min, total_sec);
       }
     } else {
       mode = "No MPD status available".to_string();
     }
-    self.view.display_statusbar(&mode, &msg);
+    self.view.display_statusbar(&mode, &msg, &track);
   }
 
   pub fn update_message(&mut self, msg: &str) {

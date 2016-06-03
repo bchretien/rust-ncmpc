@@ -22,6 +22,7 @@ pub struct KeyConfig {
   pub previous_song: ControlKey,
   pub quit: ControlKey,
   pub stop: ControlKey,
+  pub toggle_bitrate_visibility: ControlKey,
   pub toggle_random: ControlKey,
   pub toggle_repeat: ControlKey,
   pub volume_down: ControlKey,
@@ -45,6 +46,9 @@ pub struct ColorConfig {
 
 #[derive(Clone,Copy)]
 pub struct ParamConfig {
+  pub display_bitrate: bool,
+  pub display_remaining_time: bool,
+  pub display_volume_level: bool,
   pub volume_change_step: i8,
 }
 
@@ -69,6 +73,7 @@ impl KeyConfig {
       previous_song: ControlKey::Char('<'),
       quit: ControlKey::Char('q'),
       stop: ControlKey::Char('s'),
+      toggle_bitrate_visibility: ControlKey::Char('#'),
       toggle_random: ControlKey::Char('z'),
       toggle_repeat: ControlKey::Char('r'),
       volume_down: ControlKey::KeyCode(nc::KEY_LEFT),
@@ -122,7 +127,12 @@ impl ColorConfig {
 
 impl ParamConfig {
   pub fn new() -> ParamConfig {
-    ParamConfig { volume_change_step: 2 }
+    ParamConfig {
+      display_bitrate: false,
+      display_remaining_time: false,
+      display_volume_level: true,
+      volume_change_step: 2,
+    }
   }
 }
 

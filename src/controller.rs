@@ -34,6 +34,9 @@ impl<'c, 'm> Controller<'c, 'm> {
     callbacks.insert(config.keys.volume_up.keycode(), Box::new(volume_up));
     // Decrease volume
     callbacks.insert(config.keys.volume_down.keycode(), Box::new(volume_down));
+    // Toggle bitrate visibility
+    callbacks.insert(config.keys.toggle_bitrate_visibility.keycode(),
+                     Box::new(toggle_bitrate_visibility));
     // Toggle random
     callbacks.insert(config.keys.toggle_random.keycode(), Box::new(toggle_random));
     // Toggle repeat

@@ -78,6 +78,7 @@ fn init_colors(colors: &ColorConfig) {
   nc::init_pair(COLOR_PAIR_DEBUG, nc::COLOR_GREEN, color_bg);
   nc::init_pair(COLOR_PAIR_STATE_LINE, colors.state_line, color_bg);
   nc::init_pair(COLOR_PAIR_STATE_FLAGS, colors.state_flags, color_bg);
+  nc::init_pair(COLOR_PAIR_TRACK, nc::COLOR_BLACK, color_bg);
 }
 
 fn init_ncurses(colors: &ColorConfig) {
@@ -338,13 +339,17 @@ impl View {
     nc::wrefresh(self.state);
   }
 
-  pub fn display_statusbar(&mut self, mode: &str, msg: &str) {
+  pub fn display_statusbar(&mut self, mode: &str, msg: &str, track: &str) {
+    let mut max_x = 0;
+    let mut max_y = 0;
+    nc::getmaxyx(nc::stdscr, &mut max_y, &mut max_x);
+
     // Clear line.
     nc::wmove(self.bottom_row, 0, 0);
     nc::wclrtoeol(self.bottom_row);
 
     // Print mode.
-    if mode.len() > 0 {
+    if !mode.is_empty() {
       let color = get_color(COLOR_PAIR_STATUSBAR);
       nc::wattron(self.bottom_row, color);
       nc::wattron(self.bottom_row, bold());
@@ -359,6 +364,17 @@ impl View {
     let offset = mode.len() + 2;
     nc::mvwprintw(self.bottom_row, 0, offset as i32, msg);
     nc::wattroff(self.bottom_row, color);
+
+    // Print track (time, bitrate, etc.)
+    if !track.is_empty() {
+      let color = get_color(COLOR_PAIR_TRACK);
+      nc::wattron(self.bottom_row, color);
+      nc::wattron(self.bottom_row, bold());
+      let offset = max_x - track.len() as i32;
+      nc::mvwprintw(self.bottom_row, 0, offset, track);
+      nc::wattroff(self.bottom_row, bold());
+      nc::wattroff(self.bottom_row, color);
+    }
 
     nc::wrefresh(self.bottom_row);
   }
