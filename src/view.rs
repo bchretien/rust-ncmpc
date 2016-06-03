@@ -163,7 +163,7 @@ impl View {
     return view;
   }
 
-  pub fn display_header(&mut self, pl_data: &PlaylistData, volume: i8) {
+  pub fn display_header(&mut self, pl_data: &PlaylistData, volume: Option<i8>) {
     let mut max_x = 0;
     let mut max_y = 0;
     nc::getmaxyx(nc::stdscr, &mut max_y, &mut max_x);
@@ -184,11 +184,13 @@ impl View {
     nc::wattroff(self.header, color);
 
     // Volume
-    color = get_color(COLOR_PAIR_VOLUME);
-    nc::wattron(self.header, color);
-    s = format!("Volume: {}%%", volume);
-    nc::mvwprintw(self.header, 0, max_x - s.len() as i32, s.as_str());
-    nc::wattroff(self.header, color);
+    if volume.is_some() {
+      color = get_color(COLOR_PAIR_VOLUME);
+      nc::wattron(self.header, color);
+      s = format!("Volume: {}%%", volume.unwrap());
+      nc::mvwprintw(self.header, 0, 1 + max_x - s.len() as i32, s.as_str());
+      nc::wattroff(self.header, color);
+    }
 
     nc::wrefresh(self.header);
   }

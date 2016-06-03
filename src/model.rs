@@ -228,7 +228,10 @@ impl<'m> Model<'m> {
   }
 
   pub fn update_header(&mut self) {
-    let vol = self.get_volume();
+    let mut vol: Option<i8> = None;
+    if self.params.display_volume_level {
+      vol = Some(self.get_volume());
+    }
     // TODO: select when to reload data
     if self.pl_data.size == 0 {
       self.reload_playlist_data();
