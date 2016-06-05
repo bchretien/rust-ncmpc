@@ -2,8 +2,7 @@ extern crate ncurses;
 
 use ncurses as nc;
 
-use std::cmp;
-use std::iter;
+use std::{cmp, iter, mem};
 use std::fmt::{self, Display, Formatter};
 use time::Duration;
 
@@ -47,6 +46,13 @@ impl Display for PlaylistData {
              s_sec)
     }
   }
+}
+
+pub enum MouseEvent {
+  // Set the song progress (percentage)
+  SetProgress(f32),
+  // Do nothing
+  Nothing,
 }
 
 pub struct View {
@@ -417,6 +423,24 @@ impl View {
     nc::mvwprintw(self.debug_row, 0, 0, &format!("[Debug] {}", msg));
 
     nc::wrefresh(self.debug_row);
+  }
+
+  pub fn process_mouse(&mut self) -> MouseEvent {
+    let mut event: nc::MEVENT = unsafe { mem::uninitialized() };
+    assert_eq!(nc::getmouse(&mut event), nc::OK);
+
+    let mut max_x = 0;
+    let mut max_y = 0;
+    let mut win_x = 0;
+    let mut win_y = 0;
+
+    // Check progressbar event
+    nc::getbegyx(self.progressbar, &mut win_y, &mut win_x);
+    if event.y == win_y {
+      nc::getmaxyx(self.progressbar, &mut max_y, &mut max_x);
+      return MouseEvent::SetProgress(event.x as f32 / max_x as f32);
+    }
+    return MouseEvent::Nothing;
   }
 }
 

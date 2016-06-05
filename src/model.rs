@@ -65,6 +65,7 @@ register_action!(playlist_stop);
 register_action!(playlist_clear);
 register_action!(playlist_previous);
 register_action!(playlist_next);
+register_action!(process_mouse);
 register_action!(toggle_bitrate_visibility);
 register_action!(toggle_random);
 register_action!(toggle_repeat);
@@ -205,6 +206,21 @@ impl<'m> Model<'m> {
     if self.client.repeat(!repeat).is_err() {
       self.view.display_debug_prompt("Failed to toggle repeat");
     }
+  }
+
+  pub fn set_song_progress(&mut self, pct: f32) {
+    let (_, d) = get_song_time(&self.client.status().unwrap());
+    let duration = d.num_seconds();
+    let new_pos = Duration::seconds((duration as f32 * pct) as i64);
+    self.client.rewind(new_pos);
+  }
+
+  pub fn process_mouse(&mut self) {
+    let event = self.view.process_mouse();
+    match event {
+      MouseEvent::Nothing => {}
+      MouseEvent::SetProgress(pct) => self.set_song_progress(pct),
+    };
   }
 
   pub fn volume_up(&mut self) {

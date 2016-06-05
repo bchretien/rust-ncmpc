@@ -41,6 +41,8 @@ impl<'c, 'm> Controller<'c, 'm> {
     callbacks.insert(config.keys.toggle_random.keycode(), Box::new(toggle_random));
     // Toggle repeat
     callbacks.insert(config.keys.toggle_repeat.keycode(), Box::new(toggle_repeat));
+    // Mouse support
+    callbacks.insert(nc::KEY_MOUSE, Box::new(process_mouse));
 
     Controller {
       model: model,
