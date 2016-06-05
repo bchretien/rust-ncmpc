@@ -9,6 +9,7 @@ use time::Duration;
 
 use constants::*;
 use config::ColorConfig;
+use util::Scroller;
 
 pub struct PlaylistData {
   pub size: u32,
@@ -50,10 +51,12 @@ impl Display for PlaylistData {
 
 pub struct View {
   header: nc::WINDOW,
+  header_scroller: Scroller,
   state: nc::WINDOW,
   main_win: nc::WINDOW,
   progressbar: nc::WINDOW,
-  bottom_row: nc::WINDOW,
+  statusbar: nc::WINDOW,
+  status_scroller: Scroller,
   debug_row: nc::WINDOW,
 }
 
@@ -141,17 +144,19 @@ impl View {
 
     let view = View {
       header: nc::newwin(1, max_x, 0, 0),
+      header_scroller: Scroller::new(max_x as usize),
       state: nc::newwin(1, max_x, 1, 0),
       main_win: nc::newwin(max_y - 5, max_x, 2, 0),
       progressbar: nc::newwin(1, max_x, max_y - 3, 0),
-      bottom_row: nc::newwin(1, max_x, max_y - 2, 0),
+      statusbar: nc::newwin(1, max_x, max_y - 2, 0),
+      status_scroller: Scroller::new(max_x as usize),
       debug_row: nc::newwin(1, max_x, max_y - 1, 0),
     };
     nc::wrefresh(view.header);
     nc::wrefresh(view.state);
     nc::wrefresh(view.main_win);
     nc::wrefresh(view.progressbar);
-    nc::wrefresh(view.bottom_row);
+    nc::wrefresh(view.statusbar);
     nc::wrefresh(view.debug_row);
     nc::keypad(view.main_win, true);
 
@@ -167,30 +172,43 @@ impl View {
     let mut max_x = 0;
     let mut max_y = 0;
     nc::getmaxyx(nc::stdscr, &mut max_y, &mut max_x);
+    let mut free_size = max_x;
+
+    // Clear
+    nc::wmove(self.header, 0, 0);
+    nc::wclrtoeol(self.header);
 
     // Start of the header
     let title = "Playlist";
-    let mut color = get_color(COLOR_PAIR_HEADER);
-    nc::wattron(self.header, color);
+    let pl_color = get_color(COLOR_PAIR_HEADER);
+    nc::wattron(self.header, pl_color);
     nc::wattron(self.header, bold());
     nc::mvwprintw(self.header, 0, 0, &title);
-
-    // Playlist details
-    nc::wmove(self.header, 0, title.len() as i32);
-    nc::wclrtoeol(self.header);
-    let mut s = format!("({})", pl_data);
-    nc::mvwprintw(self.header, 0, 1 + title.len() as i32, s.as_str());
     nc::wattroff(self.header, bold());
-    nc::wattroff(self.header, color);
+    nc::wattroff(self.header, pl_color);
+    free_size -= title.len() as i32;
 
     // Volume
     if volume.is_some() {
-      color = get_color(COLOR_PAIR_VOLUME);
-      nc::wattron(self.header, color);
-      s = format!("Volume: {}%%", volume.unwrap());
+      let vol_color = get_color(COLOR_PAIR_VOLUME);
+      nc::wattron(self.header, vol_color);
+      let s = format!(" Volume: {}%%", volume.unwrap());
       nc::mvwprintw(self.header, 0, 1 + max_x - s.len() as i32, s.as_str());
-      nc::wattroff(self.header, color);
+      nc::wattroff(self.header, vol_color);
+      free_size -= s.len() as i32;
     }
+
+    // Playlist details
+    let s = format!("({})", pl_data);
+    // TODO: only change text on playlist change
+    self.header_scroller.set_text(&s);
+    self.header_scroller.resize(free_size);
+    nc::wattron(self.header, pl_color);
+    nc::wattron(self.header, bold());
+    nc::mvwprintw(self.header, 0, 1 + title.len() as i32, self.header_scroller.display());
+    nc::wattroff(self.header, bold());
+    nc::wattroff(self.header, pl_color);
+
 
     nc::wrefresh(self.header);
   }
@@ -346,40 +364,49 @@ impl View {
     let mut max_y = 0;
     nc::getmaxyx(nc::stdscr, &mut max_y, &mut max_x);
 
+    let mut free_size = max_x;
+
     // Clear line.
-    nc::wmove(self.bottom_row, 0, 0);
-    nc::wclrtoeol(self.bottom_row);
+    nc::wmove(self.statusbar, 0, 0);
+    nc::wclrtoeol(self.statusbar);
 
     // Print mode.
     if !mode.is_empty() {
       let color = get_color(COLOR_PAIR_STATUSBAR);
-      nc::wattron(self.bottom_row, color);
-      nc::wattron(self.bottom_row, bold());
-      nc::mvwprintw(self.bottom_row, 0, 0, &format!("{}:", mode));
-      nc::wattroff(self.bottom_row, bold());
-      nc::wattroff(self.bottom_row, color);
-    }
+      nc::wattron(self.statusbar, color);
+      nc::wattron(self.statusbar, bold());
+      nc::mvwprintw(self.statusbar, 0, 0, &format!("{}:", mode));
+      nc::wattroff(self.statusbar, bold());
+      nc::wattroff(self.statusbar, color);
 
-    // Print message.
-    let color = get_color(COLOR_PAIR_DEFAULT);
-    nc::wattron(self.bottom_row, color);
-    let offset = mode.len() + 2;
-    nc::mvwprintw(self.bottom_row, 0, offset as i32, msg);
-    nc::wattroff(self.bottom_row, color);
+      free_size -= mode.len() as i32 + 2;
+    }
 
     // Print track (time, bitrate, etc.)
     if !track.is_empty() {
       let color = get_color(COLOR_PAIR_TRACK);
-      nc::wattron(self.bottom_row, color);
-      nc::wattron(self.bottom_row, bold());
+      nc::wattron(self.statusbar, color);
+      nc::wattron(self.statusbar, bold());
       let offset = max_x - track.len() as i32;
-      nc::mvwprintw(self.bottom_row, 0, offset - 1, " ");
-      nc::mvwprintw(self.bottom_row, 0, offset, track);
-      nc::wattroff(self.bottom_row, bold());
-      nc::wattroff(self.bottom_row, color);
+      nc::mvwprintw(self.statusbar, 0, offset - 1, " ");
+      nc::mvwprintw(self.statusbar, 0, offset, track);
+      nc::wattroff(self.statusbar, bold());
+      nc::wattroff(self.statusbar, color);
+
+      free_size -= track.len() as i32 + 1;
     }
 
-    nc::wrefresh(self.bottom_row);
+    // Print message.
+    // TODO: only change text on song change
+    self.status_scroller.set_text(msg);
+    self.status_scroller.resize(free_size);
+    let color = get_color(COLOR_PAIR_DEFAULT);
+    nc::wattron(self.statusbar, color);
+    let offset = mode.len() + 2;
+    nc::mvwprintw(self.statusbar, 0, offset as i32, self.status_scroller.display());
+    nc::wattroff(self.statusbar, color);
+
+    nc::wrefresh(self.statusbar);
   }
 
   pub fn display_debug_prompt(&mut self, msg: &str) {
@@ -399,7 +426,7 @@ impl Drop for View {
     destroy_win(self.state);
     destroy_win(self.main_win);
     destroy_win(self.progressbar);
-    destroy_win(self.bottom_row);
+    destroy_win(self.statusbar);
     destroy_win(self.debug_row);
     deinit_ncurses();
   }
