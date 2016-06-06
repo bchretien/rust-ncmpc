@@ -49,9 +49,11 @@ impl Display for PlaylistData {
 }
 
 pub enum MouseEvent {
-  // Set the song progress (percentage)
+  /// Set the song progress (percentage).
   SetProgress(f32),
-  // Do nothing
+  /// Set the selected song (TUI).
+  SetSelectedSong(u32),
+  /// Do nothing.
   Nothing,
 }
 
@@ -129,6 +131,10 @@ fn get_color(c: i16) -> i32 {
 
 fn bold() -> i32 {
   return nc::A_BOLD() as i32;
+}
+
+fn reverse() -> i32 {
+  return nc::A_REVERSE() as i32;
 }
 
 fn deinit_ncurses() {
@@ -224,7 +230,8 @@ impl View {
   }
 
   // TODO: data should not be mutable
-  pub fn display_main_playlist(&mut self, desc: &[(String, u32)], data: &mut [&mut [String]], current_song: Option<u32>) {
+  pub fn display_main_playlist(&mut self, desc: &[(String, u32)], data: &mut [&mut [String]], current_song: &Option<u32>,
+    selected_song: &Option<u32>) {
     // Get the screen bounds.
     let mut max_x = 0;
     let mut max_y = 0;
@@ -274,9 +281,22 @@ impl View {
         if is_current {
           nc::wattron(self.main_win, bold());
         }
+
+        // Highlight selected song
+        let is_selected = selected_song.is_some() && selected_song.unwrap() == y as u32;
+        if is_selected {
+          nc::wattron(self.main_win, reverse());
+        }
+
+        // Print song
         nc::mvwprintw(self.main_win, pl_start_row + y, x, &format!("{}", data[y as usize][i as usize]));
 
-        // Stop highlighting
+        // Stop highlighting selected song
+        if is_selected {
+          nc::wattroff(self.main_win, reverse());
+        }
+
+        // Stop highlighting current song
         if is_current {
           nc::wattroff(self.main_win, bold());
         }
@@ -433,6 +453,13 @@ impl View {
       let mut max_y = 0;
       let mut win_x = 0;
       let mut win_y = 0;
+
+      // Check playlist event
+      nc::getbegyx(self.main_win, &mut win_y, &mut win_x);
+      nc::getmaxyx(self.main_win, &mut max_y, &mut max_x);
+      if event.y >= win_y + 2 && event.y < win_y + max_y {
+        return MouseEvent::SetSelectedSong((event.y - win_y) as u32 - 2);
+      }
 
       // Check progressbar event
       nc::getbegyx(self.progressbar, &mut win_y, &mut win_x);

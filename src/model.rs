@@ -84,6 +84,8 @@ pub struct Model<'m> {
   params: ParamConfig,
   /// Data relative to the current playlist.
   pl_data: PlaylistData,
+  /// Currently selected song (if any).
+  selected_song: Option<u32>,
 }
 
 impl<'m> Model<'m> {
@@ -102,6 +104,7 @@ impl<'m> Model<'m> {
       config: config,
       params: config.params.clone(),
       pl_data: PlaylistData::new(),
+      selected_song: None,
     }
   }
 
@@ -221,6 +224,7 @@ impl<'m> Model<'m> {
     match event {
       MouseEvent::Nothing => {}
       MouseEvent::SetProgress(pct) => self.set_song_progress(pct),
+      MouseEvent::SetSelectedSong(idx) => self.selected_song = Some(idx),
     };
   }
 
@@ -305,12 +309,12 @@ impl<'m> Model<'m> {
 
     // Get index of current song
     let song = self.client.status().unwrap().song;
-    let mut pos: Option<u32> = None;
+    let mut cur_song: Option<u32> = None;
     if song.is_some() {
-      pos = Some(song.unwrap().pos);
+      cur_song = Some(song.unwrap().pos);
     }
 
-    self.view.display_main_playlist(&columns, grid, pos);
+    self.view.display_main_playlist(&columns, grid, &cur_song, &self.selected_song);
   }
 
   pub fn update_progressbar(&mut self) {
