@@ -8,8 +8,7 @@ use time::Duration;
 
 use view::*;
 use config::*;
-use mpd::status::State;
-use mpd::status::Status;
+use mpd::status::{State, Status};
 use mpd::song::Song;
 
 pub type SharedModel<'m> = Arc<Mutex<Model<'m>>>;
@@ -63,6 +62,7 @@ register_action!(playlist_play);
 register_action!(playlist_pause);
 register_action!(playlist_stop);
 register_action!(playlist_clear);
+register_action!(playlist_delete_items);
 register_action!(playlist_previous);
 register_action!(playlist_next);
 register_action!(play_selected);
@@ -180,6 +180,13 @@ impl<'m> Model<'m> {
   pub fn playlist_clear(&mut self) {
     if self.client.clear().is_ok() {
       self.view.display_debug_prompt("Cleared playlist");
+    }
+  }
+
+  pub fn playlist_delete_items(&mut self) {
+    match self.selected_song {
+      Some(idx) => self.client.delete(idx).unwrap_or({}),
+      None => {}
     }
   }
 

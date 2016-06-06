@@ -31,6 +31,8 @@ impl<'c, 'm> Controller<'c, 'm> {
 
     // Clear the playlist
     callbacks.insert(config.keys.clear.keycode(), Box::new(playlist_clear));
+    // Delete selected items
+    callbacks.insert(config.keys.delete.keycode(), Box::new(playlist_delete_items));
     // Pause
     callbacks.insert(config.keys.play_pause.keycode(), Box::new(playlist_pause));
     // Stop

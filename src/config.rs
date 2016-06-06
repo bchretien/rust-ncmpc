@@ -19,6 +19,7 @@ pub enum ControlKey {
 #[derive(Clone,Copy)]
 pub struct KeyConfig {
   pub clear: ControlKey,
+  pub delete: ControlKey,
   pub next_song: ControlKey,
   pub play_pause: ControlKey,
   pub press_enter: ControlKey,
@@ -74,6 +75,7 @@ impl KeyConfig {
   pub fn new() -> KeyConfig {
     KeyConfig {
       clear: ControlKey::Char('c'),
+      delete: ControlKey::KeyCode(nc::KEY_DC),
       next_song: ControlKey::Char('>'),
       play_pause: ControlKey::Char('p'),
       press_enter: ControlKey::Char('\n'),
