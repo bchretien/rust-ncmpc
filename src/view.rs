@@ -103,7 +103,6 @@ fn init_ncurses(colors: &ColorConfig) {
 
   // Make cursor invisible.
   nc::curs_set(nc::CURSOR_VISIBILITY::CURSOR_INVISIBLE);
-  // nc::start_color();
   nc::cbreak();
 
   // Allow for extended keyboard (like F1).
@@ -112,6 +111,9 @@ fn init_ncurses(colors: &ColorConfig) {
 
   // Set timeout.
   nc::timeout(0);
+
+  // Make getch non-blocking.
+  nc::nodelay(nc::stdscr, true);
 
   // Enable mouse events.
   nc::mousemask(nc::BUTTON1_PRESSED as u64, None);
@@ -177,7 +179,7 @@ impl View {
   pub fn display_header(&mut self, pl_data: &PlaylistData, volume: Option<i8>) {
     let mut max_x = 0;
     let mut max_y = 0;
-    nc::getmaxyx(nc::stdscr, &mut max_y, &mut max_x);
+    nc::getmaxyx(self.header, &mut max_y, &mut max_x);
     let mut free_size = max_x;
 
     // Clear
@@ -215,7 +217,6 @@ impl View {
     nc::wattroff(self.header, bold());
     nc::wattroff(self.header, pl_color);
 
-
     nc::wrefresh(self.header);
   }
 
@@ -224,7 +225,7 @@ impl View {
     // Get the screen bounds.
     let mut max_x = 0;
     let mut max_y = 0;
-    nc::getmaxyx(nc::stdscr, &mut max_y, &mut max_x);
+    nc::getmaxyx(self.main_win, &mut max_y, &mut max_x);
 
     let mut color = get_color(COLOR_PAIR_DEFAULT);
 
@@ -296,7 +297,7 @@ impl View {
   pub fn display_progressbar(&mut self, pct: f32) {
     let mut max_x = 0;
     let mut max_y = 0;
-    nc::getmaxyx(nc::stdscr, &mut max_y, &mut max_x);
+    nc::getmaxyx(self.progressbar, &mut max_y, &mut max_x);
 
     let tip_x: i32 = (pct / 100. * (max_x as f32)) as i32;
 
@@ -332,7 +333,7 @@ impl View {
 
     let mut max_x = 0;
     let mut max_y = 0;
-    nc::getmaxyx(nc::stdscr, &mut max_y, &mut max_x);
+    nc::getmaxyx(self.state, &mut max_y, &mut max_x);
 
     // Print the bar
     let sep = iter::repeat('─').take(max_x as usize).collect::<String>();
@@ -368,7 +369,7 @@ impl View {
   pub fn display_statusbar(&mut self, mode: &str, msg: &str, track: &str) {
     let mut max_x = 0;
     let mut max_y = 0;
-    nc::getmaxyx(nc::stdscr, &mut max_y, &mut max_x);
+    nc::getmaxyx(self.statusbar, &mut max_y, &mut max_x);
 
     let mut free_size = max_x;
 

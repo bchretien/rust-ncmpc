@@ -23,7 +23,7 @@ fn main() {
 
   // Start the TUI loop (automatic refresh).
   loop {
-    // Process user input.
+    // Process user input, and exit if required.
     if controller.process_input() {
       break;
     }

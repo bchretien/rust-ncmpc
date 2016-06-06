@@ -16,3 +16,4 @@ path = "src/lib.rs"
 [[bin]]
 name = "ncmpc"
 path = "src/main.rs"
+doc = false
