@@ -114,7 +114,7 @@ fn init_ncurses(colors: &ColorConfig) {
   nc::timeout(0);
 
   // Enable mouse events.
-  nc::mousemask(nc::ALL_MOUSE_EVENTS as u64, None);
+  nc::mousemask(nc::BUTTON1_PRESSED as u64, None);
 
   nc::clear();
 }
@@ -427,18 +427,18 @@ impl View {
 
   pub fn process_mouse(&mut self) -> MouseEvent {
     let mut event: nc::MEVENT = unsafe { mem::uninitialized() };
-    assert_eq!(nc::getmouse(&mut event), nc::OK);
+    if nc::getmouse(&mut event) == nc::OK {
+      let mut max_x = 0;
+      let mut max_y = 0;
+      let mut win_x = 0;
+      let mut win_y = 0;
 
-    let mut max_x = 0;
-    let mut max_y = 0;
-    let mut win_x = 0;
-    let mut win_y = 0;
-
-    // Check progressbar event
-    nc::getbegyx(self.progressbar, &mut win_y, &mut win_x);
-    if event.y == win_y {
-      nc::getmaxyx(self.progressbar, &mut max_y, &mut max_x);
-      return MouseEvent::SetProgress(event.x as f32 / max_x as f32);
+      // Check progressbar event
+      nc::getbegyx(self.progressbar, &mut win_y, &mut win_x);
+      if event.y == win_y {
+        nc::getmaxyx(self.progressbar, &mut max_y, &mut max_x);
+        return MouseEvent::SetProgress(event.x as f32 / max_x as f32);
+      }
     }
     return MouseEvent::Nothing;
   }
