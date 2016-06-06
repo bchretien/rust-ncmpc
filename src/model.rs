@@ -65,6 +65,7 @@ register_action!(playlist_stop);
 register_action!(playlist_clear);
 register_action!(playlist_previous);
 register_action!(playlist_next);
+register_action!(play_selected);
 register_action!(process_mouse);
 register_action!(resize_windows);
 register_action!(toggle_bitrate_visibility);
@@ -178,6 +179,13 @@ impl<'m> Model<'m> {
     if self.client.clear().is_ok() {
       self.view.display_debug_prompt("Cleared playlist");
     }
+  }
+
+  pub fn play_selected(&mut self) {
+    match self.selected_song {
+      Some(idx) => self.client.switch(idx).unwrap_or({}),
+      None => {}
+    };
   }
 
   pub fn get_volume(&mut self) -> i8 {
