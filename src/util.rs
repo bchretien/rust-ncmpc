@@ -1,5 +1,25 @@
 use time::{Duration, Timespec, get_time};
 
+/// Utility structure that associates a timestamp with a value.
+#[derive(Clone, Copy)]
+pub struct TimedValue<T> {
+  pub value: T,
+  pub timestamp: Timespec,
+}
+
+impl<T: Copy> TimedValue<T> {
+  pub fn new(value: T) -> TimedValue<T> {
+    TimedValue::<T> {
+      value: value,
+      timestamp: get_time(),
+    }
+  }
+
+  pub fn bump(&mut self) {
+    self.timestamp = get_time();
+  }
+}
+
 /// Utility structure used to define an horizontal scrolling area.
 pub struct Scroller {
   /// Width of the horizontal scrolling area.

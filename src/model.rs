@@ -8,6 +8,7 @@ use time::Duration;
 
 use view::*;
 use config::*;
+use util::*;
 use mpd::status::{State, Status};
 use mpd::song::Song;
 
@@ -106,7 +107,7 @@ pub struct Model<'m> {
   /// Current state configuration.
   params: ParamConfig,
   /// Currently selected song (if any).
-  selected_song: Option<u32>,
+  selected_song: Option<TimedValue<u32>>,
   /// Snapshot of MPD data.
   snapshot: Snapshot,
 }
@@ -185,14 +186,14 @@ impl<'m> Model<'m> {
 
   pub fn playlist_delete_items(&mut self) {
     match self.selected_song {
-      Some(idx) => self.client.delete(idx).unwrap_or({}),
+      Some(ref s) => self.client.delete(s.value).unwrap_or({}),
       None => {}
     }
   }
 
   pub fn play_selected(&mut self) {
     match self.selected_song {
-      Some(idx) => self.client.switch(idx).unwrap_or({}),
+      Some(ref s) => self.client.switch(s.value).unwrap_or({}),
       None => {}
     };
   }
@@ -242,8 +243,13 @@ impl<'m> Model<'m> {
     let event = self.view.process_mouse();
     match event {
       MouseEvent::Nothing => {}
+      MouseEvent::WakeUp => {
+        if self.selected_song.is_some() {
+          self.selected_song.as_mut().unwrap().bump();
+        }
+      }
       MouseEvent::SetProgress(pct) => self.set_song_progress(pct),
-      MouseEvent::SetSelectedSong(idx) => self.selected_song = Some(idx),
+      MouseEvent::SetSelectedSong(idx) => self.selected_song = Some(TimedValue::<u32>::new(idx)),
     };
   }
 
@@ -402,17 +408,17 @@ impl<'m> Model<'m> {
 
   pub fn scroll_down(&mut self) {
     let end = self.snapshot.pl_data.size;
-    self.selected_song = Some(match self.selected_song {
-      Some(idx) => if idx < end - 1 { idx + 1 } else { end },
+    self.selected_song = Some(TimedValue::<u32>::new(match self.selected_song {
+      Some(ref s) => if s.value < end - 1 { s.value + 1 } else { end },
       None => 0,
-    })
+    }))
   }
 
   pub fn scroll_up(&mut self) {
-    self.selected_song = Some(match self.selected_song {
-      Some(idx) => if idx > 1 { idx - 1 } else { 0 },
+    self.selected_song = Some(TimedValue::<u32>::new(match self.selected_song {
+      Some(ref s) => if s.value > 1 { s.value - 1 } else { 0 },
       None => 0,
-    })
+    }))
   }
 
   pub fn take_snapshot(&mut self) {

@@ -2,13 +2,13 @@ extern crate ncurses;
 
 use ncurses as nc;
 
-use std::{cmp, iter, mem};
+use std::{cmp, mem};
 use std::fmt::{self, Display, Formatter};
-use time::Duration;
+use time::{Duration, Timespec, get_time};
 
 use constants::*;
 use config::ColorConfig;
-use util::Scroller;
+use util::{Scroller, TimedValue};
 
 pub struct PlaylistData {
   pub size: u32,
@@ -53,6 +53,8 @@ pub enum MouseEvent {
   SetProgress(f32),
   /// Set the selected song (TUI).
   SetSelectedSong(u32),
+  /// Wake up click (re-highlight selected song).
+  WakeUp,
   /// Do nothing.
   Nothing,
 }
@@ -232,7 +234,7 @@ impl View {
 
   // TODO: data should not be mutable
   pub fn display_main_playlist(&mut self, desc: &[(String, u32)], data: &mut [&mut [String]], current_song: &Option<u32>,
-    selected_song: &Option<u32>) {
+    selected_song: &Option<TimedValue<u32>>) {
     // Get the screen bounds.
     let mut max_x = 0;
     let mut max_y = 0;
@@ -266,6 +268,12 @@ impl View {
     color = get_color(COLOR_PAIR_ARTIST);
     nc::wattron(self.main_win, color);
 
+    let highlight_ts: Timespec = match *selected_song {
+      Some(s) => s.timestamp + Duration::seconds(5),
+      None => Timespec::new(0, 0),
+    };
+    let highlighting: bool = get_time() < highlight_ts;
+
     let height = cmp::min(pl_max_row - pl_start_row, data.len() as i32);
     // For each song
     for y in 0..height {
@@ -282,7 +290,7 @@ impl View {
         }
 
         // Highlight selected song
-        let is_selected = selected_song.is_some() && selected_song.unwrap() == y as u32;
+        let is_selected = highlighting && selected_song.is_some() && selected_song.unwrap().value == y as u32;
         if is_selected {
           nc::wattron(self.main_win, reverse());
         }
@@ -467,6 +475,8 @@ impl View {
         nc::getmaxyx(self.progressbar, &mut max_y, &mut max_x);
         return MouseEvent::SetProgress(event.x as f32 / max_x as f32);
       }
+
+      return MouseEvent::WakeUp;
     }
     return MouseEvent::Nothing;
   }
