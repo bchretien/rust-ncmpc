@@ -64,6 +64,7 @@ pub struct View {
   statusbar: nc::WINDOW,
   status_scroller: Scroller,
   debug_row: nc::WINDOW,
+  static_rows: i32,
 }
 
 fn init_colors(colors: &ColorConfig) {
@@ -149,16 +150,18 @@ impl View {
     let mut max_x = 0;
     let mut max_y = 0;
     nc::getmaxyx(nc::stdscr, &mut max_y, &mut max_x);
+    let static_rows = 5;
 
     let view = View {
       header: nc::newwin(1, max_x, 0, 0),
       header_scroller: Scroller::new(max_x as usize),
       state: nc::newwin(1, max_x, 1, 0),
-      main_win: nc::newwin(max_y - 5, max_x, 2, 0),
+      main_win: nc::newwin(max_y - static_rows, max_x, 2, 0),
       progressbar: nc::newwin(1, max_x, max_y - 3, 0),
       statusbar: nc::newwin(1, max_x, max_y - 2, 0),
       status_scroller: Scroller::new(max_x as usize),
       debug_row: nc::newwin(1, max_x, max_y - 1, 0),
+      static_rows: static_rows,
     };
     nc::wrefresh(view.header);
     nc::wrefresh(view.state);
@@ -251,19 +254,19 @@ impl View {
     nc::wattroff(self.main_win, bold());
 
     // Playlist data
-    let playlist_start_row = 2;
-    let playlist_max_row = max_y - 3;
+    let pl_start_row = 2;
+    let pl_max_row = max_y;
 
     color = get_color(COLOR_PAIR_ARTIST);
     nc::wattron(self.main_win, color);
 
-    let height = cmp::min(playlist_max_row - playlist_start_row, data.len() as i32);
+    let height = cmp::min(pl_max_row - pl_start_row, data.len() as i32);
     // For each song
     for y in 0..height {
       // For each column
       x = 0;
       for i in 0..desc.len() {
-        nc::wmove(self.main_win, playlist_start_row + y, cmp::max(x - 1, 0));
+        nc::wmove(self.main_win, pl_start_row + y, cmp::max(x - 1, 0));
         nc::wclrtoeol(self.main_win);
 
         // Highlight current song
@@ -271,10 +274,7 @@ impl View {
         if is_current {
           nc::wattron(self.main_win, bold());
         }
-        nc::mvwprintw(self.main_win,
-                      playlist_start_row + y,
-                      x,
-                      &format!("{}", data[y as usize][i as usize]));
+        nc::mvwprintw(self.main_win, pl_start_row + y, x, &format!("{}", data[y as usize][i as usize]));
 
         // Stop highlighting
         if is_current {
@@ -286,7 +286,7 @@ impl View {
     }
     // Clear the rest of the lines
     for y in height..max_y - 3 {
-      nc::wmove(self.main_win, playlist_start_row + y, 0);
+      nc::wmove(self.main_win, pl_start_row + y, 0);
       nc::wclrtoeol(self.main_win);
     }
     nc::wattroff(self.main_win, color);
@@ -442,6 +442,41 @@ impl View {
       }
     }
     return MouseEvent::Nothing;
+  }
+
+  pub fn resize_windows(&mut self) {
+    let mut max_x = 0;
+    let mut max_y = 0;
+    nc::getmaxyx(nc::stdscr, &mut max_y, &mut max_x);
+
+    let mut row = 0;
+    nc::wresize(self.header, 1, max_x);
+    nc::mvwin(self.header, row, 0);
+    row += 1;
+
+    nc::wresize(self.state, 1, max_x);
+    nc::mvwin(self.state, row, 0);
+    row += 1;
+
+    nc::wresize(self.main_win, max_y - self.static_rows, max_x);
+    nc::mvwin(self.main_win, row, 0);
+    row += max_y - self.static_rows;
+
+    nc::wresize(self.progressbar, 1, max_x);
+    nc::mvwin(self.progressbar, row, 0);
+    row += 1;
+
+    nc::wresize(self.statusbar, 1, max_x);
+    nc::mvwin(self.statusbar, row, 0);
+    row += 1;
+
+    nc::wresize(self.debug_row, 1, max_x);
+    nc::mvwin(self.debug_row, row, 0);
+
+    // TODO: resize scrollers?
+    // self.header_scroller.resize();
+
+    nc::refresh();
   }
 }
 

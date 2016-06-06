@@ -43,6 +43,8 @@ impl<'c, 'm> Controller<'c, 'm> {
     callbacks.insert(config.keys.toggle_repeat.keycode(), Box::new(toggle_repeat));
     // Mouse support
     callbacks.insert(nc::KEY_MOUSE, Box::new(process_mouse));
+    // Resize windows.
+    callbacks.insert(nc::KEY_RESIZE, Box::new(resize_windows));
 
     Controller {
       model: model,

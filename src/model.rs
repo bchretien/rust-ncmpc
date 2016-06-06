@@ -66,6 +66,7 @@ register_action!(playlist_clear);
 register_action!(playlist_previous);
 register_action!(playlist_next);
 register_action!(process_mouse);
+register_action!(resize_windows);
 register_action!(toggle_bitrate_visibility);
 register_action!(toggle_random);
 register_action!(toggle_repeat);
@@ -377,5 +378,9 @@ impl<'m> Model<'m> {
 
   pub fn update_message(&mut self, msg: &str) {
     self.view.display_debug_prompt(msg);
+  }
+
+  pub fn resize_windows(&mut self) {
+    self.view.resize_windows();
   }
 }
