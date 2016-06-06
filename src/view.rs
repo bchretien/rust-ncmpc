@@ -119,7 +119,8 @@ fn init_ncurses(colors: &ColorConfig) {
   nc::nodelay(nc::stdscr, true);
 
   // Enable mouse events.
-  nc::mousemask(nc::BUTTON1_PRESSED as u64, None);
+  nc::mousemask(nc::BUTTON1_CLICKED as u64, None);
+  nc::mouseinterval(0);
 
   nc::clear();
 }
