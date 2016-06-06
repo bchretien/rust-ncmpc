@@ -253,9 +253,7 @@ impl View {
 
     // Separator
     nc::wmove(self.main_win, 1, 0);
-    nc::wclrtoeol(self.main_win);
-    let sep = iter::repeat('─').take(max_x as usize).collect::<String>();
-    nc::mvwprintw(self.main_win, 1, 0, &sep);
+    nc::whline(self.main_win, nc::ACS_HLINE(), max_x);
 
     nc::wattroff(self.main_win, color);
     nc::wattroff(self.main_win, bold());
@@ -322,11 +320,10 @@ impl View {
     let tip_x: i32 = (pct / 100. * (max_x as f32)) as i32;
 
     // Start of the bar
-    let len_start: usize = tip_x as usize;
-    let sep = iter::repeat('─').take(len_start).collect::<String>();
+    let len_start = tip_x;
     let mut color = get_color(COLOR_PAIR_PROGRESSBAR_ELAPSED);
     nc::wattron(self.progressbar, color);
-    nc::mvwprintw(self.progressbar, 0, 0, &sep);
+    nc::mvwhline(self.progressbar, 0, 0, nc::ACS_HLINE(), len_start);
 
     if pct > 0. {
       // Tip of the bar
@@ -336,11 +333,14 @@ impl View {
     }
 
     // End of the bar
-    let len_end: usize = (max_x - tip_x) as usize;
-    let sep = iter::repeat('─').take(len_end).collect::<String>();
+    let len_end = max_x - tip_x;
     color = get_color(COLOR_PAIR_PROGRESSBAR);
     nc::wattron(self.progressbar, color);
-    nc::mvwprintw(self.progressbar, 0, if tip_x > 0 { tip_x + 1 } else { 0 }, &sep);
+    nc::mvwhline(self.progressbar,
+                 0,
+                 if tip_x > 0 { tip_x + 1 } else { 0 },
+                 nc::ACS_HLINE(),
+                 len_end);
     nc::wattroff(self.progressbar, color);
 
     nc::wrefresh(self.progressbar);
@@ -356,10 +356,9 @@ impl View {
     nc::getmaxyx(self.state, &mut max_y, &mut max_x);
 
     // Print the bar
-    let sep = iter::repeat('─').take(max_x as usize).collect::<String>();
     let mut color = get_color(COLOR_PAIR_STATE_LINE);
     nc::wattron(self.state, color);
-    nc::mvwprintw(self.state, 0, 0, &sep);
+    nc::whline(self.state, nc::ACS_HLINE(), max_x);
     nc::wattroff(self.state, color);
 
     if !flags.is_empty() {
