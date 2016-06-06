@@ -73,6 +73,26 @@ register_action!(toggle_repeat);
 register_action!(volume_down);
 register_action!(volume_up);
 
+struct Snapshot {
+  /// Current MPD status.
+  pub status: mpd::Status,
+  /// Data relative to the current playlist.
+  pub pl_data: PlaylistData,
+}
+
+impl Snapshot {
+  pub fn new() -> Snapshot {
+    Snapshot {
+      status: mpd::Status::default(),
+      pl_data: PlaylistData::new(),
+    }
+  }
+
+  pub fn update(&mut self, client: &mut mpd::Client) {
+    self.status = client.status().unwrap().clone();
+  }
+}
+
 pub struct Model<'m> {
   /// MPD client.
   client: mpd::Client<TcpStream>,
@@ -82,10 +102,10 @@ pub struct Model<'m> {
   config: &'m Config,
   /// Current state configuration.
   params: ParamConfig,
-  /// Data relative to the current playlist.
-  pl_data: PlaylistData,
   /// Currently selected song (if any).
   selected_song: Option<u32>,
+  /// Snapshot of MPD data.
+  snapshot: Snapshot,
 }
 
 impl<'m> Model<'m> {
@@ -98,13 +118,15 @@ impl<'m> Model<'m> {
     }
     let client = res.unwrap();
 
+    let snapshot = Snapshot::new();
+
     Model {
       client: client,
       view: view,
       config: config,
       params: config.params.clone(),
-      pl_data: PlaylistData::new(),
       selected_song: None,
+      snapshot: snapshot,
     }
   }
 
@@ -115,12 +137,7 @@ impl<'m> Model<'m> {
   }
 
   pub fn playlist_pause(&mut self) {
-    let status = self.client.status();
-    if status.is_err() {
-      self.view.display_debug_prompt(&format!("{}", status.unwrap_err()));
-      return;
-    }
-    let state = status.unwrap().state;
+    let state = self.snapshot.status.state;
 
     match state {
       State::Play => {
@@ -164,12 +181,7 @@ impl<'m> Model<'m> {
   }
 
   pub fn get_volume(&mut self) -> i8 {
-    let status = self.client.status();
-    if status.is_err() {
-      self.view.display_debug_prompt(&format!("{}", status.unwrap_err()));
-      return 0;
-    }
-    return status.unwrap().volume;
+    return self.snapshot.status.volume;
   }
 
   pub fn set_volume(&mut self, mut vol: i8) {
@@ -189,31 +201,21 @@ impl<'m> Model<'m> {
   }
 
   pub fn toggle_random(&mut self) {
-    let status = self.client.status();
-    if status.is_err() {
-      self.view.display_debug_prompt(&format!("{}", status.unwrap_err()));
-      return;
-    }
-    let random = status.unwrap().random;
+    let random = self.snapshot.status.random;
     if self.client.random(!random).is_err() {
       self.view.display_debug_prompt("Failed to toggle random");
     }
   }
 
   pub fn toggle_repeat(&mut self) {
-    let status = self.client.status();
-    if status.is_err() {
-      self.view.display_debug_prompt(&format!("{}", status.unwrap_err()));
-      return;
-    }
-    let repeat = status.unwrap().repeat;
+    let repeat = self.snapshot.status.repeat;
     if self.client.repeat(!repeat).is_err() {
       self.view.display_debug_prompt("Failed to toggle repeat");
     }
   }
 
   pub fn set_song_progress(&mut self, pct: f32) {
-    let (_, d) = get_song_time(&self.client.status().unwrap());
+    let (_, d) = get_song_time(&self.snapshot.status);
     let duration = d.num_seconds();
     let new_pos = Duration::seconds((duration as f32 * pct) as i64);
     self.client.rewind(new_pos);
@@ -242,31 +244,24 @@ impl<'m> Model<'m> {
 
   fn reload_playlist_data(&mut self) {
     let queue = self.client.queue().unwrap_or(Vec::<Song>::default());
-    self.pl_data.size = queue.len() as u32;
+    self.snapshot.pl_data.size = queue.len() as u32;
     let sum = queue.iter().fold(0i64,
                                 |sum, val| sum + val.duration.unwrap_or(Duration::seconds(0)).num_seconds());
-    self.pl_data.duration = Duration::seconds(sum);
+    self.snapshot.pl_data.duration = Duration::seconds(sum);
   }
 
   pub fn update_header(&mut self) {
-    let mut vol: Option<i8> = None;
-    if self.params.display_volume_level {
-      vol = Some(self.get_volume());
-    }
+    let vol: Option<i8> = if self.params.display_volume_level { Some(self.get_volume()) } else { None };
+
     // TODO: select when to reload data
-    if self.pl_data.size == 0 {
+    if self.snapshot.pl_data.size == 0 {
       self.reload_playlist_data();
     }
-    self.view.display_header(&self.pl_data, vol);
+    self.view.display_header(&self.snapshot.pl_data, vol);
   }
 
   pub fn update_stateline(&mut self) {
-    let query = self.client.status();
-    if query.is_err() {
-      self.view.display_debug_prompt(&format!("{}", query.unwrap_err()));
-      return;
-    }
-    let status = query.unwrap();
+    let status = &self.snapshot.status;
 
     let mut flags = Vec::<char>::new();
     if status.repeat {
@@ -308,7 +303,7 @@ impl<'m> Model<'m> {
     }
 
     // Get index of current song
-    let song = self.client.status().unwrap().song;
+    let song = self.snapshot.status.song;
     let mut cur_song: Option<u32> = None;
     if song.is_some() {
       cur_song = Some(song.unwrap().pos);
@@ -318,7 +313,7 @@ impl<'m> Model<'m> {
   }
 
   pub fn update_progressbar(&mut self) {
-    let (e, d) = get_song_time(&self.client.status().unwrap());
+    let (e, d) = get_song_time(&self.snapshot.status);
     let elapsed = e.num_seconds();
     let duration = d.num_seconds();
 
@@ -340,7 +335,7 @@ impl<'m> Model<'m> {
     if query.is_ok() {
       let data = query.unwrap();
       if data.is_some() {
-        let status = self.client.status().unwrap();
+        let status = &self.snapshot.status;
         let state = status.state;
         match state {
           State::Play => {
@@ -386,5 +381,9 @@ impl<'m> Model<'m> {
 
   pub fn resize_windows(&mut self) {
     self.view.resize_windows();
+  }
+
+  pub fn take_snapshot(&mut self) {
+    self.snapshot.update(&mut self.client);
   }
 }
