@@ -7,6 +7,15 @@ use std::collections::HashMap;
 use config::*;
 use model::*;
 
+pub enum ControlQuery {
+  /// Some query was made.
+  Command,
+  /// No query was made.
+  Nothing,
+  /// Exit query.
+  Exit,
+}
+
 pub type ControllerCallbacks<'m> = HashMap<i32, Box<FnMut(&mut SharedModel<'m>) + 'm>>;
 
 pub struct Controller<'c, 'm: 'c> {
@@ -59,7 +68,7 @@ impl<'c, 'm> Controller<'c, 'm> {
     }
   }
 
-  pub fn process_input(&mut self) -> bool {
+  pub fn process_input(&mut self) -> ControlQuery {
     // Get user input
     let ch = nc::getch();
 
@@ -68,6 +77,7 @@ impl<'c, 'm> Controller<'c, 'm> {
       // no key pressed
       if ch == -1 {
         // Do nothing
+        return ControlQuery::Nothing;
       }
       // Registered callbacks
       else if let Some(f) = self.callbacks.get_mut(&ch) {
@@ -83,9 +93,9 @@ impl<'c, 'm> Controller<'c, 'm> {
           model.update_message(&format!("Pressed unmapped key (code = {})", ch));
         }
       }
-      return false;
+      return ControlQuery::Command;
     } else {
-      return true;
+      return ControlQuery::Exit;
     }
   }
 }

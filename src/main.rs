@@ -1,10 +1,12 @@
 extern crate ncmpc;
 
 use std::sync::{Arc, Mutex};
+use std::thread::sleep;
+use std::time::Duration;
 
 
 fn main() {
-  use ncmpc::{ConfigLoader, Controller, Model, View};
+  use ncmpc::{ConfigLoader, ControlQuery, Controller, Model, View};
 
   let config_loader = ConfigLoader::new();
 
@@ -24,8 +26,10 @@ fn main() {
   // Start the TUI loop (automatic refresh).
   loop {
     // Process user input, and exit if required.
-    if controller.process_input() {
-      break;
+    match controller.process_input() {
+      ControlQuery::Exit => break,
+      ControlQuery::Nothing => sleep(Duration::from_millis(50)),
+      ControlQuery::Command => {}
     }
 
     // Refresh TUI.
