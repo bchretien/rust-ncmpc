@@ -36,6 +36,10 @@ impl<'c, 'm> Controller<'c, 'm> {
     callbacks.insert(config.keys.volume_down.keycode(), Box::new(volume_down));
     // Press enter
     callbacks.insert(config.keys.press_enter.keycode(), Box::new(play_selected));
+    // Scroll down
+    callbacks.insert(config.keys.scroll_down.keycode(), Box::new(scroll_down));
+    // Scroll up
+    callbacks.insert(config.keys.scroll_up.keycode(), Box::new(scroll_up));
     // Toggle bitrate visibility
     callbacks.insert(config.keys.toggle_bitrate_visibility.keycode(),
                      Box::new(toggle_bitrate_visibility));

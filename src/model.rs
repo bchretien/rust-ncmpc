@@ -68,6 +68,8 @@ register_action!(playlist_next);
 register_action!(play_selected);
 register_action!(process_mouse);
 register_action!(resize_windows);
+register_action!(scroll_down);
+register_action!(scroll_up);
 register_action!(toggle_bitrate_visibility);
 register_action!(toggle_random);
 register_action!(toggle_repeat);
@@ -389,6 +391,21 @@ impl<'m> Model<'m> {
 
   pub fn resize_windows(&mut self) {
     self.view.resize_windows();
+  }
+
+  pub fn scroll_down(&mut self) {
+    let end = self.snapshot.pl_data.size;
+    self.selected_song = Some(match self.selected_song {
+      Some(idx) => if idx < end - 1 { idx + 1 } else { end },
+      None => 0,
+    })
+  }
+
+  pub fn scroll_up(&mut self) {
+    self.selected_song = Some(match self.selected_song {
+      Some(idx) => if idx > 1 { idx - 1 } else { 0 },
+      None => 0,
+    })
   }
 
   pub fn take_snapshot(&mut self) {
