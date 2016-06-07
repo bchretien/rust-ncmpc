@@ -274,29 +274,49 @@ impl View {
     };
     let highlighting: bool = get_time() < highlight_ts;
 
-    let height = cmp::min(pl_max_row - pl_start_row, data.len() as i32);
+    // Total number of songs
+    let n = data.len() as i32;
+    // Index of the selected song
+    let selected_idx = if selected_song.is_some() { selected_song.unwrap().value as i32 } else { -1 as i32 };
+    // Maximum number of displayed song rows
+    let max_height = pl_max_row - pl_start_row;
+    // Number of displayed song rows
+    let height = cmp::min(max_height, n);
+    // Index of the song serving as the first displayed row
+    let start_idx: i32 = if selected_idx < max_height / 2 {
+      0
+    } else if selected_idx < (n - max_height / 2) {
+      selected_idx - max_height / 2
+    } else {
+      n - max_height
+    };
+
     // For each song
-    for y in 0..height {
+    let mut row = 0;
+    for idx in start_idx..height + start_idx {
       // For each column
       x = 0;
-      for i in 0..desc.len() {
-        nc::wmove(self.main_win, pl_start_row + y, cmp::max(x - 1, 0));
+      for i in 0..desc.len() as usize {
+        nc::wmove(self.main_win, pl_start_row + row, cmp::max(x - 1, 0));
         nc::wclrtoeol(self.main_win);
 
         // Highlight current song
-        let is_current = current_song.is_some() && current_song.unwrap() == y as u32;
+        let is_current = current_song.is_some() && current_song.unwrap() == idx as u32;
         if is_current {
           nc::wattron(self.main_win, bold());
         }
 
         // Highlight selected song
-        let is_selected = highlighting && selected_song.is_some() && selected_song.unwrap().value == y as u32;
+        let is_selected = highlighting && selected_idx == idx;
         if is_selected {
           nc::wattron(self.main_win, reverse());
         }
 
         // Print song
-        nc::mvwprintw(self.main_win, pl_start_row + y, x, &format!("{}", data[y as usize][i as usize]));
+        nc::mvwprintw(self.main_win,
+                      pl_start_row + row,
+                      x,
+                      &format!("{}", data[idx as usize][i as usize]));
 
         // Stop highlighting selected song
         if is_selected {
@@ -310,6 +330,7 @@ impl View {
 
         x += 1 + desc[i].1 as i32;
       }
+      row += 1;
     }
     // Clear the rest of the lines
     for y in height..max_y - 3 {
