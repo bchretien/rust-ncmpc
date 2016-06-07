@@ -10,13 +10,13 @@ use std::path::PathBuf;
 use ini::Ini;
 use ncurses as nc;
 
-#[derive(Clone,Copy)]
+#[derive(Clone,Copy,PartialEq,Debug)]
 pub enum ControlKey {
   KeyCode(i32),
   Char(char),
 }
 
-#[derive(Clone,Copy)]
+#[derive(Clone,Copy,PartialEq,Debug)]
 pub struct KeyConfig {
   pub clear: ControlKey,
   pub delete: ControlKey,
@@ -35,7 +35,7 @@ pub struct KeyConfig {
   pub volume_up: ControlKey,
 }
 
-#[derive(Clone,Copy)]
+#[derive(Clone,Copy,PartialEq,Debug)]
 pub struct ColorConfig {
   pub color1: i16,
   pub color2: i16,
@@ -50,7 +50,7 @@ pub struct ColorConfig {
   pub volume: i16,
 }
 
-#[derive(Clone,Copy)]
+#[derive(Clone,Copy,PartialEq,Debug)]
 pub struct ParamConfig {
   pub cyclic_scrolling: bool,
   pub display_bitrate: bool,
@@ -60,7 +60,7 @@ pub struct ParamConfig {
   pub volume_change_step: i8,
 }
 
-#[derive(Clone,Copy)]
+#[derive(Clone,Copy,PartialEq,Debug)]
 pub struct Config {
   pub addr: SocketAddr,
   pub colors: ColorConfig,

@@ -12,7 +12,7 @@ pub mod model;
 pub mod util;
 pub mod view;
 
-pub use config::ConfigLoader;
+pub use config::{ConfigLoader, ParamConfig};
 pub use controller::{ControlQuery, Controller};
 pub use model::Model;
 pub use view::View;
