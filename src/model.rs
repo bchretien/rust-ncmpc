@@ -409,14 +409,15 @@ impl<'m> Model<'m> {
   pub fn scroll_down(&mut self) {
     let end = self.snapshot.pl_data.size;
     self.selected_song = Some(TimedValue::<u32>::new(match self.selected_song {
-      Some(ref s) => if s.value < end - 1 { s.value + 1 } else { end },
+      Some(ref s) => if s.value == end - 1 { if self.params.cyclic_scrolling { 0 } else { s.value } } else { s.value + 1 },
       None => 0,
     }))
   }
 
   pub fn scroll_up(&mut self) {
+    let end = self.snapshot.pl_data.size;
     self.selected_song = Some(TimedValue::<u32>::new(match self.selected_song {
-      Some(ref s) => if s.value > 1 { s.value - 1 } else { 0 },
+      Some(ref s) => if s.value == 0 { if self.params.cyclic_scrolling { end - 1 } else { 0 } } else { s.value - 1 },
       None => 0,
     }))
   }

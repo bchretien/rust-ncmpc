@@ -52,6 +52,7 @@ pub struct ColorConfig {
 
 #[derive(Clone,Copy)]
 pub struct ParamConfig {
+  pub cyclic_scrolling: bool,
   pub display_bitrate: bool,
   pub display_remaining_time: bool,
   pub display_volume_level: bool,
@@ -139,6 +140,7 @@ impl ColorConfig {
 impl ParamConfig {
   pub fn new() -> ParamConfig {
     ParamConfig {
+      cyclic_scrolling: false,
       display_bitrate: false,
       display_remaining_time: false,
       display_volume_level: true,
@@ -217,6 +219,7 @@ fn assign(key: &str, val: &str, config: &mut Config) -> bool {
     "statusbar_color" => config.colors.statusbar = parse_color(val),
     "volume_color" => config.colors.volume = parse_color(val),
     // Parameters
+    "cyclic_scrolling" => config.params.cyclic_scrolling = parse_bool(val),
     "volume_change_step" => config.params.volume_change_step = parse_int(val),
     "display_bitrate" => config.params.display_bitrate = parse_bool(val),
     "display_remaining_time" => config.params.display_remaining_time = parse_bool(val),
