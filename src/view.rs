@@ -333,7 +333,7 @@ impl View {
       row += 1;
     }
     // Clear the rest of the lines
-    for y in height..max_y - 3 {
+    for y in height..max_height {
       nc::wmove(self.main_win, pl_start_row + y, 0);
       nc::wclrtoeol(self.main_win);
     }
