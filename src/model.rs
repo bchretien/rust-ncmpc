@@ -15,7 +15,7 @@ use mpd::song::Song;
 pub type SharedModel<'m> = Arc<Mutex<Model<'m>>>;
 
 fn start_client(config: &Config) -> Result<mpd::Client, mpd::error::Error> {
-  mpd::Client::connect(config.addr)
+  mpd::Client::connect(config.socket_addr())
 }
 
 fn get_song_info(song: &Song, tag: &String) -> String {

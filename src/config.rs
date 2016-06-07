@@ -1,7 +1,7 @@
 extern crate ncurses;
 extern crate ini;
 
-use std::net::SocketAddr;
+use std::net::{IpAddr, SocketAddr};
 use std::env;
 use std::fmt::Debug;
 use std::str::FromStr;
@@ -50,19 +50,20 @@ pub struct ColorConfig {
   pub volume: i16,
 }
 
-#[derive(Clone,Copy,PartialEq,Debug)]
+#[derive(Clone,PartialEq,Debug)]
 pub struct ParamConfig {
   pub cyclic_scrolling: bool,
   pub display_bitrate: bool,
   pub display_remaining_time: bool,
   pub display_volume_level: bool,
   pub header_text_scrolling: bool,
+  pub mpd_host: String,
+  pub mpd_port: u16,
   pub volume_change_step: i8,
 }
 
-#[derive(Clone,Copy,PartialEq,Debug)]
+#[derive(Clone,PartialEq,Debug)]
 pub struct Config {
-  pub addr: SocketAddr,
   pub colors: ColorConfig,
   pub keys: KeyConfig,
   pub params: ParamConfig,
@@ -145,6 +146,8 @@ impl ParamConfig {
       display_remaining_time: false,
       display_volume_level: true,
       header_text_scrolling: true,
+      mpd_host: String::from("localhost"),
+      mpd_port: 6600,
       volume_change_step: 2,
     }
   }
@@ -152,26 +155,33 @@ impl ParamConfig {
 
 impl Config {
   pub fn new() -> Config {
-    // TODO: support MPD_SOCK
-    // let addr = env::var("MPD_SOCK").unwrap_or("127.0.0.1:6600".to_owned());
-
-    // Search for the MPD_PORT environment variable
-    let mpd_ip = "127.0.0.1".parse().unwrap();
-    let mpd_port = env::var("MPD_PORT")
-      .unwrap_or("6600".to_owned())
-      .parse::<u16>()
-      .unwrap_or(6600);
-    println!("MPD: {}:{}", mpd_ip, mpd_port);
-
     let keys = KeyConfig::new();
-    let params = ParamConfig::new();
+    let mut params = ParamConfig::new();
+
+    // Search for the MPD environment variables, as they take precedence over
+    // the configuration
+    let mpd_host = env::var("MPD_HOST");
+    let mpd_port = env::var("MPD_PORT");
+    if mpd_host.is_ok() {
+      params.mpd_host = mpd_host.unwrap();
+    }
+    if mpd_port.is_ok() {
+      params.mpd_port = mpd_port.unwrap()
+        .parse::<u16>()
+        .unwrap_or(params.mpd_port);
+    }
 
     Config {
       colors: ColorConfig::new(),
-      addr: SocketAddr::new(mpd_ip, mpd_port),
       keys: keys,
       params: params,
     }
+  }
+
+  /// Get the socket address of the MPC daemon.
+  pub fn socket_addr(&self) -> SocketAddr {
+    let ip = IpAddr::from_str(self.params.mpd_host.as_str()).unwrap();
+    SocketAddr::new(ip, self.params.mpd_port)
   }
 }
 
@@ -220,11 +230,13 @@ fn assign(key: &str, val: &str, config: &mut Config) -> bool {
     "volume_color" => config.colors.volume = parse_color(val),
     // Parameters
     "cyclic_scrolling" => config.params.cyclic_scrolling = parse_bool(val),
-    "volume_change_step" => config.params.volume_change_step = parse_int(val),
     "display_bitrate" => config.params.display_bitrate = parse_bool(val),
     "display_remaining_time" => config.params.display_remaining_time = parse_bool(val),
     "display_volume_level" => config.params.display_volume_level = parse_bool(val),
     "header_text_scrolling" => config.params.header_text_scrolling = parse_bool(val),
+    "mpd_host" => config.params.mpd_host = String::from(val),
+    "mpd_port" => config.params.mpd_port = parse_int(val),
+    "volume_change_step" => config.params.volume_change_step = parse_int(val),
     _ => return false,
   }
   return true;
