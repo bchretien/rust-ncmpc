@@ -1,5 +1,6 @@
 extern crate ncurses;
 extern crate ini;
+extern crate xdg;
 
 use std::net::{IpAddr, SocketAddr, ToSocketAddrs};
 use std::env;
@@ -73,7 +74,8 @@ pub struct Config {
 }
 
 pub struct ConfigLoader {
-  default_config_path: PathBuf,
+  default_config_path: Option<PathBuf>,
+  default_bindings_path: Option<PathBuf>,
 }
 
 impl KeyConfig {
@@ -251,27 +253,27 @@ fn assign(key: &str, val: &str, config: &mut Config) -> bool {
 
 impl ConfigLoader {
   pub fn new() -> ConfigLoader {
-    // TODO: rely on XDG paths
-    let mut default_config_path = PathBuf::from("");
-    match env::home_dir() {
-      Some(path) => default_config_path = path.join(PathBuf::from(".config/ncmpcpp/config")),
-      None => {}
-    }
+    let xdg_dirs = xdg::BaseDirectories::with_prefix("ncmpcpp").unwrap();
 
-    ConfigLoader { default_config_path: default_config_path }
+    let default_config_path = xdg_dirs.find_config_file("config");
+    let default_bindings_path = xdg_dirs.find_config_file("bindings");
+
+    ConfigLoader {
+      default_config_path: default_config_path,
+      default_bindings_path: default_bindings_path,
+    }
   }
 
-  pub fn load(&self, opt_path: Option<PathBuf>) -> Config {
-    let path = match opt_path {
-      Some(x) => x,
-      None => self.default_config_path.clone(),
-    };
+  pub fn load(&self, user_config: Option<PathBuf>) -> Config {
+    let opt_path = if user_config.is_some() { user_config.clone() } else { self.default_config_path.clone() };
 
     let mut config = Config::new();
 
     // Read ncmpcpp configuration
-    if path.is_file() {
-      let ini = Ini::load_from_file(path.to_str().unwrap()).unwrap();
+    if opt_path.is_some() {
+      let path = opt_path.unwrap();
+      let file = path.to_str().unwrap();
+      let ini = Ini::load_from_file(file).unwrap();
       for (_, prop) in ini.iter() {
         for (k, v) in prop.iter() {
           // Remove quotes

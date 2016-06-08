@@ -8,6 +8,7 @@ mpd = "0.0.11"
 ncurses = "5.80.0"
 time = "0.1.34"
 rust-ini = "0.9.4"
+xdg = "2.0.0"
 
 [lib]
 name = "ncmpc"
