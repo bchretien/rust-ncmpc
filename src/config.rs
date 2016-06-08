@@ -1,7 +1,7 @@
 extern crate ncurses;
 extern crate ini;
 
-use std::net::{IpAddr, SocketAddr};
+use std::net::{IpAddr, SocketAddr, ToSocketAddrs};
 use std::env;
 use std::fmt::Debug;
 use std::str::FromStr;
@@ -180,8 +180,12 @@ impl Config {
 
   /// Get the socket address of the MPC daemon.
   pub fn socket_addr(&self) -> SocketAddr {
-    let ip = IpAddr::from_str(self.params.mpd_host.as_str()).unwrap();
-    SocketAddr::new(ip, self.params.mpd_port)
+    let ip = if self.params.mpd_host == "localhost" {
+      IpAddr::from_str("127.0.0.1").unwrap()
+    } else {
+      IpAddr::from_str(self.params.mpd_host.as_str()).unwrap()
+    };
+    (ip, self.params.mpd_port).to_socket_addrs().unwrap().next().unwrap()
   }
 }
 
