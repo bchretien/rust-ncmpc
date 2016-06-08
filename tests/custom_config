@@ -311,7 +311,7 @@ incremental_seeking = yes
 
 seek_time = 1
 
-volume_change_step = 2
+volume_change_step = 5
 
 autocenter_mode = no
 
@@ -351,9 +351,9 @@ statusbar_visibility = yes
 
 titles_visibility = yes
 
-header_text_scrolling = yes
+header_text_scrolling = no
 
-cyclic_scrolling = no
+cyclic_scrolling = yes
 
 lines_scrolled = 2
 
@@ -420,11 +420,11 @@ ask_before_clearing_playlists = yes
 
 clock_display_seconds = no
 
-display_volume_level = yes
+display_volume_level = no
 
-display_bitrate = no
+display_bitrate = yes
 
-display_remaining_time = no
+display_remaining_time = yes
 
 # Available values: none, basic, extended, perl.
 #

@@ -56,7 +56,13 @@ fn load_custom_config() {
   let config = config_loader.load(Some(config_path));
 
   let mut params = ParamConfig::new();
+  params.cyclic_scrolling = true;
+  params.display_bitrate = true;
+  params.display_remaining_time = true;
+  params.display_volume_level = false;
+  params.header_text_scrolling = false;
   params.mpd_port = 7700;
+  params.volume_change_step = 5;
   assert_eq!(config.params, params);
 
   after_each();
