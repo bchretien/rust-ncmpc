@@ -267,12 +267,14 @@ impl ConfigLoader {
     let mut config = Config::new();
 
     // Read ncmpcpp configuration
-    let i = Ini::load_from_file(path.to_str().unwrap()).unwrap();
-    for (_, prop) in i.iter() {
-      for (k, v) in prop.iter() {
-        // Remove quotes
-        let fixed = v.trim_matches('\"');
-        assign(&k, fixed, &mut config);
+    if path.is_file() {
+      let ini = Ini::load_from_file(path.to_str().unwrap()).unwrap();
+      for (_, prop) in ini.iter() {
+        for (k, v) in prop.iter() {
+          // Remove quotes
+          let fixed = v.trim_matches('\"');
+          assign(&k, fixed, &mut config);
+        }
       }
     }
 
