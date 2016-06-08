@@ -16,23 +16,26 @@ pub enum ControlKey {
   Char(char),
 }
 
-#[derive(Clone,Copy,PartialEq,Debug)]
+pub type ControlKeys = Vec<ControlKey>;
+
+/// Key bindings configuration.
+#[derive(Clone,PartialEq,Debug)]
 pub struct KeyConfig {
-  pub clear: ControlKey,
-  pub delete: ControlKey,
-  pub next_song: ControlKey,
-  pub play_pause: ControlKey,
-  pub press_enter: ControlKey,
-  pub previous_song: ControlKey,
-  pub quit: ControlKey,
-  pub scroll_down: ControlKey,
-  pub scroll_up: ControlKey,
-  pub stop: ControlKey,
-  pub toggle_bitrate_visibility: ControlKey,
-  pub toggle_random: ControlKey,
-  pub toggle_repeat: ControlKey,
-  pub volume_down: ControlKey,
-  pub volume_up: ControlKey,
+  pub clear: ControlKeys,
+  pub delete: ControlKeys,
+  pub next_song: ControlKeys,
+  pub play_pause: ControlKeys,
+  pub press_enter: ControlKeys,
+  pub previous_song: ControlKeys,
+  pub quit: ControlKeys,
+  pub scroll_down: ControlKeys,
+  pub scroll_up: ControlKeys,
+  pub stop: ControlKeys,
+  pub toggle_bitrate_visibility: ControlKeys,
+  pub toggle_random: ControlKeys,
+  pub toggle_repeat: ControlKeys,
+  pub volume_down: ControlKeys,
+  pub volume_up: ControlKeys,
 }
 
 #[derive(Clone,Copy,PartialEq,Debug)]
@@ -76,21 +79,21 @@ pub struct ConfigLoader {
 impl KeyConfig {
   pub fn new() -> KeyConfig {
     KeyConfig {
-      clear: ControlKey::Char('c'),
-      delete: ControlKey::KeyCode(nc::KEY_DC),
-      next_song: ControlKey::Char('>'),
-      play_pause: ControlKey::Char('p'),
-      press_enter: ControlKey::Char('\n'),
-      previous_song: ControlKey::Char('<'),
-      quit: ControlKey::Char('q'),
-      scroll_down: ControlKey::KeyCode(nc::KEY_DOWN),
-      scroll_up: ControlKey::KeyCode(nc::KEY_UP),
-      stop: ControlKey::Char('s'),
-      toggle_bitrate_visibility: ControlKey::Char('#'),
-      toggle_random: ControlKey::Char('z'),
-      toggle_repeat: ControlKey::Char('r'),
-      volume_down: ControlKey::KeyCode(nc::KEY_LEFT),
-      volume_up: ControlKey::KeyCode(nc::KEY_RIGHT),
+      clear: vec![ControlKey::Char('c')],
+      delete: vec![ControlKey::KeyCode(nc::KEY_DC)],
+      next_song: vec![ControlKey::Char('>')],
+      play_pause: vec![ControlKey::Char('p')],
+      press_enter: vec![ControlKey::Char('\n')],
+      previous_song: vec![ControlKey::Char('<')],
+      quit: vec![ControlKey::Char('q')],
+      scroll_down: vec![ControlKey::KeyCode(nc::KEY_DOWN)],
+      scroll_up: vec![ControlKey::KeyCode(nc::KEY_UP)],
+      stop: vec![ControlKey::Char('s')],
+      toggle_bitrate_visibility: vec![ControlKey::Char('#')],
+      toggle_random: vec![ControlKey::Char('z')],
+      toggle_repeat: vec![ControlKey::Char('r')],
+      volume_down: vec![ControlKey::KeyCode(nc::KEY_LEFT)],
+      volume_up: vec![ControlKey::KeyCode(nc::KEY_RIGHT)],
     }
   }
 }

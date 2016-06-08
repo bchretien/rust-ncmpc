@@ -22,6 +22,24 @@ pub struct Controller<'c, 'm: 'c> {
   model: &'c mut SharedModel<'m>,
   config: &'c Config,
   callbacks: ControllerCallbacks<'m>,
+  quit_keycodes: Vec<i32>,
+}
+
+macro_rules! register_callback {
+  // If the keycode is part of the configuration
+  ($callbacks: ident, $config: ident, $action:ident, $callback: ident) => {
+    {
+      for key in &$config.keys.$action {
+        $callbacks.insert(key.keycode(), Box::new($callback));
+      }
+    }
+  };
+  // For special keycodes
+  ($callbacks: ident, $key:expr, $callback: ident) => {
+    {
+      $callbacks.insert($key, Box::new($callback));
+    }
+  };
 }
 
 impl<'c, 'm> Controller<'c, 'm> {
@@ -30,43 +48,45 @@ impl<'c, 'm> Controller<'c, 'm> {
     let mut callbacks = ControllerCallbacks::new();
 
     // Clear the playlist
-    callbacks.insert(config.keys.clear.keycode(), Box::new(playlist_clear));
+    register_callback!(callbacks, config, clear, playlist_clear);
     // Delete selected items
-    callbacks.insert(config.keys.delete.keycode(), Box::new(playlist_delete_items));
+    register_callback!(callbacks, config, delete, playlist_delete_items);
     // Pause
-    callbacks.insert(config.keys.play_pause.keycode(), Box::new(playlist_pause));
+    register_callback!(callbacks, config, play_pause, playlist_pause);
     // Stop
-    callbacks.insert(config.keys.stop.keycode(), Box::new(playlist_stop));
+    register_callback!(callbacks, config, stop, playlist_stop);
     // Previous song
-    callbacks.insert(config.keys.previous_song.keycode(), Box::new(playlist_previous));
+    register_callback!(callbacks, config, previous_song, playlist_previous);
     // Next song
-    callbacks.insert(config.keys.next_song.keycode(), Box::new(playlist_next));
+    register_callback!(callbacks, config, next_song, playlist_next);
     // Increase volume
-    callbacks.insert(config.keys.volume_up.keycode(), Box::new(volume_up));
+    register_callback!(callbacks, config, volume_up, volume_up);
     // Decrease volume
-    callbacks.insert(config.keys.volume_down.keycode(), Box::new(volume_down));
+    register_callback!(callbacks, config, volume_down, volume_down);
     // Press enter
-    callbacks.insert(config.keys.press_enter.keycode(), Box::new(play_selected));
+    register_callback!(callbacks, config, press_enter, play_selected);
     // Scroll down
-    callbacks.insert(config.keys.scroll_down.keycode(), Box::new(scroll_down));
+    register_callback!(callbacks, config, scroll_down, scroll_down);
     // Scroll up
-    callbacks.insert(config.keys.scroll_up.keycode(), Box::new(scroll_up));
+    register_callback!(callbacks, config, scroll_up, scroll_up);
     // Toggle bitrate visibility
-    callbacks.insert(config.keys.toggle_bitrate_visibility.keycode(),
-                     Box::new(toggle_bitrate_visibility));
+    register_callback!(callbacks, config, toggle_bitrate_visibility, toggle_bitrate_visibility);
     // Toggle random
-    callbacks.insert(config.keys.toggle_random.keycode(), Box::new(toggle_random));
+    register_callback!(callbacks, config, toggle_random, toggle_random);
     // Toggle repeat
-    callbacks.insert(config.keys.toggle_repeat.keycode(), Box::new(toggle_repeat));
+    register_callback!(callbacks, config, toggle_repeat, toggle_repeat);
     // Mouse support
-    callbacks.insert(nc::KEY_MOUSE, Box::new(process_mouse));
+    register_callback!(callbacks, nc::KEY_MOUSE, process_mouse);
     // Resize windows.
-    callbacks.insert(nc::KEY_RESIZE, Box::new(resize_windows));
+    register_callback!(callbacks, nc::KEY_RESIZE, resize_windows);
+
+    let quit_keycodes = config.keys.quit.iter().map(|&key| key.keycode()).collect::<Vec<i32>>();
 
     Controller {
       model: model,
       config: config,
       callbacks: callbacks,
+      quit_keycodes: quit_keycodes,
     }
   }
 
@@ -74,9 +94,9 @@ impl<'c, 'm> Controller<'c, 'm> {
     // Get user input
     let ch = nc::getch();
 
-    // quit
-    if ch != self.config.keys.quit.keycode() {
-      // no key pressed
+    // Quit check
+    if !self.quit_keycodes.contains(&ch) {
+      // No key pressed
       if ch == -1 {
         // Do nothing
         return ControlQuery::Nothing;
