@@ -7,10 +7,10 @@ pub struct TimedValue<T> {
   pub timestamp: Timespec,
 }
 
-impl<T: Copy> TimedValue<T> {
+impl<T: Clone> TimedValue<T> {
   pub fn new(value: T) -> TimedValue<T> {
     TimedValue::<T> {
-      value: value,
+      value: value.clone(),
       timestamp: get_time(),
     }
   }

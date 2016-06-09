@@ -5,11 +5,11 @@ use std::process;
 use std::net::TcpStream;
 use std::sync::{Arc, Mutex};
 use std::collections::HashMap;
-use time::Duration;
+use time::{Duration, get_time};
 
 use view::*;
 use config::*;
-use util::*;
+use util::TimedValue;
 use mpd::status::{State, Status};
 use mpd::song::Song;
 
@@ -168,10 +168,12 @@ pub struct Model<'m> {
   config: &'m Config,
   /// Current state configuration.
   params: ParamConfig,
-  /// Currently selected song (if any).
+  /// Index of the currently selected song (if any).
   selected_song: Option<TimedValue<u32>>,
   /// Snapshot of MPD data.
   snapshot: Snapshot,
+  /// Temporary info message.
+  info_msg: Option<TimedValue<String>>,
 }
 
 impl<'m> Model<'m> {
@@ -193,12 +195,13 @@ impl<'m> Model<'m> {
       params: config.params.clone(),
       selected_song: None,
       snapshot: snapshot,
+      info_msg: None,
     }
   }
 
   pub fn playlist_play(&mut self) {
-    if self.client.play().is_ok() {
-      self.view.display_debug_prompt("Playing");
+    if self.client.play().is_err() {
+      self.update_message("Error: play failed");
     }
   }
 
@@ -207,13 +210,13 @@ impl<'m> Model<'m> {
 
     match state {
       State::Play => {
-        if self.client.pause(true).is_ok() {
-          self.view.display_debug_prompt("Pausing");
+        if self.client.pause(true).is_err() {
+          self.update_message("Error: pause failed");
         }
       }
       State::Pause => {
-        if self.client.pause(false).is_ok() {
-          self.view.display_debug_prompt("Playing");
+        if self.client.pause(false).is_err() {
+          self.update_message("Error: unpause failed");
         }
       }
       State::Stop => {
@@ -223,26 +226,26 @@ impl<'m> Model<'m> {
   }
 
   pub fn playlist_stop(&mut self) {
-    if self.client.stop().is_ok() {
-      self.view.display_debug_prompt("Stopping");
+    if self.client.stop().is_err() {
+      self.update_message("Error: stop failed");
     }
   }
 
   pub fn playlist_previous(&mut self) {
-    if self.client.prev().is_ok() {
-      self.view.display_debug_prompt("Previous song");
+    if self.client.prev().is_err() {
+      self.update_message("Error: previous song failed");
     }
   }
 
   pub fn playlist_next(&mut self) {
-    if self.client.next().is_ok() {
-      self.view.display_debug_prompt("Next song");
+    if self.client.next().is_err() {
+      self.update_message("Error: next song failed");
     }
   }
 
   pub fn playlist_clear(&mut self) {
-    if self.client.clear().is_ok() {
-      self.view.display_debug_prompt("Cleared playlist");
+    if self.client.clear().is_err() {
+      self.update_message("Error: playlist clear failed");
     }
   }
 
@@ -271,8 +274,8 @@ impl<'m> Model<'m> {
     } else if vol > 100 {
       vol = 100;
     };
-    if self.client.volume(vol).is_ok() {
-      self.view.display_debug_prompt("Volume set");
+    if self.client.volume(vol).is_err() {
+      self.update_message("Error: volume set failed");
     }
   }
 
@@ -283,14 +286,14 @@ impl<'m> Model<'m> {
   pub fn toggle_random(&mut self) {
     let random = self.snapshot.status.random;
     if self.client.random(!random).is_err() {
-      self.view.display_debug_prompt("Failed to toggle random");
+      self.update_message("Error: random toggle failed");
     }
   }
 
   pub fn toggle_repeat(&mut self) {
     let repeat = self.snapshot.status.repeat;
     if self.client.repeat(!repeat).is_err() {
-      self.view.display_debug_prompt("Failed to toggle repeat");
+      self.update_message("Error: repeat toggle failed");
     }
   }
 
@@ -412,6 +415,16 @@ impl<'m> Model<'m> {
   pub fn update_statusbar(&mut self) {
     use mpd::status::State;
 
+    // If an info message has to be displayed
+    if self.info_msg.is_some() {
+      if get_time() < self.info_msg.as_ref().unwrap().timestamp + Duration::seconds(5) {
+        self.view.display_statusbar_msg(&self.info_msg.as_ref().unwrap().value);
+        return;
+      } else {
+        self.info_msg = None;
+      }
+    }
+
     let mut mode = String::default();
     let mut msg = String::default();
     let mut track = String::default();
@@ -461,7 +474,7 @@ impl<'m> Model<'m> {
   }
 
   pub fn update_message(&mut self, msg: &str) {
-    self.view.display_debug_prompt(msg);
+    self.info_msg = Some(TimedValue::<String>::new(String::from(msg)));
   }
 
   pub fn resize_windows(&mut self) {

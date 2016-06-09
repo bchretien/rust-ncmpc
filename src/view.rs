@@ -67,7 +67,6 @@ pub struct View {
   progressbar: nc::WINDOW,
   statusbar: nc::WINDOW,
   status_scroller: Scroller,
-  debug_row: nc::WINDOW,
   static_rows: i32,
 }
 
@@ -89,7 +88,6 @@ fn init_colors(colors: &ColorConfig) {
   nc::init_pair(COLOR_PAIR_PROGRESSBAR_ELAPSED, colors.progressbar_elapsed, color_bg);
   nc::init_pair(COLOR_PAIR_STATUSBAR, colors.statusbar, color_bg);
   nc::init_pair(COLOR_PAIR_VOLUME, colors.volume, color_bg);
-  nc::init_pair(COLOR_PAIR_DEBUG, nc::COLOR_GREEN, color_bg);
   nc::init_pair(COLOR_PAIR_STATE_LINE, colors.state_line, color_bg);
   nc::init_pair(COLOR_PAIR_STATE_FLAGS, colors.state_flags, color_bg);
   nc::init_pair(COLOR_PAIR_TRACK, nc::COLOR_BLACK, color_bg);
@@ -159,17 +157,16 @@ impl View {
     let mut max_x = 0;
     let mut max_y = 0;
     nc::getmaxyx(nc::stdscr, &mut max_y, &mut max_x);
-    let static_rows = 5;
+    let static_rows = 4;
 
     let view = View {
       header: nc::newwin(1, max_x, 0, 0),
       header_scroller: Scroller::new(max_x as usize),
       state: nc::newwin(1, max_x, 1, 0),
       main_win: nc::newwin(max_y - static_rows, max_x, 2, 0),
-      progressbar: nc::newwin(1, max_x, max_y - 3, 0),
-      statusbar: nc::newwin(1, max_x, max_y - 2, 0),
+      progressbar: nc::newwin(1, max_x, max_y - 2, 0),
+      statusbar: nc::newwin(1, max_x, max_y - 1, 0),
       status_scroller: Scroller::new(max_x as usize),
-      debug_row: nc::newwin(1, max_x, max_y - 1, 0),
       static_rows: static_rows,
     };
     nc::wrefresh(view.header);
@@ -177,13 +174,11 @@ impl View {
     nc::wrefresh(view.main_win);
     nc::wrefresh(view.progressbar);
     nc::wrefresh(view.statusbar);
-    nc::wrefresh(view.debug_row);
     nc::keypad(view.main_win, true);
 
     // Set colors
     nc::wbkgd(view.header, nc::COLOR_PAIR(COLOR_PAIR_ARTIST) as nc::chtype);
     nc::wbkgd(view.state, nc::COLOR_PAIR(COLOR_PAIR_DEFAULT) as nc::chtype);
-    nc::wbkgd(view.debug_row, nc::COLOR_PAIR(COLOR_PAIR_DEBUG) as nc::chtype);
 
     return view;
   }
@@ -465,14 +460,11 @@ impl View {
     nc::wrefresh(self.statusbar);
   }
 
-  pub fn display_debug_prompt(&mut self, msg: &str) {
-    // Clear line.
-    nc::wmove(self.debug_row, 0, 0);
-    nc::wclrtoeol(self.debug_row);
-    // Print message.
-    nc::mvwprintw(self.debug_row, 0, 0, &format!("[Debug] {}", msg));
-
-    nc::wrefresh(self.debug_row);
+  pub fn display_statusbar_msg(&mut self, msg: &str) {
+    nc::wmove(self.statusbar, 0, 0);
+    nc::wclrtoeol(self.statusbar);
+    nc::mvwprintw(self.statusbar, 0, 0, msg);
+    nc::wrefresh(self.statusbar);
   }
 
   pub fn process_mouse(&mut self) -> MouseEvent {
@@ -526,10 +518,6 @@ impl View {
 
     nc::wresize(self.statusbar, 1, max_x);
     nc::mvwin(self.statusbar, row, 0);
-    row += 1;
-
-    nc::wresize(self.debug_row, 1, max_x);
-    nc::mvwin(self.debug_row, row, 0);
 
     // TODO: resize scrollers?
     // self.header_scroller.resize();
@@ -545,7 +533,6 @@ impl Drop for View {
     destroy_win(self.main_win);
     destroy_win(self.progressbar);
     destroy_win(self.statusbar);
-    destroy_win(self.debug_row);
     deinit_ncurses();
   }
 }
