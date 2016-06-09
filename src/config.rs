@@ -7,6 +7,7 @@ use std::env;
 use std::fmt::Debug;
 use std::str::FromStr;
 use std::path::PathBuf;
+use std::collections::HashMap;
 
 use ini::Ini;
 use ncurses as nc;
@@ -18,6 +19,7 @@ pub enum ControlKey {
 }
 
 pub type ControlKeys = Vec<ControlKey>;
+pub type CustomActions = HashMap<i32, Vec<String>>;
 
 /// Key bindings configuration.
 #[derive(Clone,PartialEq,Debug)]
@@ -37,6 +39,7 @@ pub struct KeyConfig {
   pub toggle_repeat: ControlKeys,
   pub volume_down: ControlKeys,
   pub volume_up: ControlKeys,
+  pub custom: CustomActions,
 }
 
 #[derive(Clone,Copy,PartialEq,Debug)]
@@ -96,6 +99,7 @@ impl KeyConfig {
       toggle_repeat: vec![ControlKey::Char('r')],
       volume_down: vec![ControlKey::KeyCode(nc::KEY_LEFT)],
       volume_up: vec![ControlKey::KeyCode(nc::KEY_RIGHT)],
+      custom: CustomActions::default(),
     }
   }
 }

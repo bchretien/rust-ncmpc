@@ -16,7 +16,7 @@ pub enum ControlQuery {
   Exit,
 }
 
-pub type ControllerCallbacks<'m> = HashMap<i32, Box<FnMut(&mut SharedModel<'m>) + 'm>>;
+pub type ControllerCallbacks<'m> = HashMap<i32, Vec<Action<'m>>>;
 
 pub struct Controller<'c, 'm: 'c> {
   model: &'c mut SharedModel<'m>,
@@ -30,14 +30,24 @@ macro_rules! register_callback {
   ($callbacks: ident, $config: ident, $action:ident, $callback: ident) => {
     {
       for key in &$config.keys.$action {
-        $callbacks.insert(key.keycode(), Box::new($callback));
+        $callbacks.insert(key.keycode(), vec![Action::new($callback)]);
       }
     }
   };
   // For special keycodes
   ($callbacks: ident, $key:expr, $callback: ident) => {
     {
-      $callbacks.insert($key, Box::new($callback));
+      $callbacks.insert($key, vec![Action::new($callback)]);
+    }
+  };
+  // For custom actions
+  ($callbacks: ident, $map: ident, $key:expr, actions => $actions: ident) => {
+    {
+      let user_actions = $actions.iter()
+        .map(|ref name| $map.get(name.as_str()).unwrap())
+        .cloned()
+        .collect::<Vec<Action<'m>>>();
+      $callbacks.insert($key.clone(), user_actions);
     }
   };
 }
@@ -77,8 +87,14 @@ impl<'c, 'm> Controller<'c, 'm> {
     register_callback!(callbacks, config, toggle_repeat, toggle_repeat);
     // Mouse support
     register_callback!(callbacks, nc::KEY_MOUSE, process_mouse);
-    // Resize windows.
+    // Resize windows
     register_callback!(callbacks, nc::KEY_RESIZE, resize_windows);
+
+    // Register custom user actions (possibly overriding defaults).
+    let action_map = get_action_map();
+    for (keycode, actions) in &config.keys.custom {
+      register_callback!(callbacks, action_map, keycode, actions => actions);
+    }
 
     let quit_keycodes = config.keys.quit.iter().map(|&key| key.keycode()).collect::<Vec<i32>>();
 
@@ -102,8 +118,10 @@ impl<'c, 'm> Controller<'c, 'm> {
         return ControlQuery::Nothing;
       }
       // Registered callbacks
-      else if let Some(f) = self.callbacks.get_mut(&ch) {
-        f(self.model);
+      else if let Some(actions) = self.callbacks.get_mut(&ch) {
+        for action in actions {
+          action.execute(self.model);
+        }
       }
       // TODO: debug only
       else {

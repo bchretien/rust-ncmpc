@@ -4,6 +4,7 @@ extern crate mpd;
 use std::process;
 use std::net::TcpStream;
 use std::sync::{Arc, Mutex};
+use std::collections::HashMap;
 use time::Duration;
 
 use view::*;
@@ -13,6 +14,29 @@ use mpd::status::{State, Status};
 use mpd::song::Song;
 
 pub type SharedModel<'m> = Arc<Mutex<Model<'m>>>;
+pub type ActionCallback<'m> = fn(&mut SharedModel<'m>);
+
+/// Action triggered by the user.
+pub struct Action<'m> {
+  callback: ActionCallback<'m>,
+}
+
+impl<'m> Action<'m> {
+  pub fn new(func: ActionCallback<'m>) -> Action<'m> {
+    Action { callback: func }
+  }
+
+  pub fn execute(&self, model: &mut SharedModel<'m>) {
+    (self.callback)(model);
+  }
+}
+
+impl<'m> Clone for Action<'m> {
+  fn clone(&self) -> Action<'m> {
+    let callback: ActionCallback<'m> = self.callback;
+    return Action { callback: callback };
+  }
+}
 
 fn start_client(config: &Config) -> Result<mpd::Client, mpd::error::Error> {
   mpd::Client::connect(config.socket_addr())
@@ -48,34 +72,72 @@ fn get_song_bitrate(status: &Status) -> u32 {
 }
 
 // TODO: update names once concat_idents can be used here for the function name
-macro_rules! register_action(
-    ($model_fun:ident) => (
-        pub fn $model_fun(shared_model: &mut SharedModel)
-        {
-            let mut model = shared_model.lock().unwrap();
-            model.$model_fun();
-        }
-    )
+macro_rules! register_actions(
+  ($($fun:ident), *) => (
+    $(
+      pub fn $fun(shared_model: &mut SharedModel)
+      {
+        let mut model = shared_model.lock().unwrap();
+        model.$fun();
+      }
+    )*
+  )
 );
 
 // Register actions for closures
-register_action!(playlist_play);
-register_action!(playlist_pause);
-register_action!(playlist_stop);
-register_action!(playlist_clear);
-register_action!(playlist_delete_items);
-register_action!(playlist_previous);
-register_action!(playlist_next);
-register_action!(play_selected);
-register_action!(process_mouse);
-register_action!(resize_windows);
-register_action!(scroll_down);
-register_action!(scroll_up);
-register_action!(toggle_bitrate_visibility);
-register_action!(toggle_random);
-register_action!(toggle_repeat);
-register_action!(volume_down);
-register_action!(volume_up);
+register_actions!(
+  playlist_play,
+  playlist_pause,
+  playlist_stop,
+  playlist_clear,
+  playlist_delete_items,
+  playlist_previous,
+  playlist_next,
+  play_selected,
+  process_mouse,
+  resize_windows,
+  scroll_down,
+  scroll_up,
+  toggle_bitrate_visibility,
+  toggle_random,
+  toggle_repeat,
+  volume_down,
+  volume_up);
+
+macro_rules! actions_to_map(
+  ($($fun:ident), *) => (
+    {
+      let mut action_map: HashMap<String, Action<'m>> = HashMap::new();
+      $(
+        action_map.insert(stringify!($fun).to_string(), Action::new($fun));
+      )*
+      action_map
+    }
+  )
+);
+
+pub fn get_action_map<'m>() -> HashMap<String, Action<'m>> {
+  let action_map = actions_to_map!(
+    playlist_play,
+    playlist_pause,
+    playlist_stop,
+    playlist_clear,
+    playlist_delete_items,
+    playlist_previous,
+    playlist_next,
+    play_selected,
+    process_mouse,
+    resize_windows,
+    scroll_down,
+    scroll_up,
+    toggle_bitrate_visibility,
+    toggle_random,
+    toggle_repeat,
+    volume_down,
+    volume_up);
+
+  return action_map;
+}
 
 struct Snapshot {
   /// Current MPD status.
