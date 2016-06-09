@@ -43,23 +43,30 @@ fn start_client(config: &Config) -> Result<mpd::Client, mpd::error::Error> {
 }
 
 fn get_song_info(song: &Song, tag: &String) -> String {
-  let unknown = "unknown".to_string();
-  let zero = "0".to_string();
   if tag == "Title" {
-    return song.clone().title.unwrap_or(unknown);
+    return match song.title.as_ref() {
+      Some(t) => t.clone(),
+      None => String::from("unknown"),
+    };
   } else if tag == "Time" || tag == "Duration" {
-    let dur = song.clone().duration.unwrap_or(Duration::seconds(0));
-    let min = dur.num_minutes();
-    let sec = dur.num_seconds() % 60;
+    let (min, sec) = match song.duration {
+      Some(d) => (d.num_minutes(), d.num_seconds() % 60),
+      None => (0, 0),
+    };
     return format!("{min}:{sec:02}", min = min, sec = sec);
   } else if tag == "Track" {
-    let track = song.tags.get(tag).unwrap_or(&zero).to_string();
-    let track_s = track.parse::<u32>().unwrap_or(0);
-    return format!("{:>02}", track_s);
+    let track = match song.tags.get(tag) {
+      Some(t) => t.parse::<u32>().unwrap_or(0),
+      None => 0,
+    };
+    return format!("{:>02}", track);
   } else
   // Use tags as is
   {
-    return song.tags.get(tag).unwrap_or(&unknown).to_string();
+    return match song.tags.get(tag) {
+      Some(t) => t.clone(),
+      None => String::from("unknown"),
+    };
   }
 }
 
