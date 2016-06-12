@@ -18,3 +18,14 @@ pub static COLOR_PAIR_DEBUG: i16 = 8;
 pub static COLOR_PAIR_STATE_LINE: i16 = 9;
 pub static COLOR_PAIR_STATE_FLAGS: i16 = 10;
 pub static COLOR_PAIR_TRACK: i16 = 11;
+
+// ctrl-?
+pub static KEY_CTRL_A: i32 = 1;
+pub static KEY_CTRL_LEFTBRACKET: i32 = 27;
+pub static KEY_CTRL_BACKSLASH: i32 = 28;
+pub static KEY_CTRL_RIGHTBRACKET: i32 = 29;
+pub static KEY_CTRL_CARET: i32 = 30;
+pub static KEY_CTRL_UNDERSCORE: i32 = 31;
+pub static KEY_ESCAPE: i32 = 27;
+pub static KEY_TAB: i32 = 9;
+pub static KEY_BACKSPACE: i32 = 127;

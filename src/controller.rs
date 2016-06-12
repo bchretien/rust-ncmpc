@@ -44,7 +44,7 @@ macro_rules! register_callback {
   ($callbacks: ident, $map: ident, $key:expr, actions => $actions: ident) => {
     {
       let user_actions = $actions.iter()
-        .map(|ref name| $map.get(name.as_str()).unwrap())
+        .filter_map(|ref name| $map.get(name.as_str()))
         .cloned()
         .collect::<Vec<Action<'m>>>();
       $callbacks.insert($key.clone(), user_actions);
@@ -126,12 +126,7 @@ impl<'c, 'm> Controller<'c, 'm> {
       // TODO: debug only
       else {
         let mut model = self.model.lock().unwrap();
-        let c = char::from_u32(ch as u32);
-        if c.is_some() {
-          model.update_message(&format!("Pressed unmapped '{}'", c.unwrap()));
-        } else {
-          model.update_message(&format!("Pressed unmapped key (code = {})", ch));
-        }
+        model.update_message(&format!("Pressed unmapped '{}' (keycode = {})", nc::keyname(ch), ch));
       }
       return ControlQuery::Command;
     } else {

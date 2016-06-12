@@ -1,4 +1,16 @@
+#![feature(macro_rules)]
+
 use time::{Duration, Timespec, get_time};
+
+/// Print to stderr.
+#[macro_export]
+macro_rules! stderr(
+  ($($arg:tt)*) => {{
+    use std::io::Write;
+    let r = writeln!(&mut ::std::io::stderr(), $($arg)*);
+    r.expect("failed printing to stderr");
+  }}
+);
 
 /// Utility structure that associates a timestamp with a value.
 #[derive(Clone, Copy)]

@@ -10,6 +10,8 @@ use std::path::PathBuf;
 use std::collections::HashMap;
 
 use ini::Ini;
+use constants::*;
+use parser::parse_bindings_configuration;
 use ncurses as nc;
 
 #[derive(Clone,Copy,PartialEq,Debug)]
@@ -101,6 +103,72 @@ impl KeyConfig {
       volume_up: vec![ControlKey::KeyCode(nc::KEY_RIGHT)],
       custom: CustomActions::default(),
     }
+  }
+}
+
+fn to_keycode(key: &str) -> i32 {
+  if key.chars().count() == 1 {
+    return key.chars().next().unwrap() as i32;
+  } else {
+    // ctrl-?
+    if key.len() == 6 && (key.starts_with("ctrl_") || key.starts_with("ctrl-")) {
+      let next: char = key.chars().skip(5).next().unwrap();
+      if next >= 'a' && next <= 'z' {
+        return 1 + (next as i32 - 'a' as i32);
+      } else if next == '[' {
+        return KEY_CTRL_LEFTBRACKET;
+      } else if next == '\\' {
+        return KEY_CTRL_BACKSLASH;
+      } else if next == ']' {
+        return KEY_CTRL_RIGHTBRACKET;
+      } else if next == '^' {
+        return KEY_CTRL_CARET;
+      } else if next == '_' {
+        return KEY_CTRL_UNDERSCORE;
+      }
+      // Discard control qualifier
+      return next as i32;
+    }
+    // shift-?
+    else if key.starts_with("shift_") {
+      return nc::KEY_UP;
+    }
+    // f?
+    else if key.starts_with("f") {
+      let other = key.chars().skip(1).next();
+      return nc::KEY_UP;
+    }
+    // TODO: use a hashmap for the rest
+    else if key == "escape" {
+      return KEY_ESCAPE;
+    } else if key == "up" {
+      return nc::KEY_UP;
+    } else if key == "down" {
+      return nc::KEY_DOWN;
+    } else if key == "left" {
+      return nc::KEY_LEFT;
+    } else if key == "right" {
+      return nc::KEY_RIGHT;
+    } else if key == "page_up" {
+      return nc::KEY_PPAGE;
+    } else if key == "page_down" {
+      return nc::KEY_NPAGE;
+    } else if key == "home" {
+      return nc::KEY_HOME;
+    } else if key == "end" {
+      return nc::KEY_END;
+    } else if key == "space" {
+      return ' ' as i32;
+    } else if key == "insert" {
+      return nc::KEY_IC;
+    } else if key == "delete" {
+      return nc::KEY_DC;
+    } else if key == "tab" {
+      return KEY_TAB;
+    } else if key == "backspace" {
+      return KEY_BACKSPACE;
+    }
+    return -1;
   }
 }
 
@@ -268,14 +336,17 @@ impl ConfigLoader {
     }
   }
 
-  pub fn load(&self, user_config: Option<PathBuf>) -> Config {
-    let opt_path = if user_config.is_some() { user_config.clone() } else { self.default_config_path.clone() };
+  pub fn load(&self, user_config: Option<PathBuf>, bindings: Option<PathBuf>) -> Config {
+    let opt_config =
+      if user_config.is_some() { user_config.clone() } else { self.default_config_path.clone() };
+    let opt_bindings =
+      if bindings.is_some() { bindings.clone() } else { self.default_bindings_path.clone() };
 
     let mut config = Config::new();
 
-    // Read ncmpcpp configuration
-    if opt_path.is_some() {
-      let path = opt_path.unwrap();
+    // Read ncmpcpp configuration (.ini file)
+    if opt_config.is_some() {
+      let path = opt_config.unwrap();
       let file = path.to_str().unwrap();
       let ini = Ini::load_from_file(file).unwrap();
       for (_, prop) in ini.iter() {
@@ -287,6 +358,48 @@ impl ConfigLoader {
       }
     }
 
+    // Read ncmpcpp bindings
+    if opt_bindings.is_some() {
+      let path = opt_bindings.unwrap();
+      let res = parse_bindings_configuration(&PathBuf::from(path.to_str().unwrap()));
+      if res.is_ok() {
+        for val in res.unwrap() {
+          let key = to_keycode(val.0.as_str());
+          config.keys.custom.insert(key, val.1);
+        }
+      } else {
+        stderr!("[Error] failed to parse {}", path.to_str().unwrap());
+      }
+    }
+
     return config;
   }
+}
+
+#[test]
+fn test_keycode() {
+  assert_eq!(to_keycode("a"), 'a' as i32);
+  assert_eq!(to_keycode("z"), 'z' as i32);
+  assert_eq!(to_keycode("escape"), KEY_ESCAPE);
+  assert_eq!(to_keycode("left"), nc::KEY_LEFT);
+  assert_eq!(to_keycode("right"), nc::KEY_RIGHT);
+  assert_eq!(to_keycode("up"), nc::KEY_UP);
+  assert_eq!(to_keycode("down"), nc::KEY_DOWN);
+  assert_eq!(to_keycode("page_up"), nc::KEY_PPAGE);
+  assert_eq!(to_keycode("page_down"), nc::KEY_NPAGE);
+  assert_eq!(to_keycode("tab"), KEY_TAB);
+  assert_eq!(to_keycode("ctrl_a"), 1);
+  assert_eq!(to_keycode("ctrl_z"), 26);
+  assert_eq!(to_keycode("ctrl_["), KEY_CTRL_LEFTBRACKET);
+  assert_eq!(to_keycode("ctrl_\\"), KEY_CTRL_BACKSLASH);
+  assert_eq!(to_keycode("ctrl_]"), KEY_CTRL_RIGHTBRACKET);
+  assert_eq!(to_keycode("ctrl_^"), KEY_CTRL_CARET);
+  assert_eq!(to_keycode("ctrl__"), KEY_CTRL_UNDERSCORE);
+  assert_eq!(to_keycode("ctrl-a"), 1);
+  assert_eq!(to_keycode("ctrl-z"), 26);
+  assert_eq!(to_keycode("ctrl-["), KEY_CTRL_LEFTBRACKET);
+  assert_eq!(to_keycode("ctrl-\\"), KEY_CTRL_BACKSLASH);
+  assert_eq!(to_keycode("ctrl-]"), KEY_CTRL_RIGHTBRACKET);
+  assert_eq!(to_keycode("ctrl-^"), KEY_CTRL_CARET);
+  assert_eq!(to_keycode("ctrl-_"), KEY_CTRL_UNDERSCORE);
 }

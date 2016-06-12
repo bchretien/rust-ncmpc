@@ -11,7 +11,7 @@ fn main() {
   let config_loader = ConfigLoader::new();
 
   // Load config.
-  let config = config_loader.load(None);
+  let config = config_loader.load(None, None);
 
   // Instantiate view.
   let mut view = View::new(&config.colors);
