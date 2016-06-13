@@ -70,6 +70,7 @@ pub struct View {
   state: nc::WINDOW,
   main_win: nc::WINDOW,
   progressbar: nc::WINDOW,
+  progressbar_look: Vec<String>,
   statusbar: nc::WINDOW,
   status_scroller: Scroller,
   static_rows: i32,
@@ -176,6 +177,17 @@ impl View {
       state: nc::newwin(1, max_x, 1, 0),
       main_win: nc::newwin(max_y - static_rows, max_x, 2, 0),
       progressbar: nc::newwin(1, max_x, max_y - 2, 0),
+      progressbar_look: {
+        let mut iter = config.params.progressbar_look.chars();
+        let mut ar = vec![String::default(); 3];
+        for i in 0..3 {
+          ar[i] = match iter.next() {
+            Some(c) => c.to_string(),
+            None => String::default(),
+          }
+        }
+        ar
+      },
       statusbar: nc::newwin(1, max_x, max_y - 1, 0),
       status_scroller: Scroller::new(max_x as usize),
       static_rows: static_rows,
@@ -384,12 +396,19 @@ impl View {
     let len_start = tip_x;
     let mut color = get_color(COLOR_PAIR_PROGRESSBAR_ELAPSED);
     nc::wattron(self.progressbar, color);
-    nc::mvwhline(self.progressbar, 0, 0, nc::ACS_HLINE(), len_start);
+    // TODO: find why using mvwhline fails with ─
+    if self.progressbar_look[0] == "─" {
+      nc::mvwhline(self.progressbar, 0, 0, nc::ACS_HLINE(), len_start);
+    } else {
+      nc::wmove(self.progressbar, 0, 0);
+      for i in 0..len_start {
+        nc::waddstr(self.progressbar, &self.progressbar_look[0]);
+      }
+    }
 
     if pct > 0. {
       // Tip of the bar
-      let tip = "╼";
-      nc::mvwprintw(self.progressbar, 0, tip_x, &tip);
+      nc::mvwprintw(self.progressbar, 0, tip_x, &self.progressbar_look[1]);
       nc::wattroff(self.progressbar, color);
     }
 
@@ -397,11 +416,18 @@ impl View {
     let len_end = max_x - tip_x;
     color = get_color(COLOR_PAIR_PROGRESSBAR);
     nc::wattron(self.progressbar, color);
-    nc::mvwhline(self.progressbar,
-                 0,
-                 if tip_x > 0 { tip_x + 1 } else { 0 },
-                 nc::ACS_HLINE(),
-                 len_end);
+    if self.progressbar_look[2] == "─" {
+      nc::mvwhline(self.progressbar,
+                   0,
+                   if tip_x > 0 { tip_x + 1 } else { 0 },
+                   nc::ACS_HLINE(),
+                   len_end);
+    } else if self.progressbar_look[2] != "" {
+      nc::wmove(self.progressbar, 0, if tip_x > 0 { tip_x + 1 } else { 0 });
+      for i in 0..len_end {
+        nc::waddstr(self.progressbar, &self.progressbar_look[2]);
+      }
+    }
     nc::wattroff(self.progressbar, color);
 
     nc::wrefresh(self.progressbar);

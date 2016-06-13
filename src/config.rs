@@ -69,6 +69,7 @@ pub struct ParamConfig {
   pub header_text_scrolling: bool,
   pub mpd_host: String,
   pub mpd_port: u16,
+  pub progressbar_look: String,
   pub song_columns_list_format: Vec<Column>,
   pub volume_change_step: i8,
 }
@@ -233,6 +234,7 @@ impl ParamConfig {
       header_text_scrolling: true,
       mpd_host: String::from("localhost"),
       mpd_port: 6600,
+      progressbar_look: String::from("=>"),
       song_columns_list_format: default_song_columns_list_format(),
       volume_change_step: 2,
     }
@@ -326,6 +328,8 @@ fn assign(key: &str, val: &str, config: &mut Config) -> bool {
     "header_text_scrolling" => config.params.header_text_scrolling = parse_bool(val),
     "mpd_host" => config.params.mpd_host = String::from(val),
     "mpd_port" => config.params.mpd_port = parse_int(val),
+    // TODO: add check (size 2 or 3)
+    "progressbar_look" => config.params.progressbar_look = String::from(val),
     "volume_change_step" => config.params.volume_change_step = parse_int(val),
     // Formats
     "song_columns_list_format" => {
