@@ -14,7 +14,7 @@ fn main() {
   let config = config_loader.load(None, None);
 
   // Instantiate view.
-  let mut view = View::new(&config.colors);
+  let mut view = View::new(&config);
 
   // Instantiate model.
   let mut model = Arc::new(Mutex::new(Model::new(&mut view, &config)));

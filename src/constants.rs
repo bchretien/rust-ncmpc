@@ -1,3 +1,6 @@
+/// Maximum number of columns.
+pub static MAX_NUM_COLUMNS: usize = 10;
+
 // Individual color handles.
 pub static COLOR_DEFAULT: i16 = -1;
 pub static COLOR_BACKGROUND: i16 = 101;
@@ -18,6 +21,9 @@ pub static COLOR_PAIR_DEBUG: i16 = 8;
 pub static COLOR_PAIR_STATE_LINE: i16 = 9;
 pub static COLOR_PAIR_STATE_FLAGS: i16 = 10;
 pub static COLOR_PAIR_TRACK: i16 = 11;
+
+// TODO: find why MAX_NUM_COLUMNS cannot be used here
+pub static COLOR_PAIR_COLUMNS: [i16; 10] = [20, 21, 22, 23, 24, 25, 26, 27, 28, 29];
 
 // ctrl-?
 pub static KEY_CTRL_A: i32 = 1;

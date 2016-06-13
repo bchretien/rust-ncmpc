@@ -8,7 +8,7 @@ use time::{Duration, Timespec, get_time};
 
 use constants::*;
 use format::*;
-use config::ColorConfig;
+use config::{ColorConfig, Config, ParamConfig};
 use util::{Scroller, TimedValue};
 
 pub struct PlaylistData {
@@ -71,7 +71,7 @@ pub struct View {
   static_rows: i32,
 }
 
-fn init_colors(colors: &ColorConfig) {
+fn init_colors(colors: &ColorConfig, params: &ParamConfig) {
   nc::start_color();
 
   // Background transparency
@@ -92,9 +92,15 @@ fn init_colors(colors: &ColorConfig) {
   nc::init_pair(COLOR_PAIR_STATE_LINE, colors.state_line, color_bg);
   nc::init_pair(COLOR_PAIR_STATE_FLAGS, colors.state_flags, color_bg);
   nc::init_pair(COLOR_PAIR_TRACK, nc::COLOR_BLACK, color_bg);
+
+  let ref columns_fmt = params.song_columns_list_format;
+  assert!(columns_fmt.len() <= MAX_NUM_COLUMNS);
+  for (i, col) in columns_fmt.iter().enumerate() {
+    nc::init_pair(COLOR_PAIR_COLUMNS[i as usize], col.color, color_bg);
+  }
 }
 
-fn init_ncurses(colors: &ColorConfig) {
+fn init_ncurses(config: &Config) {
   // Set locale for unicode support.
   let locale_conf = nc::LcCategory::all;
   nc::setlocale(locale_conf, "en_US.UTF-8");
@@ -103,7 +109,7 @@ fn init_ncurses(colors: &ColorConfig) {
   nc::initscr();
 
   // Initialize colors.
-  init_colors(colors);
+  init_colors(&config.colors, &config.params);
 
   // Make cursor invisible.
   nc::curs_set(nc::CURSOR_VISIBILITY::CURSOR_INVISIBLE);
@@ -152,8 +158,8 @@ fn destroy_win(win: nc::WINDOW) {
 }
 
 impl View {
-  pub fn new(colors: &ColorConfig) -> View {
-    init_ncurses(colors);
+  pub fn new(config: &Config) -> View {
+    init_ncurses(config);
 
     let mut max_x = 0;
     let mut max_y = 0;
@@ -262,9 +268,6 @@ impl View {
     let pl_start_row = 2;
     let pl_max_row = max_y;
 
-    color = get_color(COLOR_PAIR_ARTIST);
-    nc::wattron(self.main_win, color);
-
     let highlight_ts: Timespec = match *selected_song {
       Some(s) => s.timestamp + Duration::seconds(5),
       None => Timespec::new(0, 0),
@@ -297,6 +300,10 @@ impl View {
         nc::wmove(self.main_win, pl_start_row + row, cmp::max(x - 1, 0));
         nc::wclrtoeol(self.main_win);
 
+        // Set column color
+        color = get_color(COLOR_PAIR_COLUMNS[i]);
+        nc::wattron(self.main_win, color);
+
         // Highlight current song
         let is_current = current_song.is_some() && current_song.unwrap() == idx as u32;
         if is_current {
@@ -325,17 +332,20 @@ impl View {
           nc::wattroff(self.main_win, bold());
         }
 
+        // Disable column color
+        nc::wattroff(self.main_win, color);
+
         // TODO: handle variable width
         x += 1 + desc[i].width as i32;
       }
       row += 1;
     }
+
     // Clear the rest of the lines
     for y in height..max_height {
       nc::wmove(self.main_win, pl_start_row + y, 0);
       nc::wclrtoeol(self.main_win);
     }
-    nc::wattroff(self.main_win, color);
 
     nc::wrefresh(self.main_win);
   }
