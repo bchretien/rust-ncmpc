@@ -242,6 +242,26 @@ impl View {
     let mut max_y = 0;
     nc::getmaxyx(self.main_win, &mut max_y, &mut max_x);
 
+    // Evaluate absolute width of each column
+    // First pass: look for fixed-width columns
+    let mut widths = vec![0; desc.len()];
+    let mut free_space = max_x;
+    let mut relative_width = 0;
+    for (i, c) in desc.iter().enumerate() {
+      if c.is_fixed {
+        widths[i] = c.width;
+        free_space -= c.width;
+      } else {
+        relative_width += c.width;
+      }
+    }
+    // Second pass: use relative width for remaining space
+    for (i, c) in desc.iter().enumerate() {
+      if !c.is_fixed {
+        widths[i] = c.width * free_space / relative_width;
+      }
+    }
+
     let mut color = get_color(COLOR_PAIR_DEFAULT);
 
     nc::wattron(self.main_win, bold());
@@ -249,12 +269,11 @@ impl View {
 
     // Header
     let mut x = 0;
-    for col in desc {
+    for (i, col) in desc.iter().enumerate() {
       nc::wmove(self.main_win, 0, x - 1);
       nc::wclrtoeol(self.main_win);
       nc::mvwprintw(self.main_win, 0, x, &format!("{}", col.column_type));
-      // TODO: handle variable width
-      x += 1 + col.width as i32;
+      x += widths[i] as i32;
     }
 
     // Separator
@@ -336,7 +355,7 @@ impl View {
         nc::wattroff(self.main_win, color);
 
         // TODO: handle variable width
-        x += 1 + desc[i].width as i32;
+        x += widths[i] as i32;
       }
       row += 1;
     }
