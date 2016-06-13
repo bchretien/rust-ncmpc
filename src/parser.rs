@@ -6,6 +6,8 @@ use std::io;
 use std::io::Read;
 use nom::*;
 
+use format::Column;
+
 #[derive(Debug)]
 pub enum ParserError {
   Io(io::Error),
@@ -103,6 +105,7 @@ named!(key_actions<&str,(&str,Vec<&str>)>,
 //   do_something
 named!(key_actions_aggregator<&str, Vec<(&str,Vec<&str>)> >, many0!(key_actions));
 
+/// Load bindings configuration from a given path.
 pub fn parse_bindings_configuration(path: &PathBuf)
                                     -> Result<Vec<(String, Vec<String>)>, ParserError> {
   let mut f = try!(File::open(path).map_err(ParserError::Io));
@@ -126,6 +129,39 @@ pub fn parse_bindings_configuration(path: &PathBuf)
     _ => Err(ParserError::Parse(0)),
   }
 }
+
+fn to_width(s: &str) -> Result<(i32, bool), ParserError> {
+  let is_fixed = if s.chars().last().unwrap_or(' ') == 'f' { true } else { false };
+  let width = if is_fixed {
+    // TODO: return error if parsing fails
+    s[..s.len() - 1].parse::<i32>().unwrap_or(1)
+  } else {
+    s.parse::<i32>().unwrap_or(1)
+  };
+  return Ok((width, is_fixed));
+}
+
+// Example:
+// (5f)[red]{b}
+named!(column<&str,(i32, bool, &str, &str)>,
+  chain!(
+    opt!(space) ~
+    tag_s!("(") ~
+    width: map_res!(take_until_s!(")"), to_width) ~
+    tag_s!(")") ~
+    tag_s!("[") ~
+    color: take_until_s!("]") ~
+    tag_s!("]") ~
+    tag_s!("{") ~
+    tag: take_until_s!("}") ~
+    tag_s!("}"),
+    || (width.0, width.1, color, tag)
+  )
+);
+
+// Example:
+// (20)[]{a} (6f)[green]{NE} (50)[white]{t|f:Title}
+named!(columns<&str, Vec<(i32, bool, &str, &str)> >, many1!(column));
 
 #[test]
 fn parse_def_key() {
@@ -233,4 +269,35 @@ def_key \"j\"
   let actions_res = key_actions_aggregator(file);
   assert_eq!(actions_res, IResult::Done(file_remaining, vec![("k", vec!["scroll_up", "scroll_down"]),
                                                              ("j", vec!["scroll_down"])]));
+}
+
+#[test]
+fn parse_column() {
+  let file = "(20)[yellow]{a}";
+  let file_remaining = "";
+
+  let column_res = column(file);
+  assert_eq!(column_res, IResult::Done(file_remaining, (20, false, "yellow", "a")));
+}
+
+#[test]
+fn parse_fixed_column() {
+  let file = "(5f)[red]{b}";
+  let file_remaining = "";
+
+  let column_res = column(file);
+  assert_eq!(column_res, IResult::Done(file_remaining, (5, true, "red", "b")));
+}
+
+#[test]
+fn parse_columns() {
+  let file = "(20)[]{a} (6f)[green]{NE} (50)[white]{t|f:Title} (20)[cyan]{b} (7f)[magenta]{l}";
+  let file_remaining = "";
+
+  let columns_res = columns(file);
+  assert_eq!(columns_res, IResult::Done(file_remaining, vec![(20, false, "", "a"),
+                                                             (6, true, "green", "NE"),
+                                                             (50, false, "white", "t|f:Title"),
+                                                             (20, false, "cyan", "b"),
+                                                             (7, true, "magenta", "l")]));
 }
