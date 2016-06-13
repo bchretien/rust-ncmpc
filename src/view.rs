@@ -54,6 +54,10 @@ pub enum MouseEvent {
   SetProgress(f32),
   /// Set the selected song (TUI).
   SetSelectedSong(u32),
+  /// Scroll down.
+  ScrollDown,
+  /// Scroll up.
+  ScrollUp,
   /// Wake up click (re-highlight selected song).
   WakeUp,
   /// Do nothing.
@@ -126,8 +130,8 @@ fn init_ncurses(config: &Config) {
   nc::nodelay(nc::stdscr, true);
 
   // Enable mouse events.
-  nc::mousemask(nc::BUTTON1_CLICKED as u64, None);
   nc::mouseinterval(0);
+  nc::mousemask((nc::BUTTON1_CLICKED | nc::BUTTON4_PRESSED | nc::BUTTON5_PRESSED) as u64, None);
 
   nc::clear();
 }
@@ -511,7 +515,18 @@ impl View {
       nc::getbegyx(self.main_win, &mut win_y, &mut win_x);
       nc::getmaxyx(self.main_win, &mut max_y, &mut max_x);
       if event.y >= win_y + 2 && event.y < win_y + max_y {
-        return MouseEvent::SetSelectedSong((event.y - win_y) as u32 - 2);
+        // Click
+        if (event.bstate & (nc::BUTTON1_CLICKED as nc::mmask_t)) != 0 {
+          return MouseEvent::SetSelectedSong((event.y - win_y) as u32 - 2);
+        }
+        // Mouse wheel up
+        else if (event.bstate & (nc::BUTTON4_PRESSED as nc::mmask_t)) != 0 {
+          return MouseEvent::ScrollUp;
+        }
+        // Mouse wheel down
+        else if (event.bstate & (nc::BUTTON5_PRESSED as nc::mmask_t)) != 0 {
+          return MouseEvent::ScrollDown;
+        }
       }
 
       // Check progressbar event

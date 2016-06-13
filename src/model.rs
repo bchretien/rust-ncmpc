@@ -331,6 +331,8 @@ impl<'m> Model<'m> {
           self.selected_song.as_mut().unwrap().bump();
         }
       }
+      MouseEvent::ScrollDown => self.scroll_down(),
+      MouseEvent::ScrollUp => self.scroll_up(),
       MouseEvent::SetProgress(pct) => self.set_song_progress(pct),
       MouseEvent::SetSelectedSong(idx) => self.selected_song = Some(TimedValue::<u32>::new(idx)),
     };
