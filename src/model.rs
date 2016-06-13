@@ -43,30 +43,30 @@ fn start_client(config: &Config) -> Result<mpd::Client, mpd::error::Error> {
   mpd::Client::connect(config.socket_addr())
 }
 
-fn get_song_info(song: &Song, tag: &ColumnType) -> String {
+fn get_song_info(song: &Song, tag: &SongProperty) -> String {
   match *tag {
-    ColumnType::Title => {
+    SongProperty::Title => {
       return match song.title.as_ref() {
         Some(t) => t.clone(),
         None => String::from("unknown"),
       }
     }
-    ColumnType::Length => {
+    SongProperty::Length => {
       let (min, sec) = match song.duration {
         Some(d) => (d.num_minutes(), d.num_seconds() % 60),
         None => (0, 0),
       };
       return format!("{min}:{sec:02}", min = min, sec = sec);
     }
-    ColumnType::Track => {
+    SongProperty::Track => {
       let track = match song.tags.get("Track") {
         Some(t) => t.parse::<u32>().unwrap_or(0),
         None => 0,
       };
       return format!("{:>02}", track);
     }
-    ColumnType::TrackFull => {
-      let track = get_song_info(song, &ColumnType::Track);
+    SongProperty::TrackFull => {
+      let track = get_song_info(song, &SongProperty::Track);
       let total = "12";
       return format!("{}/{:>02}", track, total);
     }
@@ -467,8 +467,8 @@ impl<'m> Model<'m> {
         }
 
         let song = data.unwrap();
-        let artist = get_song_info(&song, &ColumnType::Artist);
-        let album = get_song_info(&song, &ColumnType::Album);
+        let artist = get_song_info(&song, &SongProperty::Artist);
+        let album = get_song_info(&song, &SongProperty::Album);
         let title = song.title.unwrap_or("Unknown title".to_string());
         msg = format!("{} - {} - {}", artist, title, album);
 

@@ -52,7 +52,7 @@ fn load_default_config() {
 fn load_custom_config() {
   before_each();
 
-  use ncmpc::{Column, ColumnType, ConfigLoader, ParamConfig};
+  use ncmpc::{Column, ConfigLoader, ParamConfig, SongProperty};
   let config_loader = ConfigLoader::new();
   let config_path = get_config_path("custom_config");
   let config = config_loader.load(Some(config_path), None);
@@ -65,13 +65,13 @@ fn load_custom_config() {
   params.header_text_scrolling = false;
   params.mpd_port = 7700;
   params.song_columns_list_format = vec![Column {
-                                           column_type: ColumnType::Artist,
+                                           column_type: SongProperty::Artist,
                                            width: 10,
                                            is_fixed: false,
                                            color: -1,
                                          },
                                          Column {
-                                           column_type: ColumnType::TrackFull,
+                                           column_type: SongProperty::TrackFull,
                                            width: 6,
                                            is_fixed: true,
                                            color: nc::COLOR_GREEN,
