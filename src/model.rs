@@ -9,6 +9,7 @@ use time::{Duration, get_time};
 
 use view::*;
 use config::*;
+use format::*;
 use util::TimedValue;
 use mpd::status::{State, Status};
 use mpd::song::Song;
@@ -42,31 +43,41 @@ fn start_client(config: &Config) -> Result<mpd::Client, mpd::error::Error> {
   mpd::Client::connect(config.socket_addr())
 }
 
-fn get_song_info(song: &Song, tag: &String) -> String {
-  if tag == "Title" {
-    return match song.title.as_ref() {
-      Some(t) => t.clone(),
-      None => String::from("unknown"),
-    };
-  } else if tag == "Time" || tag == "Duration" {
-    let (min, sec) = match song.duration {
-      Some(d) => (d.num_minutes(), d.num_seconds() % 60),
-      None => (0, 0),
-    };
-    return format!("{min}:{sec:02}", min = min, sec = sec);
-  } else if tag == "Track" {
-    let track = match song.tags.get(tag) {
-      Some(t) => t.parse::<u32>().unwrap_or(0),
-      None => 0,
-    };
-    return format!("{:>02}", track);
-  } else
-  // Use tags as is
-  {
-    return match song.tags.get(tag) {
-      Some(t) => t.clone(),
-      None => String::from("unknown"),
-    };
+fn get_song_info(song: &Song, tag: &ColumnType) -> String {
+  match *tag {
+    ColumnType::Title => {
+      return match song.title.as_ref() {
+        Some(t) => t.clone(),
+        None => String::from("unknown"),
+      }
+    }
+    ColumnType::Length => {
+      let (min, sec) = match song.duration {
+        Some(d) => (d.num_minutes(), d.num_seconds() % 60),
+        None => (0, 0),
+      };
+      return format!("{min}:{sec:02}", min = min, sec = sec);
+    }
+    ColumnType::Track => {
+      let track = match song.tags.get("Track") {
+        Some(t) => t.parse::<u32>().unwrap_or(0),
+        None => 0,
+      };
+      return format!("{:>02}", track);
+    }
+    ColumnType::TrackFull => {
+      let track = get_song_info(song, &ColumnType::Track);
+      let total = "12";
+      return format!("{}/{:>02}", track, total);
+    }
+    _ => {
+      // Use tags as is
+      let tag_s = format!("{}", tag);
+      return match song.tags.get(tag_s.as_str()) {
+        Some(t) => t.clone(),
+        None => String::from("unknown"),
+      };
+    }
   }
 }
 
@@ -381,20 +392,18 @@ impl<'m> Model<'m> {
     // Get playlist
     let playlist = self.client.queue().unwrap();
 
-    let columns =
-      [("Artist".to_string(), 20), ("Track".to_string(), 2), ("Title".to_string(), 40), ("Album".to_string(), 40), ("Time".to_string(), 5)];
+    let ref columns = self.config.params.song_columns_list_format;
     let n_cols = columns.len();
     let n_entries = playlist.len();
     let mut grid_raw = vec![String::from("a"); n_cols * n_entries];
     let mut grid_base: Vec<_> = grid_raw.as_mut_slice().chunks_mut(n_cols).collect();
     let mut grid: &mut [&mut [String]] = grid_base.as_mut_slice();
 
+    // Fill data grid
     for i in 0..n_entries {
-      grid[i][0] = get_song_info(&playlist[i], &"Artist".to_string());
-      grid[i][1] = get_song_info(&playlist[i], &"Track".to_string());
-      grid[i][2] = get_song_info(&playlist[i], &"Title".to_string());
-      grid[i][3] = get_song_info(&playlist[i], &"Album".to_string());
-      grid[i][4] = get_song_info(&playlist[i], &"Time".to_string());
+      for j in 0..n_cols {
+        grid[i][j] = get_song_info(&playlist[i], &columns.get(j).unwrap().column_type);
+      }
     }
 
     // Get index of current song
@@ -404,7 +413,8 @@ impl<'m> Model<'m> {
       cur_song = Some(song.unwrap().pos);
     }
 
-    self.view.display_main_playlist(&columns, grid, &cur_song, &self.selected_song);
+    self.view
+      .display_main_playlist(&columns, grid, &cur_song, &self.selected_song);
   }
 
   pub fn update_progressbar(&mut self) {
@@ -455,8 +465,8 @@ impl<'m> Model<'m> {
         }
 
         let song = data.unwrap();
-        let artist = get_song_info(&song, &"Artist".to_string());
-        let album = get_song_info(&song, &"Album".to_string());
+        let artist = get_song_info(&song, &ColumnType::Artist);
+        let album = get_song_info(&song, &ColumnType::Album);
         let title = song.title.unwrap_or("Unknown title".to_string());
         msg = format!("{} - {} - {}", artist, title, album);
 

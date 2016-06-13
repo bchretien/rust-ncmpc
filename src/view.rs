@@ -7,6 +7,7 @@ use std::fmt::{self, Display, Formatter};
 use time::{Duration, Timespec, get_time};
 
 use constants::*;
+use format::*;
 use config::ColorConfig;
 use util::{Scroller, TimedValue};
 
@@ -228,8 +229,8 @@ impl View {
   }
 
   // TODO: data should not be mutable
-  pub fn display_main_playlist(&mut self, desc: &[(String, u32)], data: &mut [&mut [String]], current_song: &Option<u32>,
-    selected_song: &Option<TimedValue<u32>>) {
+  pub fn display_main_playlist(&mut self, desc: &Vec<Column>, data: &mut [&mut [String]],
+    current_song: &Option<u32>, selected_song: &Option<TimedValue<u32>>) {
     // Get the screen bounds.
     let mut max_x = 0;
     let mut max_y = 0;
@@ -245,8 +246,9 @@ impl View {
     for col in desc {
       nc::wmove(self.main_win, 0, x - 1);
       nc::wclrtoeol(self.main_win);
-      nc::mvwprintw(self.main_win, 0, x, &format!("{}", col.0));
-      x += 1 + col.1 as i32;
+      nc::mvwprintw(self.main_win, 0, x, &format!("{}", col.column_type));
+      // TODO: handle variable width
+      x += 1 + col.width as i32;
     }
 
     // Separator
@@ -323,7 +325,8 @@ impl View {
           nc::wattroff(self.main_win, bold());
         }
 
-        x += 1 + desc[i].1 as i32;
+        // TODO: handle variable width
+        x += 1 + desc[i].width as i32;
       }
       row += 1;
     }
