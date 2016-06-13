@@ -12,6 +12,7 @@ use std::collections::HashMap;
 use ini::Ini;
 use constants::*;
 use parser::parse_bindings_configuration;
+use format::{Column, generate_columns};
 use ncurses as nc;
 
 #[derive(Clone,Copy,PartialEq,Debug)]
@@ -68,6 +69,7 @@ pub struct ParamConfig {
   pub header_text_scrolling: bool,
   pub mpd_host: String,
   pub mpd_port: u16,
+  pub song_columns_list_format: Vec<Column>,
   pub volume_change_step: i8,
 }
 
@@ -215,6 +217,12 @@ impl ColorConfig {
   }
 }
 
+fn default_song_columns_list_format() -> Vec<Column> {
+  return generate_columns("(20)[]{a} (6f)[green]{NE} (50)[white]{t|f:Title} (20)[cyan]{b} \
+                           (7f)[magenta]{l}")
+    .unwrap();
+}
+
 impl ParamConfig {
   pub fn new() -> ParamConfig {
     ParamConfig {
@@ -225,6 +233,7 @@ impl ParamConfig {
       header_text_scrolling: true,
       mpd_host: String::from("localhost"),
       mpd_port: 6600,
+      song_columns_list_format: default_song_columns_list_format(),
       volume_change_step: 2,
     }
   }
@@ -318,6 +327,11 @@ fn assign(key: &str, val: &str, config: &mut Config) -> bool {
     "mpd_host" => config.params.mpd_host = String::from(val),
     "mpd_port" => config.params.mpd_port = parse_int(val),
     "volume_change_step" => config.params.volume_change_step = parse_int(val),
+    // Formats
+    "song_columns_list_format" => {
+      config.params.song_columns_list_format = generate_columns(val)
+        .unwrap_or(Vec::<Column>::default())
+    }
     _ => return false,
   }
   return true;

@@ -10,15 +10,17 @@ extern crate mpd;
 extern crate time;
 extern crate ini;
 
-pub mod constants;
 pub mod config;
+pub mod constants;
 pub mod controller;
+pub mod format;
 pub mod model;
 pub mod parser;
 pub mod view;
 
 pub use config::{ConfigLoader, ParamConfig};
 pub use controller::{ControlQuery, Controller};
+pub use format::{Column, ColumnType};
 pub use model::Model;
 pub use view::View;
 pub use parser::parse_bindings_configuration;

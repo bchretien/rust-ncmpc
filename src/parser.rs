@@ -161,7 +161,7 @@ named!(column<&str,(i32, bool, &str, &str)>,
 
 // Example:
 // (20)[]{a} (6f)[green]{NE} (50)[white]{t|f:Title}
-named!(columns<&str, Vec<(i32, bool, &str, &str)> >, many1!(column));
+named!(pub get_columns_format<&str, Vec<(i32, bool, &str, &str)> >, many1!(column));
 
 #[test]
 fn parse_def_key() {
@@ -294,7 +294,7 @@ fn parse_columns() {
   let file = "(20)[]{a} (6f)[green]{NE} (50)[white]{t|f:Title} (20)[cyan]{b} (7f)[magenta]{l}";
   let file_remaining = "";
 
-  let columns_res = columns(file);
+  let columns_res = get_columns_format(file);
   assert_eq!(columns_res, IResult::Done(file_remaining, vec![(20, false, "", "a"),
                                                              (6, true, "green", "NE"),
                                                              (50, false, "white", "t|f:Title"),
