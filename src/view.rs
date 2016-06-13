@@ -516,7 +516,7 @@ impl View {
       nc::getmaxyx(self.main_win, &mut max_y, &mut max_x);
       if event.y >= win_y + 2 && event.y < win_y + max_y {
         // Click
-        if (event.bstate & (nc::BUTTON1_CLICKED as nc::mmask_t)) != 0 {
+        if (event.bstate & (nc::BUTTON1_PRESSED as nc::mmask_t)) != 0 {
           return MouseEvent::SetSelectedSong((event.y - win_y) as u32 - 2);
         }
         // Mouse wheel up
