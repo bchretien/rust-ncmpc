@@ -332,7 +332,7 @@ impl View {
       // For each column
       x = 0;
       for i in 0..desc.len() as usize {
-        nc::wmove(self.main_win, pl_start_row + row, cmp::max(x - 1, 0));
+        nc::wmove(self.main_win, pl_start_row + row, x);
         nc::wclrtoeol(self.main_win);
 
         // Set column color
@@ -357,8 +357,22 @@ impl View {
                       x,
                       &format!("{}", data[idx as usize][i as usize]));
 
-        // Stop highlighting selected song
+        // If it's not the last column
+        if i < desc.len() - 1 {
+          // Add whitespace before the next column
+          nc::mvwaddch(self.main_win, pl_start_row + row, x + widths[i] - 1, ' ' as nc::chtype);
+        }
+
         if is_selected {
+          // Fill with whitespace for ncmpcpp-style highlighting
+          let len = data[idx as usize][i as usize].chars().count() as i32;
+          nc::mvwhline(self.main_win,
+                       pl_start_row + row,
+                       x + len,
+                       ' ' as nc::chtype,
+                       widths[i] - len);
+
+          // Stop highlighting
           nc::wattroff(self.main_win, reverse());
         }
 
