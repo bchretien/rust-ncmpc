@@ -47,17 +47,17 @@ pub struct KeyConfig {
 
 #[derive(Clone,Copy,PartialEq,Debug)]
 pub struct ColorConfig {
-  pub color1: i16,
-  pub color2: i16,
-  pub header_window: i16,
-  pub main_window: i16,
-  pub main_window_highlight: i16,
-  pub progressbar: i16,
-  pub progressbar_elapsed: i16,
-  pub state_flags: i16,
-  pub state_line: i16,
-  pub statusbar: i16,
-  pub volume: i16,
+  pub color1: Color,
+  pub color2: Color,
+  pub header_window: Color,
+  pub main_window: Color,
+  pub main_window_highlight: Color,
+  pub progressbar: Color,
+  pub progressbar_elapsed: Color,
+  pub state_flags: Color,
+  pub state_line: Color,
+  pub statusbar: Color,
+  pub volume: Color,
 }
 
 #[derive(Clone,PartialEq,Debug)]
@@ -277,7 +277,7 @@ impl Config {
   }
 }
 
-fn parse_color(s: &str) -> i16 {
+fn parse_color(s: &str) -> Color {
   match s {
     "black" => nc::COLOR_BLACK,
     "red" => nc::COLOR_RED,

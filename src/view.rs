@@ -138,7 +138,7 @@ fn init_ncurses(config: &Config) {
 }
 
 // TODO: check 32/64 bit attr_t
-fn get_color(c: i16) -> i32 {
+fn get_color(c: Color) -> i32 {
   return nc::COLOR_PAIR(c) as i32;
 }
 

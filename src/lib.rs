@@ -20,6 +20,7 @@ pub mod view;
 
 pub use config::{ConfigLoader, ParamConfig};
 pub use controller::{ControlQuery, Controller};
+pub use constants::Color;
 pub use format::{Column, SongProperty};
 pub use model::Model;
 pub use view::View;
