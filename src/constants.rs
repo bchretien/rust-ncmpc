@@ -2,39 +2,47 @@
 pub type Color = i16;
 
 /// Maximum number of columns.
-pub static MAX_NUM_COLUMNS: usize = 10;
+pub const MAX_NUM_COLUMNS: usize = 10;
 
 // Individual color handles.
-pub static COLOR_DEFAULT: Color = -1;
-pub static COLOR_BACKGROUND: Color = 101;
-pub static COLOR_FOREGROUND: Color = 102;
-pub static COLOR_BAR_START: Color = 103;
-pub static COLOR_BAR_END: Color = 104;
+pub const COLOR_DEFAULT: Color = -1;
+pub const COLOR_BACKGROUND: Color = 101;
+pub const COLOR_FOREGROUND: Color = 102;
+pub const COLOR_BAR_START: Color = 103;
+pub const COLOR_BAR_END: Color = 104;
 
-// Color pairs; foreground && background.
+// Color pairs
+pub const COLOR_PAIR_DEFAULT: Color = 0;
+pub const COLOR_PAIR_BLACK: Color = 1;
+pub const COLOR_PAIR_RED: Color = 2;
+pub const COLOR_PAIR_GREEN: Color = 3;
+pub const COLOR_PAIR_YELLOW: Color = 4;
+pub const COLOR_PAIR_BLUE: Color = 5;
+pub const COLOR_PAIR_MAGENTA: Color = 6;
+pub const COLOR_PAIR_CYAN: Color = 7;
+pub const COLOR_PAIR_WHITE: Color = 8;
+
 // TODO: automate this once const fn is available
-pub static COLOR_PAIR_DEFAULT: Color = 1;
-pub static COLOR_PAIR_HEADER: Color = 2;
-pub static COLOR_PAIR_ARTIST: Color = 3;
-pub static COLOR_PAIR_PROGRESSBAR: Color = 4;
-pub static COLOR_PAIR_PROGRESSBAR_ELAPSED: Color = 5;
-pub static COLOR_PAIR_STATUSBAR: Color = 6;
-pub static COLOR_PAIR_VOLUME: Color = 7;
-pub static COLOR_PAIR_DEBUG: Color = 8;
-pub static COLOR_PAIR_STATE_LINE: Color = 9;
-pub static COLOR_PAIR_STATE_FLAGS: Color = 10;
-pub static COLOR_PAIR_TRACK: Color = 11;
+pub const COLOR_PAIR_HEADER: Color = 10;
+pub const COLOR_PAIR_PROGRESSBAR: Color = 11;
+pub const COLOR_PAIR_PROGRESSBAR_ELAPSED: Color = 12;
+pub const COLOR_PAIR_STATUSBAR: Color = 13;
+pub const COLOR_PAIR_VOLUME: Color = 14;
+pub const COLOR_PAIR_DEBUG: Color = 15;
+pub const COLOR_PAIR_STATE_LINE: Color = 16;
+pub const COLOR_PAIR_STATE_FLAGS: Color = 17;
+pub const COLOR_PAIR_TRACK: Color = 18;
 
 // TODO: find why MAX_NUM_COLUMNS cannot be used here
-pub static COLOR_PAIR_COLUMNS: [Color; 10] = [20, 21, 22, 23, 24, 25, 26, 27, 28, 29];
+pub const COLOR_PAIR_COLUMNS: [Color; MAX_NUM_COLUMNS] = [30, 31, 32, 33, 34, 35, 36, 37, 38, 39];
 
 // ctrl-?
-pub static KEY_CTRL_A: i32 = 1;
-pub static KEY_CTRL_LEFTBRACKET: i32 = 27;
-pub static KEY_CTRL_BACKSLASH: i32 = 28;
-pub static KEY_CTRL_RIGHTBRACKET: i32 = 29;
-pub static KEY_CTRL_CARET: i32 = 30;
-pub static KEY_CTRL_UNDERSCORE: i32 = 31;
-pub static KEY_ESCAPE: i32 = 27;
-pub static KEY_TAB: i32 = 9;
-pub static KEY_BACKSPACE: i32 = 127;
+pub const KEY_CTRL_A: i32 = 1;
+pub const KEY_CTRL_LEFTBRACKET: i32 = 27;
+pub const KEY_CTRL_BACKSLASH: i32 = 28;
+pub const KEY_CTRL_RIGHTBRACKET: i32 = 29;
+pub const KEY_CTRL_CARET: i32 = 30;
+pub const KEY_CTRL_UNDERSCORE: i32 = 31;
+pub const KEY_ESCAPE: i32 = 27;
+pub const KEY_TAB: i32 = 9;
+pub const KEY_BACKSPACE: i32 = 127;
