@@ -7,17 +7,12 @@ use std::path::PathBuf;
 use std::env;
 use std::net::SocketAddr;
 
-fn init_logger() {
-  env_logger::init();
-}
-
 fn reset_env_vars() {
   env::remove_var("MPD_HOST");
   env::remove_var("MPD_PORT");
 }
 
 fn before_each() {
-  init_logger();
   reset_env_vars();
 }
 
