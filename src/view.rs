@@ -88,7 +88,15 @@ fn init_colors(colors: &ColorConfig, params: &ParamConfig) {
   }
 
   nc::init_pair(COLOR_PAIR_DEFAULT, color_fg, color_bg);
-  nc::init_pair(COLOR_PAIR_ARTIST, nc::COLOR_YELLOW, color_bg);
+  nc::init_pair(COLOR_PAIR_BLACK, nc::COLOR_BLACK, color_bg);
+  nc::init_pair(COLOR_PAIR_RED, nc::COLOR_RED, color_bg);
+  nc::init_pair(COLOR_PAIR_GREEN, nc::COLOR_GREEN, color_bg);
+  nc::init_pair(COLOR_PAIR_YELLOW, nc::COLOR_YELLOW, color_bg);
+  nc::init_pair(COLOR_PAIR_BLUE, nc::COLOR_BLUE, color_bg);
+  nc::init_pair(COLOR_PAIR_MAGENTA, nc::COLOR_MAGENTA, color_bg);
+  nc::init_pair(COLOR_PAIR_CYAN, nc::COLOR_CYAN, color_bg);
+  nc::init_pair(COLOR_PAIR_WHITE, nc::COLOR_WHITE, color_bg);
+
   nc::init_pair(COLOR_PAIR_HEADER, colors.header_window, color_bg);
   nc::init_pair(COLOR_PAIR_PROGRESSBAR, colors.progressbar, color_bg);
   nc::init_pair(COLOR_PAIR_PROGRESSBAR_ELAPSED, colors.progressbar_elapsed, color_bg);
