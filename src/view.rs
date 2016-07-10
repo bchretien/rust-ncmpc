@@ -200,7 +200,7 @@ impl View {
     nc::keypad(view.main_win, true);
 
     // Set colors
-    nc::wbkgd(view.header, nc::COLOR_PAIR(COLOR_PAIR_ARTIST) as nc::chtype);
+    nc::wbkgd(view.header, nc::COLOR_PAIR(COLOR_PAIR_DEFAULT) as nc::chtype);
     nc::wbkgd(view.state, nc::COLOR_PAIR(COLOR_PAIR_DEFAULT) as nc::chtype);
 
     return view;
