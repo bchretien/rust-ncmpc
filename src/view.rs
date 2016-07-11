@@ -8,6 +8,7 @@ use time::{Duration, Timespec, get_time};
 
 use constants::*;
 use format::*;
+use help::*;
 use config::{ColorConfig, Config, ParamConfig};
 use util::{Scroller, TimedValue};
 
@@ -80,6 +81,7 @@ pub struct View {
   progressbar: nc::WINDOW,
   progressbar_look: Vec<String>,
   statusbar: nc::WINDOW,
+  help: Help,
   status_scroller: Scroller,
   static_rows: i32,
 }
@@ -158,7 +160,7 @@ fn get_color(c: Color) -> i32 {
   return nc::COLOR_PAIR(c) as i32;
 }
 
-fn bold() -> i32 {
+pub fn bold() -> i32 {
   return nc::A_BOLD() as i32;
 }
 
@@ -187,11 +189,12 @@ impl View {
     nc::getmaxyx(nc::stdscr, &mut max_y, &mut max_x);
     let static_rows = 4;
 
+    let main_win = nc::newwin(max_y - static_rows, max_x, 2, 0);
     let view = View {
       header: nc::newwin(1, max_x, 0, 0),
       header_scroller: Scroller::new(max_x as usize),
       state: nc::newwin(1, max_x, 1, 0),
-      main_win: nc::newwin(max_y - static_rows, max_x, 2, 0),
+      main_win: main_win,
       progressbar: nc::newwin(1, max_x, max_y - 2, 0),
       progressbar_look: {
         let mut iter = config.params.progressbar_look.chars();
@@ -205,6 +208,7 @@ impl View {
         ar
       },
       statusbar: nc::newwin(1, max_x, max_y - 1, 0),
+      help: Help::new(main_win, config),
       status_scroller: Scroller::new(max_x as usize),
       static_rows: static_rows,
     };
@@ -269,8 +273,7 @@ impl View {
   }
 
   pub fn display_help(&mut self) {
-    nc::wclear(self.main_win);
-    nc::wrefresh(self.main_win);
+    self.help.print();
   }
 
   // TODO: data should not be mutable

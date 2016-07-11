@@ -8,6 +8,7 @@ use std::fmt::Debug;
 use std::str::FromStr;
 use std::path::PathBuf;
 use std::collections::HashMap;
+use std::fmt;
 
 use ini::Ini;
 use constants::*;
@@ -205,6 +206,40 @@ impl ToKeyCode for ControlKey {
       ControlKey::KeyCode(c) => return c,
       ControlKey::Char(c) => return c.keycode(),
     }
+  }
+}
+
+fn from_keycode(c: i32) -> String {
+  if c > nc::KEY_F0 && c <= nc::KEY_F15 {
+    return format!("F{}", c - nc::KEY_F0);
+  } else if c == nc::KEY_UP {
+    return String::from("Up");
+  } else if c == nc::KEY_DOWN {
+    return String::from("Down");
+  } else if c == nc::KEY_LEFT {
+    return String::from("Left");
+  } else if c == nc::KEY_RIGHT {
+    return String::from("Right");
+  } else if c == nc::KEY_DC {
+    return String::from("Delete");
+  } else if c == KEY_TAB {
+    return String::from("Tab");
+  } else if c == KEY_BACKSPACE {
+    return String::from("Backspace");
+  }
+  return String::from("unknown");
+}
+
+impl fmt::Display for ControlKey {
+  fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+    use format::SongProperty::*;
+    write!(f,
+           "{}",
+           match *self {
+               ControlKey::KeyCode(c) => from_keycode(c),
+               ControlKey::Char(c) => c.to_string(),
+             }
+             .as_str())
   }
 }
 
@@ -431,4 +466,6 @@ fn test_keycode() {
   assert_eq!(to_keycode("f1"), nc::KEY_F1);
   assert_eq!(to_keycode("f5"), nc::KEY_F5);
   assert_eq!(to_keycode("f10"), nc::KEY_F10);
+
+  assert_eq!(from_keycode(nc::KEY_F9), String::from("F9"));
 }
