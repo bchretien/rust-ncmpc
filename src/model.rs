@@ -116,6 +116,8 @@ register_actions!(
   resize_windows,
   scroll_down,
   scroll_up,
+  show_help,
+  show_playlist,
   toggle_bitrate_visibility,
   toggle_random,
   toggle_repeat,
@@ -148,6 +150,8 @@ pub fn get_action_map<'m>() -> HashMap<String, Action<'m>> {
     resize_windows,
     scroll_down,
     scroll_up,
+    show_help,
+    show_playlist,
     toggle_bitrate_visibility,
     toggle_random,
     toggle_repeat,
@@ -186,6 +190,8 @@ pub struct Model<'m> {
   config: &'m Config,
   /// Current state configuration.
   params: ParamConfig,
+  /// Current active window.
+  active_window: ActiveWindow,
   /// Index of the currently selected song (if any).
   selected_song: Option<TimedValue<u32>>,
   /// Snapshot of MPD data.
@@ -211,6 +217,7 @@ impl<'m> Model<'m> {
       view: view,
       config: config,
       params: config.params.clone(),
+      active_window: ActiveWindow::Playlist,
       selected_song: None,
       snapshot: snapshot,
       info_msg: None,
@@ -365,7 +372,7 @@ impl<'m> Model<'m> {
     if self.snapshot.pl_data.size == 0 {
       self.reload_playlist_data();
     }
-    self.view.display_header(&self.snapshot.pl_data, vol);
+    self.view.display_header(&self.active_window, &self.snapshot.pl_data, vol);
   }
 
   pub fn update_stateline(&mut self) {
@@ -388,6 +395,18 @@ impl<'m> Model<'m> {
       flags.push('x');
     }
     self.view.display_stateline(&flags);
+  }
+
+
+  pub fn update_main_window(&mut self) {
+    match self.active_window {
+      ActiveWindow::Help => self.update_help(),
+      ActiveWindow::Playlist => self.update_playlist(),
+    }
+  }
+
+  pub fn update_help(&mut self) {
+    self.view.display_help();
   }
 
   pub fn update_playlist(&mut self) {
@@ -514,6 +533,14 @@ impl<'m> Model<'m> {
       Some(ref s) => if s.value == 0 { if self.params.cyclic_scrolling { end - 1 } else { 0 } } else { s.value - 1 },
       None => 0,
     }))
+  }
+
+  pub fn show_help(&mut self) {
+    self.active_window = ActiveWindow::Help;
+  }
+
+  pub fn show_playlist(&mut self) {
+    self.active_window = ActiveWindow::Playlist;
   }
 
   pub fn take_snapshot(&mut self) {

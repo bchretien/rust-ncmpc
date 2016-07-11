@@ -36,6 +36,8 @@ pub struct KeyConfig {
   pub quit: ControlKeys,
   pub scroll_down: ControlKeys,
   pub scroll_up: ControlKeys,
+  pub show_help: ControlKeys,
+  pub show_playlist: ControlKeys,
   pub stop: ControlKeys,
   pub toggle_bitrate_visibility: ControlKeys,
   pub toggle_random: ControlKeys,
@@ -98,6 +100,8 @@ impl KeyConfig {
       quit: vec![ControlKey::Char('q')],
       scroll_down: vec![ControlKey::KeyCode(nc::KEY_DOWN)],
       scroll_up: vec![ControlKey::KeyCode(nc::KEY_UP)],
+      show_help: vec![ControlKey::KeyCode(nc::KEY_F1)],
+      show_playlist: vec![ControlKey::Char('1')],
       stop: vec![ControlKey::Char('s')],
       toggle_bitrate_visibility: vec![ControlKey::Char('#')],
       toggle_random: vec![ControlKey::Char('z')],
@@ -134,12 +138,16 @@ fn to_keycode(key: &str) -> i32 {
     }
     // shift-?
     else if key.starts_with("shift_") {
+      // TODO
       return nc::KEY_UP;
     }
     // f?
     else if key.starts_with("f") {
-      let other = key.chars().skip(1).next();
-      return nc::KEY_UP;
+      let mut iter = key.chars();
+      iter.by_ref().nth(0);
+      // TODO: return error if required
+      let n: i32 = iter.as_str().parse().unwrap_or(0);
+      return nc::KEY_F0 + n;
     }
     // TODO: use a hashmap for the rest
     else if key == "escape" {
@@ -420,4 +428,7 @@ fn test_keycode() {
   assert_eq!(to_keycode("ctrl-]"), KEY_CTRL_RIGHTBRACKET);
   assert_eq!(to_keycode("ctrl-^"), KEY_CTRL_CARET);
   assert_eq!(to_keycode("ctrl-_"), KEY_CTRL_UNDERSCORE);
+  assert_eq!(to_keycode("f1"), nc::KEY_F1);
+  assert_eq!(to_keycode("f5"), nc::KEY_F5);
+  assert_eq!(to_keycode("f10"), nc::KEY_F10);
 }

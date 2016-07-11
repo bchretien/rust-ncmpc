@@ -64,6 +64,14 @@ pub enum MouseEvent {
   Nothing,
 }
 
+#[derive(Debug,PartialEq)]
+pub enum ActiveWindow {
+  /// Displaying help window.
+  Help,
+  /// Displaying current playlist.
+  Playlist,
+}
+
 pub struct View {
   header: nc::WINDOW,
   header_scroller: Scroller,
@@ -214,7 +222,7 @@ impl View {
     return view;
   }
 
-  pub fn display_header(&mut self, pl_data: &PlaylistData, volume: Option<i8>) {
+  pub fn display_header(&mut self, active_window: &ActiveWindow, pl_data: &PlaylistData, volume: Option<i8>) {
     let mut max_x = 0;
     let mut max_y = 0;
     nc::getmaxyx(self.header, &mut max_y, &mut max_x);
@@ -225,7 +233,7 @@ impl View {
     nc::wclrtoeol(self.header);
 
     // Start of the header
-    let title = "Playlist";
+    let title = format!("{:?}", active_window);
     let pl_color = get_color(COLOR_PAIR_HEADER);
     nc::wattron(self.header, pl_color);
     nc::wattron(self.header, bold());
@@ -244,18 +252,25 @@ impl View {
       free_size -= s.len() as i32;
     }
 
-    // Playlist details
-    let s = format!("({})", pl_data);
-    // TODO: only change text on playlist change
-    self.header_scroller.set_text(&s);
-    self.header_scroller.resize(free_size);
-    nc::wattron(self.header, pl_color);
-    nc::wattron(self.header, bold());
-    nc::mvwprintw(self.header, 0, 1 + title.len() as i32, self.header_scroller.display());
-    nc::wattroff(self.header, bold());
-    nc::wattroff(self.header, pl_color);
+    if active_window == &ActiveWindow::Playlist {
+      // Playlist details
+      let s = format!("({})", pl_data);
+      // TODO: only change text on playlist change
+      self.header_scroller.set_text(&s);
+      self.header_scroller.resize(free_size);
+      nc::wattron(self.header, pl_color);
+      nc::wattron(self.header, bold());
+      nc::mvwprintw(self.header, 0, 1 + title.len() as i32, self.header_scroller.display());
+      nc::wattroff(self.header, bold());
+      nc::wattroff(self.header, pl_color);
+    }
 
     nc::wrefresh(self.header);
+  }
+
+  pub fn display_help(&mut self) {
+    nc::wclear(self.main_win);
+    nc::wrefresh(self.main_win);
   }
 
   // TODO: data should not be mutable

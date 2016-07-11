@@ -38,7 +38,7 @@ fn main() {
       m.take_snapshot();
       m.update_header();
       m.update_stateline();
-      m.update_playlist();
+      m.update_main_window();
       m.update_progressbar();
       m.update_statusbar();
     }

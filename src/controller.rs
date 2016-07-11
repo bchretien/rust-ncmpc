@@ -79,6 +79,10 @@ impl<'c, 'm> Controller<'c, 'm> {
     register_callback!(callbacks, config, scroll_down, scroll_down);
     // Scroll up
     register_callback!(callbacks, config, scroll_up, scroll_up);
+    // Show help
+    register_callback!(callbacks, config, show_help, show_help);
+    // Show playlist
+    register_callback!(callbacks, config, show_playlist, show_playlist);
     // Toggle bitrate visibility
     register_callback!(callbacks, config, toggle_bitrate_visibility, toggle_bitrate_visibility);
     // Toggle random
