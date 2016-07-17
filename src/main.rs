@@ -3,15 +3,19 @@ extern crate ncmpc;
 use std::sync::{Arc, Mutex};
 use std::thread::sleep;
 use std::time::Duration;
+use std::env;
 
 
 fn main() {
-  use ncmpc::{ConfigLoader, ControlQuery, Controller, Model, View};
+  use ncmpc::{ControlQuery, Controller, Model, View, process_cli};
 
-  let config_loader = ConfigLoader::new();
-
-  // Load config.
-  let config = config_loader.load(None, None);
+  // Process CLI options and return config.
+  let args: Vec<String> = env::args().collect();
+  let opt_config = process_cli(&args);
+  let config = match opt_config {
+    Some(o) => o,
+    None => return,
+  };
 
   // Instantiate view.
   let mut view = View::new(&config);

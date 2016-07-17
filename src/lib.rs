@@ -9,7 +9,9 @@ extern crate ncurses;
 extern crate mpd;
 extern crate time;
 extern crate ini;
+extern crate getopts;
 
+pub mod cli;
 pub mod config;
 pub mod constants;
 pub mod controller;
@@ -19,6 +21,7 @@ pub mod model;
 pub mod parser;
 pub mod view;
 
+pub use cli::process_cli;
 pub use config::{ConfigLoader, ParamConfig};
 pub use controller::{ControlQuery, Controller};
 pub use constants::Color;
