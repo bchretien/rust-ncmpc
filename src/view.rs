@@ -312,7 +312,7 @@ impl View {
     // Header
     let mut x = 0;
     for (i, col) in desc.iter().enumerate() {
-      nc::wmove(self.main_win, 0, x - 1);
+      nc::wmove(self.main_win, 0, cmp::max(0, x - 1));
       nc::wclrtoeol(self.main_win);
       nc::mvwprintw(self.main_win, 0, x, &format!("{}", col.column_type));
       x += widths[i] as i32;
