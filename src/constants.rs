@@ -23,17 +23,16 @@ pub const COLOR_PAIR_CYAN: Color = 7;
 pub const COLOR_PAIR_WHITE: Color = 8;
 
 // TODO: automate this once const fn is available
-pub const COLOR_PAIR_HEADER: Color = 10;
-pub const COLOR_PAIR_PROGRESSBAR: Color = 11;
-pub const COLOR_PAIR_PROGRESSBAR_ELAPSED: Color = 12;
-pub const COLOR_PAIR_STATUSBAR: Color = 13;
-pub const COLOR_PAIR_VOLUME: Color = 14;
-pub const COLOR_PAIR_DEBUG: Color = 15;
-pub const COLOR_PAIR_STATE_LINE: Color = 16;
-pub const COLOR_PAIR_STATE_FLAGS: Color = 17;
-pub const COLOR_PAIR_TRACK: Color = 18;
+pub const COLOR_PAIR_HEADER: Color = 210;
+pub const COLOR_PAIR_PROGRESSBAR: Color = 211;
+pub const COLOR_PAIR_PROGRESSBAR_ELAPSED: Color = 212;
+pub const COLOR_PAIR_STATUSBAR: Color = 213;
+pub const COLOR_PAIR_VOLUME: Color = 214;
+pub const COLOR_PAIR_DEBUG: Color = 215;
+pub const COLOR_PAIR_STATE_LINE: Color = 216;
+pub const COLOR_PAIR_STATE_FLAGS: Color = 217;
+pub const COLOR_PAIR_TRACK: Color = 218;
 
-// TODO: find why MAX_NUM_COLUMNS cannot be used here
 pub const COLOR_PAIR_COLUMNS: [Color; MAX_NUM_COLUMNS] = [30, 31, 32, 33, 34, 35, 36, 37, 38, 39];
 
 // ctrl-?

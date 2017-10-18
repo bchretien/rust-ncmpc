@@ -226,6 +226,10 @@ fn from_keycode(c: i32) -> String {
     return String::from("Tab");
   } else if c == KEY_BACKSPACE {
     return String::from("Backspace");
+  } else if c == '\n' as i32 {
+    return String::from("Enter");
+  } else if c == ' ' as i32 {
+    return String::from("Space");
   }
   return String::from("unknown");
 }
@@ -236,7 +240,7 @@ impl fmt::Display for ControlKey {
            "{}",
            match *self {
                ControlKey::KeyCode(c) => from_keycode(c),
-               ControlKey::Char(c) => c.to_string(),
+               ControlKey::Char(c) => if c == '\n' || c == ' ' { from_keycode(c as i32) } else { c.to_string() },
              }
              .as_str())
   }
