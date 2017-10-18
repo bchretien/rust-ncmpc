@@ -150,22 +150,21 @@ fn init_ncurses(config: &Config) {
 
   // Enable mouse events.
   nc::mouseinterval(0);
-  nc::mousemask((nc::BUTTON1_CLICKED | nc::BUTTON4_PRESSED | nc::BUTTON5_PRESSED) as u32, None);
+  nc::mousemask((nc::BUTTON1_CLICKED | nc::BUTTON4_PRESSED | nc::BUTTON5_PRESSED) as nc::mmask_t, None);
 
   nc::clear();
 }
 
-// TODO: check 32/64 bit attr_t
-pub fn get_color(c: Color) -> u32 {
-  return nc::COLOR_PAIR(c) as u32;
+pub fn get_color(c: Color) -> nc::attr_t {
+  return nc::COLOR_PAIR(c) as nc::attr_t;
 }
 
-pub fn bold() -> u32 {
-  return nc::A_BOLD() as u32;
+pub fn bold() -> nc::attr_t {
+  return nc::A_BOLD() as nc::attr_t;
 }
 
-fn reverse() -> u32 {
-  return nc::A_REVERSE() as u32;
+fn reverse() -> nc::attr_t {
+  return nc::A_REVERSE() as nc::attr_t;
 }
 
 fn deinit_ncurses() {
