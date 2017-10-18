@@ -1,19 +1,18 @@
 extern crate getopts;
 
 use getopts::Options;
-use std::env;
 use std::path::PathBuf;
 
 use config::{Config, ConfigLoader};
 
 fn print_usage(program: &str, opts: Options) {
-  let brief = format!("Usage: {} FILE [options]...", program);
+  let brief = format!("Usage: {} [options]...", program);
   print!("{}", opts.usage(&brief));
 }
 
 fn print_version() {
-  const version: Option<&'static str> = option_env!("CARGO_PKG_VERSION");
-  println!("rust-ncmpc: {}", version.unwrap_or("0.0.1"));
+  const VERSION: Option<&'static str> = option_env!("CARGO_PKG_VERSION");
+  println!("rust-ncmpc: {}", VERSION.unwrap_or("0.0.1"));
 }
 
 /// Process command-line options, and return the config.

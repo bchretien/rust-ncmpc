@@ -1,7 +1,6 @@
 extern crate ncurses;
 use ncurses as nc;
 
-use std::char;
 use std::collections::HashMap;
 
 use config::*;

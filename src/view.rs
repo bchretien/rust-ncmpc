@@ -139,33 +139,33 @@ fn init_ncurses(config: &Config) {
   nc::cbreak();
 
   // Allow for extended keyboard (like F1).
-  nc::keypad(nc::stdscr, true);
+  nc::keypad(nc::stdscr(), true);
   nc::noecho();
 
   // Set timeout.
   nc::timeout(0);
 
   // Make getch non-blocking.
-  nc::nodelay(nc::stdscr, true);
+  nc::nodelay(nc::stdscr(), true);
 
   // Enable mouse events.
   nc::mouseinterval(0);
-  nc::mousemask((nc::BUTTON1_CLICKED | nc::BUTTON4_PRESSED | nc::BUTTON5_PRESSED) as u64, None);
+  nc::mousemask((nc::BUTTON1_CLICKED | nc::BUTTON4_PRESSED | nc::BUTTON5_PRESSED) as u32, None);
 
   nc::clear();
 }
 
 // TODO: check 32/64 bit attr_t
-fn get_color(c: Color) -> i32 {
-  return nc::COLOR_PAIR(c) as i32;
+pub fn get_color(c: Color) -> u32 {
+  return nc::COLOR_PAIR(c) as u32;
 }
 
-pub fn bold() -> i32 {
-  return nc::A_BOLD() as i32;
+pub fn bold() -> u32 {
+  return nc::A_BOLD() as u32;
 }
 
-fn reverse() -> i32 {
-  return nc::A_REVERSE() as i32;
+fn reverse() -> u32 {
+  return nc::A_REVERSE() as u32;
 }
 
 fn deinit_ncurses() {
@@ -186,7 +186,7 @@ impl View {
 
     let mut max_x = 0;
     let mut max_y = 0;
-    nc::getmaxyx(nc::stdscr, &mut max_y, &mut max_x);
+    nc::getmaxyx(nc::stdscr(), &mut max_y, &mut max_x);
     let static_rows = 4;
 
     let main_win = nc::newwin(max_y - static_rows, max_x, 2, 0);
@@ -277,8 +277,8 @@ impl View {
   }
 
   // TODO: data should not be mutable
-  pub fn display_main_playlist(&mut self, desc: &Vec<Column>, data: &mut [&mut [String]],
-    current_song: &Option<u32>, selected_song: &Option<TimedValue<u32>>) {
+  pub fn display_main_playlist(&mut self, desc: &Vec<Column>, data: &mut [&mut [String]], current_song: &Option<u32>,
+    selected_song: &Option<TimedValue<u32>>) {
     // Get the screen bounds.
     let mut max_x = 0;
     let mut max_y = 0;
@@ -392,11 +392,7 @@ impl View {
         if is_selected {
           // Fill with whitespace for ncmpcpp-style highlighting
           let len = data[idx as usize][i as usize].chars().count() as i32;
-          nc::mvwhline(self.main_win,
-                       pl_start_row + row,
-                       x + len,
-                       ' ' as nc::chtype,
-                       widths[i] - len);
+          nc::mvwhline(self.main_win, pl_start_row + row, x + len, ' ' as nc::chtype, widths[i] - len);
 
           // Stop highlighting
           nc::wattroff(self.main_win, reverse());
@@ -441,7 +437,7 @@ impl View {
       nc::mvwhline(self.progressbar, 0, 0, nc::ACS_HLINE(), len_start);
     } else {
       nc::wmove(self.progressbar, 0, 0);
-      for i in 0..len_start {
+      for _i in 0..len_start {
         nc::waddstr(self.progressbar, &self.progressbar_look[0]);
       }
     }
@@ -464,7 +460,7 @@ impl View {
                    len_end);
     } else if self.progressbar_look[2] != "" {
       nc::wmove(self.progressbar, 0, if tip_x > 0 { tip_x + 1 } else { 0 });
-      for i in 0..len_end {
+      for _i in 0..len_end {
         nc::waddstr(self.progressbar, &self.progressbar_look[2]);
       }
     }
@@ -610,7 +606,7 @@ impl View {
   pub fn resize_windows(&mut self) {
     let mut max_x = 0;
     let mut max_y = 0;
-    nc::getmaxyx(nc::stdscr, &mut max_y, &mut max_x);
+    nc::getmaxyx(nc::stdscr(), &mut max_y, &mut max_x);
 
     let mut row = 0;
     nc::wresize(self.header, 1, max_x);

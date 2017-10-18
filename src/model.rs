@@ -326,7 +326,7 @@ impl<'m> Model<'m> {
     let (_, d) = get_song_time(&self.snapshot.status);
     let duration = d.num_seconds();
     let new_pos = Duration::seconds((duration as f32 * pct) as i64);
-    self.client.rewind(new_pos);
+    let _res = self.client.rewind(new_pos);
   }
 
   pub fn process_mouse(&mut self) {
@@ -418,7 +418,7 @@ impl<'m> Model<'m> {
     let n_entries = playlist.len();
     let mut grid_raw = vec![String::from("a"); n_cols * n_entries];
     let mut grid_base: Vec<_> = grid_raw.as_mut_slice().chunks_mut(n_cols).collect();
-    let mut grid: &mut [&mut [String]] = grid_base.as_mut_slice();
+    let grid: &mut [&mut [String]] = grid_base.as_mut_slice();
 
     // Fill data grid
     for i in 0..n_entries {

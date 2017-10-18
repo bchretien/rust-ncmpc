@@ -87,7 +87,7 @@ fn mpd_socket_addr() {
   let config_path = get_config_path("custom_config");
   let config = config_loader.load(Some(config_path), None);
 
-  let params = ParamConfig::new();
+  let _params = ParamConfig::new();
   let addr: SocketAddr = "127.0.0.1:7700".parse().unwrap();
   assert_eq!(config.socket_addr(), addr);
 

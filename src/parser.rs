@@ -6,8 +6,6 @@ use std::io;
 use std::io::Read;
 use nom::*;
 
-use format::Column;
-
 #[derive(Debug)]
 pub enum ParserError {
   Io(io::Error),
@@ -27,35 +25,35 @@ fn is_line_ending_s(ch: char) -> bool {
 named!(line_ending_s<&str,&str>, is_a_s!("\r\n"));
 
 named!(comment<&str,&str>,
-  chain!(
-    tag_s!("#") ~
-    take_till_s!(is_line_ending_s),
-    || ""
+  do_parse!(
+    tag_s!("#") >>
+    take_till_s!(is_line_ending_s) >>
+    ("")
   )
 );
 
 named!(line_ending_or_comment<&str,&str>,
-  chain!(
-    opt!(comment) ~
-    line_ending_s,
-  || ""
+  do_parse!(
+    opt!(comment) >>
+    line_ending_s >>
+    ("")
   )
 );
 
 named!(ignored_line<&str,&str>,
-  alt!(multispace | chain!(opt!(space) ~ line_ending_or_comment, || ""))
+  alt!(multispace | do_parse!(opt!(space) >> line_ending_or_comment >> ("")))
 );
 
 named!(def_key<&str,&str>,
-  chain!(
-    tag_s!("def_key") ~
-    space ~
-    tag_s!("\"") ~
-    val: take_until_s!("\"") ~
-    tag_s!("\"") ~
-    opt!(space) ~
-    line_ending_or_comment,
-    || val
+  do_parse!(
+    tag_s!("def_key") >>
+    space >>
+    tag_s!("\"") >>
+    val: take_until_s!("\"") >>
+    tag_s!("\"") >>
+    opt!(space) >>
+    line_ending_or_comment >>
+    (val)
   )
 );
 
@@ -66,14 +64,14 @@ named!(action_name<&str,&str>,
 // Example:
 //   some_action
 named!(action<&str,&str>,
-  chain!(
-    space ~
-    val: action_name ~
+  do_parse!(
+    space >>
+    val: action_name >>
     alt!(
-      chain!(opt!(space) ~ opt!(line_ending_or_comment), || "") |
-      eof
-    ),
-    || val
+      do_parse!(opt!(space) >> opt!(line_ending_or_comment) >> ("")) |
+      eof!()
+    ) >>
+    (val)
   )
 );
 
@@ -87,12 +85,12 @@ named!(actions_aggregator<&str, Vec<&str> >, many1!(action));
 //   some_action
 //   some_other_action
 named!(key_actions<&str,(&str,Vec<&str>)>,
-  chain!(
-    many0!(ignored_line) ~
-    key: def_key ~
-    actions: actions_aggregator ~
-    many0!(ignored_line),
-    || {(key, actions)}
+  do_parse!(
+    many0!(ignored_line) >>
+    key: def_key >>
+    actions: actions_aggregator >>
+    many0!(ignored_line) >>
+    (key, actions)
   )
 );
 
@@ -106,8 +104,7 @@ named!(key_actions<&str,(&str,Vec<&str>)>,
 named!(key_actions_aggregator<&str, Vec<(&str,Vec<&str>)> >, many0!(key_actions));
 
 /// Load bindings configuration from a given path.
-pub fn parse_bindings_configuration(path: &PathBuf)
-                                    -> Result<Vec<(String, Vec<String>)>, ParserError> {
+pub fn parse_bindings_configuration(path: &PathBuf) -> Result<Vec<(String, Vec<String>)>, ParserError> {
   let mut f = try!(File::open(path).map_err(ParserError::Io));
   let mut s = String::default();
   try!(f.read_to_string(&mut s).map_err(ParserError::Io));
@@ -144,18 +141,18 @@ fn to_width(s: &str) -> Result<(i32, bool), ParserError> {
 // Example:
 // (5f)[red]{b}
 named!(column<&str,(i32, bool, &str, &str)>,
-  chain!(
-    opt!(space) ~
-    tag_s!("(") ~
-    width: map_res!(take_until_s!(")"), to_width) ~
-    tag_s!(")") ~
-    tag_s!("[") ~
-    color: take_until_s!("]") ~
-    tag_s!("]") ~
-    tag_s!("{") ~
-    tag: take_until_s!("}") ~
-    tag_s!("}"),
-    || (width.0, width.1, color, tag)
+  do_parse!(
+    opt!(space) >>
+    tag_s!("(") >>
+    width: map_res!(take_until_s!(")"), to_width) >>
+    tag_s!(")") >>
+    tag_s!("[") >>
+    color: take_until_s!("]") >>
+    tag_s!("]") >>
+    tag_s!("{") >>
+    tag: take_until_s!("}") >>
+    tag_s!("}") >>
+    (width.0, width.1, color, tag)
   )
 );
 

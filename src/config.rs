@@ -232,7 +232,6 @@ fn from_keycode(c: i32) -> String {
 
 impl fmt::Display for ControlKey {
   fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-    use format::SongProperty::*;
     write!(f,
            "{}",
            match *self {
@@ -375,10 +374,7 @@ fn assign(key: &str, val: &str, config: &mut Config) -> bool {
     "progressbar_look" => config.params.progressbar_look = String::from(val),
     "volume_change_step" => config.params.volume_change_step = parse_int(val),
     // Formats
-    "song_columns_list_format" => {
-      config.params.song_columns_list_format = generate_columns(val)
-        .unwrap_or(Vec::<Column>::default())
-    }
+    "song_columns_list_format" => config.params.song_columns_list_format = generate_columns(val).unwrap_or(Vec::<Column>::default()),
     _ => return false,
   }
   return true;
@@ -398,10 +394,8 @@ impl ConfigLoader {
   }
 
   pub fn load(&self, user_config: Option<PathBuf>, bindings: Option<PathBuf>) -> Config {
-    let opt_config =
-      if user_config.is_some() { user_config.clone() } else { self.default_config_path.clone() };
-    let opt_bindings =
-      if bindings.is_some() { bindings.clone() } else { self.default_bindings_path.clone() };
+    let opt_config = if user_config.is_some() { user_config.clone() } else { self.default_config_path.clone() };
+    let opt_bindings = if bindings.is_some() { bindings.clone() } else { self.default_bindings_path.clone() };
 
     let mut config = Config::new();
 

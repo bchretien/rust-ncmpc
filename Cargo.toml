@@ -4,13 +4,13 @@ version = "0.0.1"
 authors = ["Benjamin Chrétien <chretien.b@gmail.com>"]
 
 [dependencies]
-mpd = "0.0.11"
-ncurses = "5.80.0"
-time = "0.1.34"
-rust-ini = "0.9.4"
-xdg = "2.0.0"
-nom = "1.2.3"
-getopts = "0.2.14"
+mpd = "0.0.12"
+ncurses = "5.86.0"
+time = "0.1.38"
+rust-ini = "0.10.0"
+xdg = "2.1.0"
+nom = "3.2.0"
+getopts = "0.2.15"
 
 [lib]
 name = "ncmpc"

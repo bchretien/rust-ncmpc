@@ -131,7 +131,7 @@ fn get_color(s: &str) -> Color {
 pub fn generate_columns(format: &str) -> Result<Vec<Column>, ParserError> {
   let res = get_columns_format(format);
   match res {
-    nom::IResult::Done(i, o) => {
+    nom::IResult::Done(_i, o) => {
       let mut columns = Vec::<Column>::default();
       for c in o {
         columns.push(Column {
