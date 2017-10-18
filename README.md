@@ -8,8 +8,10 @@ rust-ncmpc
 
 ## Progress
 
+<img src="https://raw.githubusercontent.com/bchretien/rust-ncmpc/master/.images/screenshot.png" width=640>
+
 - [x] Parser for `ncmpcpp` configuration files.
-- [ ] Parser for `ncmpcpp` keybinding files.
+- [x] Parser for `ncmpcpp` keybinding files.
 - [x] Help tab.
 - [x] Playlist tab.
 - [ ] Browser tab.
