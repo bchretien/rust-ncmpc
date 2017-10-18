@@ -1,5 +1,3 @@
-#![feature(macro_rules)]
-
 use time::{Duration, Timespec, get_time};
 
 /// Print to stderr.
