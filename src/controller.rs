@@ -1,10 +1,10 @@
 extern crate ncurses;
-use ncurses as nc;
-
-use std::collections::HashMap;
 
 use config::*;
 use model::*;
+use ncurses as nc;
+
+use std::collections::HashMap;
 
 pub enum ControlQuery {
   /// Some query was made.
@@ -99,7 +99,12 @@ impl<'c, 'm> Controller<'c, 'm> {
       register_callback!(callbacks, action_map, keycode, actions => actions);
     }
 
-    let quit_keycodes = config.keys.quit.iter().map(|&key| key.keycode()).collect::<Vec<i32>>();
+    let quit_keycodes = config
+      .keys
+      .quit
+      .iter()
+      .map(|&key| key.keycode())
+      .collect::<Vec<i32>>();
 
     Controller {
       model: model,

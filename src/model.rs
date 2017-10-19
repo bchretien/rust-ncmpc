@@ -1,18 +1,18 @@
 extern crate time;
 extern crate mpd;
 
-use std::process;
-use std::net::TcpStream;
-use std::sync::{Arc, Mutex};
-use std::collections::HashMap;
-use time::{Duration, get_time};
-
-use view::*;
 use config::*;
 use format::*;
-use util::TimedValue;
-use mpd::status::{State, Status};
 use mpd::song::Song;
+use mpd::status::{State, Status};
+use std::collections::HashMap;
+use std::net::TcpStream;
+use std::process;
+use std::sync::{Arc, Mutex};
+use time::{Duration, get_time};
+use util::TimedValue;
+
+use view::*;
 
 pub type SharedModel<'m> = Arc<Mutex<Model<'m>>>;
 pub type ActionCallback<'m> = fn(&mut SharedModel<'m>);
@@ -82,7 +82,9 @@ fn get_song_info(song: &Song, tag: &SongProperty) -> String {
 }
 
 fn get_song_time(status: &Status) -> (Duration, Duration) {
-  status.time.unwrap_or((Duration::seconds(0), Duration::seconds(0)))
+  status.time.unwrap_or(
+    (Duration::seconds(0), Duration::seconds(0)),
+  )
 }
 
 fn get_song_bitrate(status: &Status) -> u32 {
@@ -122,7 +124,8 @@ register_actions!(
   toggle_random,
   toggle_repeat,
   volume_down,
-  volume_up);
+  volume_up
+);
 
 macro_rules! actions_to_map(
   ($($fun:ident), *) => (
@@ -156,7 +159,8 @@ pub fn get_action_map<'m>() -> HashMap<String, Action<'m>> {
     toggle_random,
     toggle_repeat,
     volume_down,
-    volume_up);
+    volume_up
+  );
 
   return action_map;
 }
@@ -360,19 +364,29 @@ impl<'m> Model<'m> {
   fn reload_playlist_data(&mut self) {
     let queue = self.client.queue().unwrap_or(Vec::<Song>::default());
     self.snapshot.pl_data.size = queue.len() as u32;
-    let sum = queue.iter().fold(0i64,
-                                |sum, val| sum + val.duration.unwrap_or(Duration::seconds(0)).num_seconds());
+    let sum = queue.iter().fold(
+      0i64,
+      |sum, val| sum + val.duration.unwrap_or(Duration::seconds(0)).num_seconds(),
+    );
     self.snapshot.pl_data.duration = Duration::seconds(sum);
   }
 
   pub fn update_header(&mut self) {
-    let vol: Option<i8> = if self.params.display_volume_level { Some(self.get_volume()) } else { None };
+    let vol: Option<i8> = if self.params.display_volume_level {
+      Some(self.get_volume())
+    } else {
+      None
+    };
 
     // TODO: select when to reload data
     if self.snapshot.pl_data.size == 0 {
       self.reload_playlist_data();
     }
-    self.view.display_header(&self.active_window, &self.snapshot.pl_data, vol);
+    self.view.display_header(
+      &self.active_window,
+      &self.snapshot.pl_data,
+      vol,
+    );
   }
 
   pub fn update_stateline(&mut self) {
@@ -391,7 +405,11 @@ impl<'m> Model<'m> {
     if status.consume {
       flags.push('c');
     }
-    if status.crossfade.unwrap_or(Duration::seconds(0)).num_seconds() > 0 {
+    if status
+      .crossfade
+      .unwrap_or(Duration::seconds(0))
+      .num_seconds() > 0
+    {
       flags.push('x');
     }
     self.view.display_stateline(&flags);
@@ -434,8 +452,12 @@ impl<'m> Model<'m> {
       cur_song = Some(song.unwrap().pos);
     }
 
-    self.view
-      .display_main_playlist(&columns, grid, &cur_song, &self.selected_song);
+    self.view.display_main_playlist(
+      &columns,
+      grid,
+      &cur_song,
+      &self.selected_song,
+    );
   }
 
   pub fn update_progressbar(&mut self) {
@@ -456,7 +478,9 @@ impl<'m> Model<'m> {
     // If an info message has to be displayed
     if self.info_msg.is_some() {
       if get_time() < self.info_msg.as_ref().unwrap().timestamp + Duration::seconds(5) {
-        self.view.display_statusbar_msg(&self.info_msg.as_ref().unwrap().value);
+        self.view.display_statusbar_msg(
+          &self.info_msg.as_ref().unwrap().value,
+        );
         return;
       } else {
         self.info_msg = None;
@@ -522,7 +546,17 @@ impl<'m> Model<'m> {
   pub fn scroll_down(&mut self) {
     let end = self.snapshot.pl_data.size;
     self.selected_song = Some(TimedValue::<u32>::new(match self.selected_song {
-      Some(ref s) => if s.value == end - 1 { if self.params.cyclic_scrolling { 0 } else { s.value } } else { s.value + 1 },
+      Some(ref s) => {
+        if s.value == end - 1 {
+          if self.params.cyclic_scrolling {
+            0
+          } else {
+            s.value
+          }
+        } else {
+          s.value + 1
+        }
+      }
       None => 0,
     }))
   }
@@ -530,7 +564,17 @@ impl<'m> Model<'m> {
   pub fn scroll_up(&mut self) {
     let end = self.snapshot.pl_data.size;
     self.selected_song = Some(TimedValue::<u32>::new(match self.selected_song {
-      Some(ref s) => if s.value == 0 { if self.params.cyclic_scrolling { end - 1 } else { 0 } } else { s.value - 1 },
+      Some(ref s) => {
+        if s.value == 0 {
+          if self.params.cyclic_scrolling {
+            end - 1
+          } else {
+            0
+          }
+        } else {
+          s.value - 1
+        }
+      }
       None => 0,
     }))
   }

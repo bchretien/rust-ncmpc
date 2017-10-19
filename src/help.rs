@@ -1,7 +1,7 @@
+use config::{Config, ControlKeys};
 use ncurses as nc;
 
 use view::{bold, get_color};
-use config::{Config, ControlKeys};
 
 pub struct Help {
   win: nc::WINDOW,
@@ -40,9 +40,14 @@ impl Help {
   }
 
   fn keys(&self, keys: &ControlKeys, desc: &str) {
-    let keys_s: String =
-      keys.iter().fold(String::default(),
-                       |acc, &x| if acc.is_empty() { format!("{}", x) } else { acc + format!(", {}", x).as_str() });
+    let keys_s: String = keys.iter().fold(
+      String::default(),
+      |acc, &x| if acc.is_empty() {
+        format!("{}", x)
+      } else {
+        acc + format!(", {}", x).as_str()
+      },
+    );
     self.print_entry(keys_s.as_str(), desc);
   }
 
@@ -80,8 +85,14 @@ impl Help {
     print_key!(play_pause, "Pause");
     print_key!(next_song, "Next track");
     print_key!(previous_song, "Previous track");
-    print_key!(volume_down, format!("Decrease volume by {}%%", self.config.params.volume_change_step).as_str());
-    print_key!(volume_up, format!("Increase volume by {}%%", self.config.params.volume_change_step).as_str());
+    print_key!(
+      volume_down,
+      format!("Decrease volume by {}%%", self.config.params.volume_change_step).as_str()
+    );
+    print_key!(
+      volume_up,
+      format!("Increase volume by {}%%", self.config.params.volume_change_step).as_str()
+    );
     self.newline();
     print_key!(toggle_repeat, "Toggle repeat mode");
     print_key!(toggle_random, "Toggle random mode");
