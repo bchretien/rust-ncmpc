@@ -2,21 +2,21 @@ extern crate ncurses;
 extern crate ini;
 extern crate xdg;
 
-use std::net::{IpAddr, SocketAddr, ToSocketAddrs};
-use std::env;
-use std::fmt::Debug;
-use std::str::FromStr;
-use std::path::PathBuf;
-use std::collections::HashMap;
-use std::fmt;
+use constants::*;
+use format::{Column, generate_columns};
 
 use ini::Ini;
-use constants::*;
-use parser::parse_bindings_configuration;
-use format::{Column, generate_columns};
 use ncurses as nc;
+use parser::parse_bindings_configuration;
+use std::collections::HashMap;
+use std::env;
+use std::fmt;
+use std::fmt::Debug;
+use std::net::{IpAddr, SocketAddr, ToSocketAddrs};
+use std::path::PathBuf;
+use std::str::FromStr;
 
-#[derive(Clone,Copy,PartialEq,Debug)]
+#[derive(Clone, Copy, PartialEq, Debug)]
 pub enum ControlKey {
   KeyCode(i32),
   Char(char),
@@ -26,7 +26,7 @@ pub type ControlKeys = Vec<ControlKey>;
 pub type CustomActions = HashMap<i32, Vec<String>>;
 
 /// Key bindings configuration.
-#[derive(Clone,PartialEq,Debug)]
+#[derive(Clone, PartialEq, Debug)]
 pub struct KeyConfig {
   pub clear: ControlKeys,
   pub delete: ControlKeys,
@@ -48,7 +48,7 @@ pub struct KeyConfig {
   pub custom: CustomActions,
 }
 
-#[derive(Clone,Copy,PartialEq,Debug)]
+#[derive(Clone, Copy, PartialEq, Debug)]
 pub struct ColorConfig {
   pub color1: Color,
   pub color2: Color,
@@ -63,7 +63,7 @@ pub struct ColorConfig {
   pub volume: Color,
 }
 
-#[derive(Clone,PartialEq,Debug)]
+#[derive(Clone, PartialEq, Debug)]
 pub struct ParamConfig {
   pub cyclic_scrolling: bool,
   pub display_bitrate: bool,
@@ -77,7 +77,7 @@ pub struct ParamConfig {
   pub volume_change_step: i8,
 }
 
-#[derive(Clone,PartialEq,Debug)]
+#[derive(Clone, PartialEq, Debug)]
 pub struct Config {
   pub colors: ColorConfig,
   pub keys: KeyConfig,
@@ -236,13 +236,20 @@ fn from_keycode(c: i32) -> String {
 
 impl fmt::Display for ControlKey {
   fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-    write!(f,
-           "{}",
-           match *self {
-               ControlKey::KeyCode(c) => from_keycode(c),
-               ControlKey::Char(c) => if c == '\n' || c == ' ' { from_keycode(c as i32) } else { c.to_string() },
-             }
-             .as_str())
+    write!(
+      f,
+      "{}",
+      match *self {
+        ControlKey::KeyCode(c) => from_keycode(c),
+        ControlKey::Char(c) => {
+          if c == '\n' || c == ' ' {
+            from_keycode(c as i32)
+          } else {
+            c.to_string()
+          }
+        }
+      }.as_str()
+    )
   }
 }
 
@@ -265,9 +272,10 @@ impl ColorConfig {
 }
 
 fn default_song_columns_list_format() -> Vec<Column> {
-  return generate_columns("(20)[]{a} (6f)[green]{NE} (50)[white]{t|f:Title} (20)[cyan]{b} \
-                           (7f)[magenta]{l}")
-    .unwrap();
+  return generate_columns(
+    "(20)[]{a} (6f)[green]{NE} (50)[white]{t|f:Title} (20)[cyan]{b} \
+                           (7f)[magenta]{l}",
+  ).unwrap();
 }
 
 impl ParamConfig {
@@ -300,9 +308,7 @@ impl Config {
       params.mpd_host = mpd_host.unwrap();
     }
     if mpd_port.is_ok() {
-      params.mpd_port = mpd_port.unwrap()
-        .parse::<u16>()
-        .unwrap_or(params.mpd_port);
+      params.mpd_port = mpd_port.unwrap().parse::<u16>().unwrap_or(params.mpd_port);
     }
 
     Config {
@@ -319,7 +325,11 @@ impl Config {
     } else {
       IpAddr::from_str(self.params.mpd_host.as_str()).unwrap()
     };
-    (ip, self.params.mpd_port).to_socket_addrs().unwrap().next().unwrap()
+    (ip, self.params.mpd_port)
+      .to_socket_addrs()
+      .unwrap()
+      .next()
+      .unwrap()
   }
 }
 
@@ -342,8 +352,9 @@ fn parse_bool(s: &str) -> bool {
 }
 
 fn parse_int<T>(s: &str) -> T
-  where T: FromStr,
-        <T as FromStr>::Err: Debug
+where
+  T: FromStr,
+  <T as FromStr>::Err: Debug,
 {
   let res = s.parse::<T>();
   if res.is_err() {
@@ -398,8 +409,16 @@ impl ConfigLoader {
   }
 
   pub fn load(&self, user_config: Option<PathBuf>, bindings: Option<PathBuf>) -> Config {
-    let opt_config = if user_config.is_some() { user_config.clone() } else { self.default_config_path.clone() };
-    let opt_bindings = if bindings.is_some() { bindings.clone() } else { self.default_bindings_path.clone() };
+    let opt_config = if user_config.is_some() {
+      user_config.clone()
+    } else {
+      self.default_config_path.clone()
+    };
+    let opt_bindings = if bindings.is_some() {
+      bindings.clone()
+    } else {
+      self.default_bindings_path.clone()
+    };
 
     let mut config = Config::new();
 
