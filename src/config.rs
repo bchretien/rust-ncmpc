@@ -8,6 +8,7 @@ use format::{Column, generate_columns};
 use ini::Ini;
 use ncurses as nc;
 use parser::parse_bindings_configuration;
+use std::char;
 use std::collections::HashMap;
 use std::env;
 use std::fmt;
@@ -111,6 +112,48 @@ impl KeyConfig {
       volume_up: vec![ControlKey::KeyCode(nc::KEY_RIGHT)],
       custom: CustomActions::default(),
     }
+  }
+
+  /// Assign a key to an action (given as a string).
+  pub fn assign(&mut self, action: &str, key: ControlKey) -> bool {
+    let opt_keys = self.to_keys(action);
+    return match opt_keys {
+      None => false,
+      Some(keys) => {
+        // TODO: use HashSet instead?
+        if !keys.contains(&key) {
+          keys.push(key);
+          true
+        } else {
+          false
+        }
+      }
+    };
+  }
+
+  /// Map from string to class members.
+  fn to_keys(&mut self, action: &str) -> Option<&mut ControlKeys> {
+    return match action {
+      // FIXME: find a way to automate this from class members
+      "clear" => Some(&mut self.clear),
+      "delete" => Some(&mut self.delete),
+      "next_song" => Some(&mut self.next_song),
+      "play_pause" => Some(&mut self.play_pause),
+      "press_enter" => Some(&mut self.press_enter),
+      "previous_song" => Some(&mut self.previous_song),
+      "quit" => Some(&mut self.quit),
+      "scroll_down" => Some(&mut self.scroll_down),
+      "scroll_up" => Some(&mut self.scroll_up),
+      "show_help" => Some(&mut self.show_help),
+      "show_playlist" => Some(&mut self.show_playlist),
+      "stop" => Some(&mut self.stop),
+      "toggle_bitrate_visibility" => Some(&mut self.toggle_bitrate_visibility),
+      "toggle_random" => Some(&mut self.toggle_random),
+      "toggle_repeat" => Some(&mut self.toggle_repeat),
+      "volume_down" => Some(&mut self.volume_down),
+      "volume_up" => Some(&mut self.volume_up),
+      _ => None,
+    };
   }
 }
 
@@ -230,8 +273,12 @@ fn from_keycode(c: i32) -> String {
     return String::from("Enter");
   } else if c == ' ' as i32 {
     return String::from("Space");
+  } else {
+    return match char::from_u32(c as u32) {
+      None => String::from("unknown"),
+      Some(c) => c.to_string(),
+    };
   }
-  return String::from("unknown");
 }
 
 impl fmt::Display for ControlKey {
@@ -443,7 +490,17 @@ impl ConfigLoader {
       if res.is_ok() {
         for val in res.unwrap() {
           let key = to_keycode(val.0.as_str());
-          config.keys.custom.insert(key, val.1);
+          // If key is associated with a single action
+          if val.1.len() == 1 {
+            // Store it directly with the action
+            config.keys.assign(
+              val.1[0].as_str(),
+              ControlKey::KeyCode(key),
+            );
+          } else {
+            // Else store it in custom actions
+            config.keys.custom.insert(key, val.1);
+          }
         }
       } else {
         stderr!("[Error] failed to parse {}", path.to_str().unwrap());
