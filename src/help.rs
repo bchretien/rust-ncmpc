@@ -45,7 +45,7 @@ impl Help {
       |acc, &x| if acc.is_empty() {
         format!("{}", x)
       } else {
-        acc + format!(", {}", x).as_str()
+        acc + format!(" {}", x).as_str()
       },
     );
     self.print_entry(keys_s.as_str(), desc);
