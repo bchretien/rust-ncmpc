@@ -78,6 +78,10 @@ impl<'c, 'm> Controller<'c, 'm> {
     register_callback!(callbacks, config, scroll_down, scroll_down);
     // Scroll up
     register_callback!(callbacks, config, scroll_up, scroll_up);
+    // Move home
+    register_callback!(callbacks, config, move_home, move_home);
+    // Move end
+    register_callback!(callbacks, config, move_end, move_end);
     // Show help
     register_callback!(callbacks, config, show_help, show_help);
     // Show playlist

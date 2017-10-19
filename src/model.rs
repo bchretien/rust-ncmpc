@@ -118,6 +118,8 @@ register_actions!(
   resize_windows,
   scroll_down,
   scroll_up,
+  move_home,
+  move_end,
   show_help,
   show_playlist,
   toggle_bitrate_visibility,
@@ -153,6 +155,8 @@ pub fn get_action_map<'m>() -> HashMap<String, Action<'m>> {
     resize_windows,
     scroll_down,
     scroll_up,
+    move_home,
+    move_end,
     show_help,
     show_playlist,
     toggle_bitrate_visibility,
@@ -577,6 +581,15 @@ impl<'m> Model<'m> {
       }
       None => 0,
     }))
+  }
+
+  pub fn move_home(&mut self) {
+    self.selected_song = Some(TimedValue::<u32>::new(0));
+  }
+
+  pub fn move_end(&mut self) {
+    let end = self.snapshot.pl_data.size;
+    self.selected_song = Some(TimedValue::<u32>::new(end - 1));
   }
 
   pub fn show_help(&mut self) {

@@ -38,6 +38,8 @@ pub struct KeyConfig {
   pub quit: ControlKeys,
   pub scroll_down: ControlKeys,
   pub scroll_up: ControlKeys,
+  pub move_home: ControlKeys,
+  pub move_end: ControlKeys,
   pub show_help: ControlKeys,
   pub show_playlist: ControlKeys,
   pub stop: ControlKeys,
@@ -103,6 +105,8 @@ impl KeyConfig {
       scroll_down: vec![ControlKey::KeyCode(nc::KEY_DOWN)],
       scroll_up: vec![ControlKey::KeyCode(nc::KEY_UP)],
       show_help: vec![ControlKey::KeyCode(nc::KEY_F1)],
+      move_home: vec![ControlKey::KeyCode(nc::KEY_HOME)],
+      move_end: vec![ControlKey::KeyCode(nc::KEY_END)],
       show_playlist: vec![ControlKey::Char('1')],
       stop: vec![ControlKey::Char('s')],
       toggle_bitrate_visibility: vec![ControlKey::Char('#')],
@@ -144,6 +148,8 @@ impl KeyConfig {
       "quit" => Some(&mut self.quit),
       "scroll_down" => Some(&mut self.scroll_down),
       "scroll_up" => Some(&mut self.scroll_up),
+      "move_home" => Some(&mut self.move_home),
+      "move_end" => Some(&mut self.move_end),
       "show_help" => Some(&mut self.show_help),
       "show_playlist" => Some(&mut self.show_playlist),
       "stop" => Some(&mut self.stop),
@@ -263,6 +269,10 @@ fn from_keycode(c: i32) -> String {
     return String::from("Left");
   } else if c == nc::KEY_RIGHT {
     return String::from("Right");
+  } else if c == nc::KEY_HOME {
+    return String::from("Home");
+  } else if c == nc::KEY_END {
+    return String::from("End");
   } else if c == nc::KEY_DC {
     return String::from("Delete");
   } else if c == KEY_TAB {
