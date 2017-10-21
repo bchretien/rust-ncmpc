@@ -79,6 +79,8 @@ impl Help {
     self.newline();
     print_key!(show_help, "Show help");
     print_key!(show_playlist, "Show playlist");
+    self.newline();
+    print_key!(show_server_info, "Show server info");
 
     self.newline();
     self.section("Keys - Global");

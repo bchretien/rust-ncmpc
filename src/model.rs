@@ -100,6 +100,7 @@ register_actions!(
   move_end,
   show_help,
   show_playlist,
+  show_server_info,
   toggle_bitrate_visibility,
   toggle_random,
   toggle_repeat,
@@ -138,6 +139,7 @@ pub fn get_action_map<'m>() -> HashMap<String, Action<'m>> {
     move_end,
     show_help,
     show_playlist,
+    show_server_info,
     toggle_bitrate_visibility,
     toggle_random,
     toggle_repeat,
@@ -403,11 +405,17 @@ impl<'m> Model<'m> {
     match self.active_window {
       ActiveWindow::Help => self.update_help(),
       ActiveWindow::Playlist => self.update_playlist(),
+      ActiveWindow::ServerInfo => self.update_server_info(),
     }
   }
 
   pub fn update_help(&mut self) {
     self.view.display_help();
+  }
+
+  pub fn update_server_info(&mut self) {
+    // Mutable getter for server stats
+    self.view.display_server_info(&mut self.client);
   }
 
   pub fn update_playlist(&mut self) {
@@ -573,6 +581,10 @@ impl<'m> Model<'m> {
 
   pub fn show_help(&mut self) {
     self.active_window = ActiveWindow::Help;
+  }
+
+  pub fn show_server_info(&mut self) {
+    self.active_window = ActiveWindow::ServerInfo;
   }
 
   pub fn show_playlist(&mut self) {

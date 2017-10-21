@@ -89,6 +89,8 @@ impl<'c, 'm> Controller<'c, 'm> {
     register_callback!(callbacks, config, show_help, show_help);
     // Show playlist
     register_callback!(callbacks, config, show_playlist, show_playlist);
+    // Show server info
+    register_callback!(callbacks, config, show_server_info, show_server_info);
     // Toggle bitrate visibility
     register_callback!(callbacks, config, toggle_bitrate_visibility, toggle_bitrate_visibility);
     // Toggle random

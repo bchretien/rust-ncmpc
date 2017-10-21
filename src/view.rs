@@ -1,4 +1,5 @@
 extern crate ncurses;
+extern crate mpd;
 
 use config::{ColorConfig, Config, ParamConfig};
 
@@ -6,9 +7,11 @@ use constants::*;
 use format::*;
 use help::*;
 use ncurses as nc;
+use server_info::*;
 
 use std::{cmp, mem};
 use std::fmt::{self, Display, Formatter};
+use std::net::TcpStream;
 use time::{Duration, Timespec, get_time};
 use util::{Scroller, TimedValue};
 
@@ -73,6 +76,8 @@ pub enum ActiveWindow {
   Help,
   /// Displaying current playlist.
   Playlist,
+  /// Displaying MPD server info.
+  ServerInfo,
 }
 
 pub struct View {
@@ -84,6 +89,7 @@ pub struct View {
   progressbar_look: Vec<String>,
   statusbar: nc::WINDOW,
   help: Help,
+  server_info: ServerInfo,
   status_scroller: Scroller,
   static_rows: i32,
 }
@@ -213,6 +219,7 @@ impl View {
       },
       statusbar: nc::newwin(1, max_x, max_y - 1, 0),
       help: Help::new(main_win, config),
+      server_info: ServerInfo::new(main_win, &config.params),
       status_scroller: Scroller::new(max_x as usize),
       static_rows: static_rows,
     };
@@ -278,6 +285,10 @@ impl View {
 
   pub fn display_help(&mut self) {
     self.help.print();
+  }
+
+  pub fn display_server_info(&mut self, client: &mut mpd::Client<TcpStream>) {
+    self.server_info.print(client);
   }
 
   // TODO: data should not be mutable
