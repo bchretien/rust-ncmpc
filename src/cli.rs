@@ -1,9 +1,9 @@
 extern crate getopts;
 
-use getopts::Options;
-use std::path::PathBuf;
 
 use config::{Config, ConfigLoader};
+use getopts::Options;
+use std::path::PathBuf;
 
 fn print_usage(program: &str, opts: Options) {
   let brief = format!("Usage: {} [options]...", program);

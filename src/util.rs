@@ -81,7 +81,11 @@ impl Scroller {
     // Update pos.
     let current_t = get_time();
     if self.pos_update_time + self.dt < current_t {
-      self.pos = if 1 + self.pos < self.text.len() + self.separator.len() { self.pos + 1 } else { 0 };
+      self.pos = if 1 + self.pos < self.text.len() + self.separator.len() {
+        self.pos + 1
+      } else {
+        0
+      };
       self.pos_update_time = current_t;
     }
     // Case 1: we can simply return the full text.
@@ -110,7 +114,10 @@ impl Scroller {
         start_sep = self.pos as i32 - self.text.len() as i32;
       }
       if free_len < self.separator.len() as i32 - start_sep as i32 {
-        self.temp.push_str(&self.separator[start_sep as usize..free_len as usize]);
+        self.temp.push_str(
+          &self.separator[start_sep as usize..
+                            free_len as usize],
+        );
       } else {
         self.temp.push_str(&self.separator[start_sep as usize..]);
       }

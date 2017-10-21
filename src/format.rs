@@ -1,13 +1,13 @@
 extern crate ncurses;
 extern crate nom;
 
-use std::fmt;
+use constants::Color;
 use ncurses as nc;
 use parser::{ParserError, get_columns_format};
-use constants::Color;
+use std::fmt;
 
 /// Column type for playlist display.
-#[derive(Clone,PartialEq,Debug)]
+#[derive(Clone, PartialEq, Debug)]
 pub enum SongProperty {
   Album,
   AlbumArtist,
@@ -30,31 +30,33 @@ pub enum SongProperty {
 impl fmt::Display for SongProperty {
   fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
     use format::SongProperty::*;
-    write!(f,
-           "{}",
-           match *self {
-             Album => "Album",
-             AlbumArtist => "Album Artist",
-             Artist => "Artist",
-             Comment => "Comment",
-             Composer => "Composer",
-             Date => "Date",
-             Directory => "Directory",
-             Disc => "Disc",
-             Filename => "Filename",
-             Genre => "Genre",
-             Length => "Time",
-             Performer => "Performer",
-             Priority => "Priority",
-             Title => "Title",
-             Track => "Track",
-             TrackFull => "Full Track",
-           })
+    write!(
+      f,
+      "{}",
+      match *self {
+        Album => "Album",
+        AlbumArtist => "Album Artist",
+        Artist => "Artist",
+        Comment => "Comment",
+        Composer => "Composer",
+        Date => "Date",
+        Directory => "Directory",
+        Disc => "Disc",
+        Filename => "Filename",
+        Genre => "Genre",
+        Length => "Time",
+        Performer => "Performer",
+        Priority => "Priority",
+        Title => "Title",
+        Track => "Track",
+        TrackFull => "Full Track",
+      }
+    )
   }
 }
 
 /// Column used to display the current playlist.
-#[derive(Clone,PartialEq,Debug)]
+#[derive(Clone, PartialEq, Debug)]
 pub struct Column {
   /// Type of the column.
   pub column_type: SongProperty,
@@ -148,7 +150,7 @@ pub fn generate_columns(format: &str) -> Result<Vec<Column>, ParserError> {
 }
 
 /// Format flags used by ncurses.
-#[derive(Clone,PartialEq,Debug)]
+#[derive(Clone, PartialEq, Debug)]
 pub enum Format {
   None,
   Bold,
@@ -193,7 +195,7 @@ pub fn get_format(s: &str) -> Result<Format, ParserError> {
 }
 
 /// Expression used for song formats.
-#[derive(Clone,PartialEq,Debug)]
+#[derive(Clone, PartialEq, Debug)]
 pub enum Expression {
   String(String),
   Color(Color),

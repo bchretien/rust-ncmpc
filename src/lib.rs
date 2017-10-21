@@ -24,9 +24,9 @@ pub mod view;
 
 pub use cli::process_cli;
 pub use config::{ConfigLoader, ParamConfig};
-pub use controller::{ControlQuery, Controller};
 pub use constants::Color;
+pub use controller::{ControlQuery, Controller};
 pub use format::{Column, SongProperty};
 pub use model::Model;
-pub use view::View;
 pub use parser::parse_bindings_configuration;
+pub use view::View;

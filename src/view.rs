@@ -1,15 +1,15 @@
 extern crate ncurses;
 
+use config::{ColorConfig, Config, ParamConfig};
+
+use constants::*;
+use format::*;
+use help::*;
 use ncurses as nc;
 
 use std::{cmp, mem};
 use std::fmt::{self, Display, Formatter};
 use time::{Duration, Timespec, get_time};
-
-use constants::*;
-use format::*;
-use help::*;
-use config::{ColorConfig, Config, ParamConfig};
 use util::{Scroller, TimedValue};
 
 pub struct PlaylistData {
@@ -37,15 +37,17 @@ impl Display for PlaylistData {
       let s_h = if n_h > 1 { "s" } else { "" };
       let s_min = if n_min > 1 { "s" } else { "" };
       let s_sec = if n_sec > 1 { "s" } else { "" };
-      write!(f,
-             "{} items, length: {} hour{}, {} minute{}, {} second{}",
-             self.size,
-             n_h,
-             s_h,
-             n_min,
-             s_min,
-             n_sec,
-             s_sec)
+      write!(
+        f,
+        "{} items, length: {} hour{}, {} minute{}, {} second{}",
+        self.size,
+        n_h,
+        s_h,
+        n_min,
+        s_min,
+        n_sec,
+        s_sec
+      )
     }
   }
 }
@@ -65,7 +67,7 @@ pub enum MouseEvent {
   Nothing,
 }
 
-#[derive(Debug,PartialEq)]
+#[derive(Debug, PartialEq)]
 pub enum ActiveWindow {
   /// Displaying help window.
   Help,
@@ -150,7 +152,10 @@ fn init_ncurses(config: &Config) {
 
   // Enable mouse events.
   nc::mouseinterval(0);
-  nc::mousemask((nc::BUTTON1_CLICKED | nc::BUTTON4_PRESSED | nc::BUTTON5_PRESSED) as nc::mmask_t, None);
+  nc::mousemask(
+    (nc::BUTTON1_CLICKED | nc::BUTTON4_PRESSED | nc::BUTTON5_PRESSED) as nc::mmask_t,
+    None,
+  );
 
   nc::clear();
 }
@@ -276,8 +281,7 @@ impl View {
   }
 
   // TODO: data should not be mutable
-  pub fn display_main_playlist(&mut self, desc: &Vec<Column>, data: &mut [&mut [String]], current_song: &Option<u32>,
-    selected_song: &Option<TimedValue<u32>>) {
+  pub fn display_main_playlist(&mut self, desc: &Vec<Column>, data: &mut [&mut [String]], current_song: &Option<u32>, selected_song: &Option<TimedValue<u32>>) {
     // Get the screen bounds.
     let mut max_x = 0;
     let mut max_y = 0;
@@ -337,7 +341,11 @@ impl View {
     // Total number of songs
     let n = data.len() as i32;
     // Index of the selected song
-    let selected_idx = if selected_song.is_some() { selected_song.unwrap().value as i32 } else { -1 as i32 };
+    let selected_idx = if selected_song.is_some() {
+      selected_song.unwrap().value as i32
+    } else {
+      -1 as i32
+    };
     // Maximum number of displayed song rows
     let max_height = pl_max_row - pl_start_row;
     // Number of displayed song rows
@@ -377,10 +385,12 @@ impl View {
         }
 
         // Print song
-        nc::mvwprintw(self.main_win,
-                      pl_start_row + row,
-                      x,
-                      &format!("{}", data[idx as usize][i as usize]));
+        nc::mvwprintw(
+          self.main_win,
+          pl_start_row + row,
+          x,
+          &format!("{}", data[idx as usize][i as usize]),
+        );
 
         // If it's not the last column
         if i < desc.len() - 1 {
@@ -452,11 +462,13 @@ impl View {
     color = get_color(COLOR_PAIR_PROGRESSBAR);
     nc::wattron(self.progressbar, color);
     if self.progressbar_look[2] == "─" {
-      nc::mvwhline(self.progressbar,
-                   0,
-                   if tip_x > 0 { tip_x + 1 } else { 0 },
-                   nc::ACS_HLINE(),
-                   len_end);
+      nc::mvwhline(
+        self.progressbar,
+        0,
+        if tip_x > 0 { tip_x + 1 } else { 0 },
+        nc::ACS_HLINE(),
+        len_end,
+      );
     } else if self.progressbar_look[2] != "" {
       nc::wmove(self.progressbar, 0, if tip_x > 0 { tip_x + 1 } else { 0 });
       for _i in 0..len_end {

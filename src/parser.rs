@@ -1,10 +1,10 @@
 extern crate nom;
 
+use nom::*;
 use std::fs::File;
-use std::path::PathBuf;
 use std::io;
 use std::io::Read;
-use nom::*;
+use std::path::PathBuf;
 
 #[derive(Debug)]
 pub enum ParserError {
@@ -114,11 +114,14 @@ pub fn parse_bindings_configuration(path: &PathBuf) -> Result<Vec<(String, Vec<S
     IResult::Done(_, o) => {
       let res = o.iter()
         .map(|ref val| {
-          (String::from(val.0),
-           val.1
-            .iter()
-            .map(|act| String::from(*act))
-            .collect::<Vec<String>>())
+          (
+            String::from(val.0),
+            val
+              .1
+              .iter()
+              .map(|act| String::from(*act))
+              .collect::<Vec<String>>(),
+          )
         })
         .collect::<Vec<(String, Vec<String>)>>();
       Ok(res)
@@ -128,7 +131,11 @@ pub fn parse_bindings_configuration(path: &PathBuf) -> Result<Vec<(String, Vec<S
 }
 
 fn to_width(s: &str) -> Result<(i32, bool), ParserError> {
-  let is_fixed = if s.chars().last().unwrap_or(' ') == 'f' { true } else { false };
+  let is_fixed = if s.chars().last().unwrap_or(' ') == 'f' {
+    true
+  } else {
+    false
+  };
   let width = if is_fixed {
     // TODO: return error if parsing fails
     s[..s.len() - 1].parse::<i32>().unwrap_or(1)
@@ -236,10 +243,12 @@ fn parse_comment() {
 
 #[test]
 fn parse_ignored_line() {
-  let files = ["# This is a comment
+  let files = [
+    "# This is a comment
 ",
-               "### This is a title ###
-"];
+    "### This is a title ###
+",
+  ];
   let file_remaining = "";
 
   for f in files.into_iter() {
