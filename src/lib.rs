@@ -11,6 +11,7 @@ extern crate time;
 extern crate ini;
 extern crate getopts;
 
+pub mod action;
 pub mod cli;
 pub mod config;
 pub mod constants;

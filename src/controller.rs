@@ -1,5 +1,6 @@
 extern crate ncurses;
 
+use action::Action;
 use config::*;
 use model::*;
 use ncurses as nc;
@@ -26,17 +27,19 @@ pub struct Controller<'c, 'm: 'c> {
 
 macro_rules! register_callback {
   // If the keycode is part of the configuration
-  ($callbacks: ident, $config: ident, $action:ident, $callback: ident) => {
+  ($callbacks: ident, $config: ident, $action: ident, $callback: ident) => {
     {
+      let name: &str = stringify!($action);
       for key in &$config.keys.$action {
-        $callbacks.insert(key.keycode(), vec![Action::new($callback)]);
+        $callbacks.insert(key.keycode(), vec![Action::new(name, $callback)]);
       }
     }
   };
   // For special keycodes
   ($callbacks: ident, $key:expr, $callback: ident) => {
     {
-      $callbacks.insert($key, vec![Action::new($callback)]);
+      let name: &str = stringify!($action);
+      $callbacks.insert($key, vec![Action::new(name, $callback)]);
     }
   };
   // For custom actions

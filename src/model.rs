@@ -1,6 +1,7 @@
 extern crate time;
 extern crate mpd;
 
+use action::Action;
 use config::*;
 use format::*;
 use mpd::song::Song;
@@ -15,29 +16,6 @@ use util::TimedValue;
 use view::*;
 
 pub type SharedModel<'m> = Arc<Mutex<Model<'m>>>;
-pub type ActionCallback<'m> = fn(&mut SharedModel<'m>);
-
-/// Action triggered by the user.
-pub struct Action<'m> {
-  callback: ActionCallback<'m>,
-}
-
-impl<'m> Action<'m> {
-  pub fn new(func: ActionCallback<'m>) -> Action<'m> {
-    Action { callback: func }
-  }
-
-  pub fn execute(&self, model: &mut SharedModel<'m>) {
-    (self.callback)(model);
-  }
-}
-
-impl<'m> Clone for Action<'m> {
-  fn clone(&self) -> Action<'m> {
-    let callback: ActionCallback<'m> = self.callback;
-    return Action { callback: callback };
-  }
-}
 
 fn start_client(config: &Config) -> Result<mpd::Client, mpd::error::Error> {
   mpd::Client::connect(config.socket_addr())
@@ -134,7 +112,8 @@ macro_rules! actions_to_map(
     {
       let mut action_map: HashMap<String, Action<'m>> = HashMap::new();
       $(
-        action_map.insert(stringify!($fun).to_string(), Action::new($fun));
+        let name: &str = stringify!($fun);
+        action_map.insert(name.to_string(), Action::new(name, $fun));
       )*
       action_map
     }
