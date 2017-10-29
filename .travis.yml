@@ -13,6 +13,7 @@ rust:
 env:
   global:
     - TRAVIS_CARGO_NIGHTLY_FEATURE=""
+    - secure: j2q12XpkDF7bWHqblb/d8Qh6I2SKb7fJl12Z2JMGSTRWSmlSP1Cq7tbBcAyIYoB0RG9RfJpzrayQyk95Gi9EpiA2tQS4cdz+oFt/XJg/XtpEiWBcxjys6h4pDilEJiRH3UIcVBaN+dP0IsQGSByHgRqHRB3KuZL2B+jU2fqF4JqLnZ200K9CvOucTfbaBKP29k0T3RQVDHb1Ubjcvso8Z+Zug0jqdhdadK9u0xLpOq/ENPFkWUyR4H3QecywmZ5aj6Ya/FuZ/Q5IGpeZRVCKnClufgM+NtsZWNdXISc02bKVn789Efw1J3uzBPbjcP4uciX5lXpGDELPwxtb5E2XppyrZxb+OXNDr5vZQIis7adUD3sbaukrRs8L3tVbp5usPVbX3ZkpXWH9gAa42k2CwzuUVUQIZe8V+2VTc8qJlsxKvt+L32PzojTVYE+Kz340nseZHg92nMxPi+L57E1JtWInYysGFHQI2VXF5ok+smlaIUiLIBC+549ua8tUFCuoCJRi0JShOmp6PMjPL52Gyvxciij8SCGYcnSAJpBdDUI52fomX8lp7JQIjLIKBUW71TFGuU9DhkGm3/9OD5oON89Na1mNv0A62jXbLWaXRSa+EAZdGUFjfnh2+LMJsfOQJrFOaTiUb+rGX1kxiS8jTDgJzU0zZJraQM0mD5IEevA=
 before_script:
   - sudo apt-get update -qq
   - sudo apt-get install -y mpd
@@ -21,9 +22,9 @@ before_script:
     pip install 'travis-cargo<0.2' --user &&
     export PATH=$HOME/.local/bin:$PATH
   - |
-      if [[ "$TRAVIS_RUST_VERSION" == "nightly" ]]; then
-        ( ( travis-cargo install clippy && export CLIPPY=true ) || export CLIPPY=false );
-      fi
+    if [[ "$TRAVIS_RUST_VERSION" == "nightly" ]]; then
+      ( ( travis-cargo install clippy && export CLIPPY=true ) || export CLIPPY=false );
+    fi
   - export PATH=$PATH:~/.cargo/bin
 script:
   - travis-cargo build
@@ -31,18 +32,18 @@ script:
   - travis-cargo bench
   - travis-cargo --only stable doc
   - |
-      if [[ "$TRAVIS_RUST_VERSION" == "nightly" && $CLIPPY ]]; then
-        travis-cargo clippy
-      fi
+    if [[ "$TRAVIS_RUST_VERSION" == "nightly" && $CLIPPY ]]; then
+      travis-cargo clippy
+    fi
 after_success:
-- |
-      if [[ "$TRAVIS_OS_NAME" == "linux" && "$TRAVIS_RUST_VERSION" == "stable" ]]; then
-        travis-cargo --only stable doc-upload
-      fi
-- |
-      if [[ "$TRAVIS_OS_NAME" == "linux" && "$TRAVIS_RUST_VERSION" == "stable" ]]; then
-        travis-cargo coveralls --no-sudo --verify
-      fi
+  - |
+    if [[ "$TRAVIS_OS_NAME" == "linux" && "$TRAVIS_RUST_VERSION" == "stable" ]]; then
+      travis-cargo --only stable doc-upload --branch master
+    fi
+  - |
+    if [[ "$TRAVIS_OS_NAME" == "linux" && "$TRAVIS_RUST_VERSION" == "stable" ]]; then
+      travis-cargo coveralls --no-sudo --verify
+    fi
 matrix:
   allow_failures:
     - rust: nightly
