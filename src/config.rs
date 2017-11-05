@@ -65,6 +65,7 @@ pub struct ColorConfig {
   pub state_line: Color,
   pub statusbar: Color,
   pub volume: Color,
+  pub window_border: Color,
 }
 
 #[derive(Clone, PartialEq, Debug)]
@@ -327,6 +328,7 @@ impl ColorConfig {
       state_line: 0,
       statusbar: 0,
       volume: 0,
+      window_border: 0,
     }
   }
 }
@@ -437,6 +439,7 @@ fn assign(key: &str, val: &str, config: &mut Config) -> bool {
     "state_line_color" => config.colors.state_line = parse_color(val),
     "statusbar_color" => config.colors.statusbar = parse_color(val),
     "volume_color" => config.colors.volume = parse_color(val),
+    "window_border_color" => config.colors.window_border = parse_color(val),
     // Parameters
     "cyclic_scrolling" => config.params.cyclic_scrolling = parse_bool(val),
     "display_bitrate" => config.params.display_bitrate = parse_bool(val),

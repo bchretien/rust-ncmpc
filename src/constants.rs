@@ -32,6 +32,7 @@ pub const COLOR_PAIR_DEBUG: Color = 215;
 pub const COLOR_PAIR_STATE_LINE: Color = 216;
 pub const COLOR_PAIR_STATE_FLAGS: Color = 217;
 pub const COLOR_PAIR_TRACK: Color = 218;
+pub const COLOR_PAIR_WINDOW_BORDER: Color = 219;
 
 pub const COLOR_PAIR_COLUMNS: [Color; MAX_NUM_COLUMNS] = [30, 31, 32, 33, 34, 35, 36, 37, 38, 39];
 

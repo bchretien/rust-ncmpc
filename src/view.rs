@@ -123,6 +123,7 @@ fn init_colors(colors: &ColorConfig, params: &ParamConfig) {
   nc::init_pair(COLOR_PAIR_STATE_LINE, colors.state_line, color_bg);
   nc::init_pair(COLOR_PAIR_STATE_FLAGS, colors.state_flags, color_bg);
   nc::init_pair(COLOR_PAIR_TRACK, nc::COLOR_BLACK, color_bg);
+  nc::init_pair(COLOR_PAIR_WINDOW_BORDER, colors.window_border, color_bg);
 
   let ref columns_fmt = params.song_columns_list_format;
   assert!(columns_fmt.len() <= MAX_NUM_COLUMNS);
