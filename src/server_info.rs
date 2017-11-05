@@ -1,9 +1,10 @@
 extern crate mpd;
 
+use chrono::{DateTime, Local, TimeZone};
 use config::{ParamConfig, ControlKeys};
 use ncurses as nc;
 use std::net::TcpStream;
-use time::Duration;
+use time::{Duration, Timespec};
 
 use view::{bold, get_color};
 
@@ -51,6 +52,13 @@ fn format_duration_time(duration: &Duration) -> String {
   let minutes = duration.num_minutes() - hours * 60;
   let seconds = duration.num_seconds() - (hours * 60 + minutes) * 60;
   return format!("{}:{}:{}", hours, minutes, seconds);
+}
+
+/// Format date for server info, e.g.:
+/// 11/26/2014 07:51:29 PM
+fn format_date(ts: &Timespec) -> String {
+  let date: DateTime<Local> = Local.timestamp(ts.sec, ts.nsec as u32);
+  return format!("{}", date.format("%m/%d/%Y %I:%M:%S %p").to_string());
 }
 
 pub struct ServerInfo {
@@ -112,7 +120,7 @@ impl ServerInfo {
     self.entry("Album names", &format!("{}", stats.albums));
     self.entry("Songs in database", &format!("{}", stats.songs));
     self.newline();
-    self.entry("Last DB update", &format!("{:?}", stats.db_update));
+    self.entry("Last DB update", format_date(&stats.db_update).as_str());
     self.newline();
     let url_handlers = client.urlhandlers();
     if url_handlers.is_ok() {

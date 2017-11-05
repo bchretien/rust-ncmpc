@@ -4,6 +4,7 @@ version = "0.0.1"
 authors = ["Benjamin Chrétien <chretien.b@gmail.com>"]
 
 [dependencies]
+chrono = "0.4"
 mpd = "0.0.12"
 ncurses = "5.86.0"
 time = "0.1.38"

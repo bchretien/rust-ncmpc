@@ -10,6 +10,7 @@ extern crate mpd;
 extern crate time;
 extern crate ini;
 extern crate getopts;
+extern crate chrono;
 
 pub mod action;
 pub mod cli;
