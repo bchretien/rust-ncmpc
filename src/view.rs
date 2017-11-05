@@ -88,7 +88,7 @@ pub struct View {
   progressbar: nc::WINDOW,
   progressbar_look: Vec<String>,
   statusbar: nc::WINDOW,
-  help: Help,
+  pub help: Help,
   server_info: ServerInfo,
   status_scroller: Scroller,
   static_rows: i32,

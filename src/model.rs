@@ -534,7 +534,7 @@ impl<'m> Model<'m> {
     self.view.resize_windows();
   }
 
-  pub fn scroll_down(&mut self) {
+  pub fn scroll_down_playlist(&mut self) {
     let end = self.snapshot.pl_data.size;
     self.selected_song = Some(TimedValue::<u32>::new(match self.selected_song {
       Some(ref s) => {
@@ -552,7 +552,19 @@ impl<'m> Model<'m> {
     }))
   }
 
-  pub fn scroll_up(&mut self) {
+  pub fn scroll_down_help(&mut self) {
+    self.view.help.scroll(-1);
+  }
+
+  pub fn scroll_down(&mut self) {
+    match self.active_window {
+      ActiveWindow::Help => self.scroll_down_help(),
+      ActiveWindow::Playlist => self.scroll_down_playlist(),
+      _ => {}
+    }
+  }
+
+  pub fn scroll_up_playlist(&mut self) {
     let end = self.snapshot.pl_data.size;
     self.selected_song = Some(TimedValue::<u32>::new(match self.selected_song {
       Some(ref s) => {
@@ -568,6 +580,18 @@ impl<'m> Model<'m> {
       }
       None => 0,
     }))
+  }
+
+  pub fn scroll_up_help(&mut self) {
+    self.view.help.scroll(1);
+  }
+
+  pub fn scroll_up(&mut self) {
+    match self.active_window {
+      ActiveWindow::Help => self.scroll_up_help(),
+      ActiveWindow::Playlist => self.scroll_up_playlist(),
+      _ => {}
+    }
   }
 
   pub fn move_home(&mut self) {

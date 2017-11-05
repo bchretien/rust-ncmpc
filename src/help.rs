@@ -4,19 +4,33 @@ use ncurses as nc;
 use view::{bold, get_color};
 
 pub struct Help {
-  win: nc::WINDOW,
+  pad: nc::WINDOW,
+  max_x: i32,
+  max_y: i32,
+  start_y: i32,
+  cur_y: i32,
   config: Config,
   current_row: i32,
+  total_rows: i32,
   tab_size: i32,
   key_col_size: i32,
 }
 
 impl Help {
   pub fn new(win: nc::WINDOW, config: &Config) -> Help {
+    let mut max_x = 0;
+    let mut max_y = 0;
+    nc::getmaxyx(win, &mut max_y, &mut max_x);
+    max_y -= 1;
     Help {
-      win: win,
+      pad: nc::newpad(500, max_x),
+      max_x: max_x,
+      max_y: max_y,
+      start_y: 2,
+      cur_y: 0,
       config: config.clone(),
       current_row: 0,
+      total_rows: 0,
       tab_size: 2,
       key_col_size: 20,
     }
@@ -27,16 +41,16 @@ impl Help {
   }
 
   fn section(&mut self, name: &str) {
-    nc::wattron(self.win, bold());
-    nc::mvwprintw(self.win, self.current_row, self.tab_size, &name);
-    nc::wattroff(self.win, bold());
+    nc::wattron(self.pad, bold());
+    nc::mvwprintw(self.pad, self.current_row, self.tab_size, &name);
+    nc::wattroff(self.pad, bold());
     self.current_row += 1;
   }
 
   fn print_entry(&self, name: &str, desc: &str) {
-    nc::mvwprintw(self.win, self.current_row, 2 * self.tab_size, &name);
-    nc::mvwprintw(self.win, self.current_row, 2 * self.tab_size + self.key_col_size, ": ");
-    nc::mvwprintw(self.win, self.current_row, 2 * self.tab_size + self.key_col_size + 2, &desc);
+    nc::mvwprintw(self.pad, self.current_row, 2 * self.tab_size, &name);
+    nc::mvwprintw(self.pad, self.current_row, 2 * self.tab_size + self.key_col_size, ": ");
+    nc::mvwprintw(self.pad, self.current_row, 2 * self.tab_size + self.key_col_size + 2, &desc);
   }
 
   fn keys(&self, keys: &ControlKeys, desc: &str) {
@@ -51,6 +65,18 @@ impl Help {
     self.print_entry(keys_s.as_str(), desc);
   }
 
+  pub fn scroll(&mut self, offset: i32) {
+    let range = self.total_rows - self.max_y;
+    let min_y = 0;
+    let max_y = range;
+
+    self.cur_y -= offset;
+    if self.cur_y < min_y {
+      self.cur_y = min_y;
+    } else if self.cur_y > max_y {
+      self.cur_y = max_y;
+    }
+  }
 
   pub fn print(&mut self) {
     macro_rules! print_key(
@@ -66,7 +92,8 @@ impl Help {
         )
       );
 
-    nc::wclear(self.win);
+    nc::scrollok(self.pad, true);
+
     self.current_row = 0;
 
     self.newline();
@@ -124,12 +151,16 @@ impl Help {
     let mut pos = 0;
     for i in 1..232 {
       let color = get_color(i);
-      nc::wattron(self.win, color);
-      nc::mvwprintw(self.win, self.current_row, pos, format!("{} ", i).as_str());
-      nc::wattroff(self.win, color);
+      nc::wattron(self.pad, color);
+      nc::mvwprintw(self.pad, self.current_row, pos, format!("{} ", i).as_str());
+      nc::wattroff(self.pad, color);
       pos += 3;
     }
 
-    nc::wrefresh(self.win);
+    if self.total_rows == 0 {
+      self.total_rows = self.current_row;
+    }
+
+    nc::prefresh(self.pad, self.cur_y, 0, 2, 0, self.start_y + self.max_y, self.max_x);
   }
 }
