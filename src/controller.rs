@@ -20,7 +20,6 @@ pub type ControllerCallbacks<'m> = HashMap<i32, Vec<Action<'m>>>;
 
 pub struct Controller<'c, 'm: 'c> {
   model: &'c mut SharedModel<'m>,
-  config: &'c Config,
   callbacks: ControllerCallbacks<'m>,
   quit_keycodes: Vec<i32>,
 }
@@ -117,7 +116,6 @@ impl<'c, 'm> Controller<'c, 'm> {
 
     Controller {
       model: model,
-      config: config,
       callbacks: callbacks,
       quit_keycodes: quit_keycodes,
     }
