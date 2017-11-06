@@ -47,7 +47,7 @@ impl fmt::Display for SongProperty {
         Length => "Time",
         Performer => "Performer",
         Priority => "Priority",
-        Title => "Title",
+        Title => "Title/Filename",
         Track => "Track",
         TrackFull => "Full Track",
       }
