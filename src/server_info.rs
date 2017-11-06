@@ -46,12 +46,17 @@ fn format_duration(duration: &Duration) -> String {
 }
 
 /// Format duration for server info, e.g.:
+/// 0:02
 /// 5:57:53
 fn format_duration_time(duration: &Duration) -> String {
   let hours = duration.num_hours();
   let minutes = duration.num_minutes() - hours * 60;
   let seconds = duration.num_seconds() - (hours * 60 + minutes) * 60;
-  return format!("{}:{}:{}", hours, minutes, seconds);
+  if hours == 0 {
+    return format!("{}:{:02}", minutes, seconds);
+  } else {
+    return format!("{}:{}:{:02}", hours, minutes, seconds);
+  }
 }
 
 /// Format date for server info, e.g.:
