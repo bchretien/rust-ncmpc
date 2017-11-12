@@ -135,7 +135,8 @@ impl<'c, 'm> Controller<'c, 'm> {
       // Registered callbacks
       else if let Some(actions) = self.callbacks.get_mut(&ch) {
         for action in actions {
-          action.execute(self.model);
+          let mut model = self.model.lock().unwrap();
+          action.execute(&mut model);
         }
       }
       // TODO: debug only

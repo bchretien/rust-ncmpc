@@ -1,6 +1,6 @@
-use model::SharedModel;
+use model::Model;
 
-pub type ActionCallback<'m> = fn(&mut SharedModel<'m>);
+pub type ActionCallback<'m> = fn(&mut Model<'m>);
 
 /// Action triggered by the user.
 pub struct Action<'m> {
@@ -16,7 +16,7 @@ impl<'m> Action<'m> {
     }
   }
 
-  pub fn execute(&self, model: &mut SharedModel<'m>) {
+  pub fn execute(&self, model: &mut Model<'m>) {
     (self.callback)(model);
   }
 }

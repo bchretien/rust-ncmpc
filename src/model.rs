@@ -73,9 +73,8 @@ fn get_song_bitrate(status: &Status) -> u32 {
 macro_rules! register_actions(
   ($($fun:ident), *) => (
     $(
-      pub fn $fun(shared_model: &mut SharedModel)
+      pub fn $fun(model: &mut Model)
       {
-        let mut model = shared_model.lock().unwrap();
         model.$fun();
       }
     )*
