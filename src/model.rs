@@ -83,6 +83,7 @@ macro_rules! register_actions(
 
 // Register actions for closures
 register_actions!(
+  execute_command,
   playlist_play,
   playlist_pause,
   playlist_stop,
@@ -122,6 +123,7 @@ macro_rules! actions_to_map(
 
 pub fn get_action_map<'m>() -> HashMap<String, Action<'m>> {
   let action_map = actions_to_map!(
+    execute_command,
     playlist_play,
     playlist_pause,
     playlist_stop,
@@ -235,6 +237,19 @@ impl<'m> Model<'m> {
       State::Stop => {
         // do nothing
       }
+    }
+  }
+
+  pub fn read_input_command(&mut self) -> String {
+    return self.view.read_input_command();
+  }
+
+  pub fn execute_command(&mut self) {
+    let cmd = self.read_input_command();
+    let action_map = get_action_map();
+    match action_map.get(cmd.as_str()) {
+      Some(ref action) => action.execute(self),
+      None => self.update_message(format!("No command named \"{}\"", cmd).as_str()),
     }
   }
 

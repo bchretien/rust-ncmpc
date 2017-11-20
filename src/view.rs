@@ -9,7 +9,7 @@ use help::*;
 use ncurses as nc;
 use server_info::*;
 
-use std::{cmp, mem};
+use std::{cmp, mem, char};
 use std::fmt::{self, Display, Formatter};
 use std::net::TcpStream;
 use time::{Duration, Timespec, get_time};
@@ -88,6 +88,7 @@ pub struct View {
   progressbar: nc::WINDOW,
   progressbar_look: Vec<String>,
   statusbar: nc::WINDOW,
+  statusbar_input: String,
   pub help: Help,
   server_info: ServerInfo,
   status_scroller: Scroller,
@@ -219,6 +220,7 @@ impl View {
         ar
       },
       statusbar: nc::newwin(1, max_x, max_y - 1, 0),
+      statusbar_input: String::default(),
       help: Help::new(main_win, config),
       server_info: ServerInfo::new(main_win, &config.params),
       status_scroller: Scroller::new(max_x as usize),
@@ -262,8 +264,14 @@ impl View {
     if volume.is_some() {
       let vol_color = get_color(COLOR_PAIR_VOLUME);
       nc::wattron(self.header, vol_color);
-      let s = format!(" Volume: {}%%", volume.unwrap());
-      nc::mvwprintw(self.header, 0, 1 + max_x - s.len() as i32, s.as_str());
+      let vol_value = volume.unwrap();
+      let s: String = if vol_value >= 0 {
+        format!(" Volume: {}%%", volume.unwrap())
+      } else {
+        String::from(" Volume: n/a")
+      };
+
+      nc::mvwprintw(self.header, 0, 1 + max_x - 1 - s.len() as i32, s.as_str());
       nc::wattroff(self.header, vol_color);
       free_size -= s.len() as i32;
     }
@@ -542,41 +550,48 @@ impl View {
     nc::wmove(self.statusbar, 0, 0);
     nc::wclrtoeol(self.statusbar);
 
-    // Print mode.
-    if !mode.is_empty() {
-      let color = get_color(COLOR_PAIR_STATUSBAR);
+    if !self.statusbar_input.is_empty() {
+      let color = get_color(COLOR_PAIR_DEFAULT);
       nc::wattron(self.statusbar, color);
-      nc::wattron(self.statusbar, bold());
-      nc::mvwprintw(self.statusbar, 0, 0, &format!("{}:", mode));
-      nc::wattroff(self.statusbar, bold());
+      nc::mvwprintw(self.statusbar, 0, 0, format!(":{}", self.statusbar_input.as_str()).as_str());
       nc::wattroff(self.statusbar, color);
+    } else {
+      // Print mode.
+      if !mode.is_empty() {
+        let color = get_color(COLOR_PAIR_STATUSBAR);
+        nc::wattron(self.statusbar, color);
+        nc::wattron(self.statusbar, bold());
+        nc::mvwprintw(self.statusbar, 0, 0, &format!("{}:", mode));
+        nc::wattroff(self.statusbar, bold());
+        nc::wattroff(self.statusbar, color);
 
-      free_size -= mode.len() as i32 + 2;
-    }
+        free_size -= mode.len() as i32 + 2;
+      }
 
-    // Print track (time, bitrate, etc.)
-    if !track.is_empty() {
-      let color = get_color(COLOR_PAIR_TRACK);
+      // Print track (time, bitrate, etc.)
+      if !track.is_empty() {
+        let color = get_color(COLOR_PAIR_TRACK);
+        nc::wattron(self.statusbar, color);
+        nc::wattron(self.statusbar, bold());
+        let offset = max_x - track.len() as i32;
+        nc::mvwprintw(self.statusbar, 0, offset - 1, " ");
+        nc::mvwprintw(self.statusbar, 0, offset, track);
+        nc::wattroff(self.statusbar, bold());
+        nc::wattroff(self.statusbar, color);
+
+        free_size -= track.len() as i32 + 1;
+      }
+
+      // Print message.
+      // TODO: only change text on song change
+      self.status_scroller.set_text(msg);
+      self.status_scroller.resize(free_size);
+      let color = get_color(COLOR_PAIR_DEFAULT);
       nc::wattron(self.statusbar, color);
-      nc::wattron(self.statusbar, bold());
-      let offset = max_x - track.len() as i32;
-      nc::mvwprintw(self.statusbar, 0, offset - 1, " ");
-      nc::mvwprintw(self.statusbar, 0, offset, track);
-      nc::wattroff(self.statusbar, bold());
+      let offset = mode.len() + 2;
+      nc::mvwprintw(self.statusbar, 0, offset as i32, self.status_scroller.display());
       nc::wattroff(self.statusbar, color);
-
-      free_size -= track.len() as i32 + 1;
     }
-
-    // Print message.
-    // TODO: only change text on song change
-    self.status_scroller.set_text(msg);
-    self.status_scroller.resize(free_size);
-    let color = get_color(COLOR_PAIR_DEFAULT);
-    nc::wattron(self.statusbar, color);
-    let offset = mode.len() + 2;
-    nc::mvwprintw(self.statusbar, 0, offset as i32, self.status_scroller.display());
-    nc::wattroff(self.statusbar, color);
 
     nc::wrefresh(self.statusbar);
   }
@@ -655,6 +670,50 @@ impl View {
     // self.header_scroller.resize();
 
     nc::refresh();
+  }
+
+  pub fn read_input_command(&mut self) -> String {
+    // Clear status bar
+    nc::wmove(self.statusbar, 0, 0);
+    nc::wclrtoeol(self.statusbar);
+
+    // While Enter was not pressed
+    // FIXME: this blocks the rest of the UI
+    loop {
+      let color = get_color(COLOR_PAIR_DEFAULT);
+      nc::wattron(self.statusbar, color);
+      nc::mvwprintw(self.statusbar, 0, 0, format!(":{}", self.statusbar_input.as_str()).as_str());
+      nc::wattroff(self.statusbar, color);
+      nc::wrefresh(self.statusbar);
+
+      let ch = nc::getch() as i32;
+
+      // If Enter is preseed
+      if ch == '\n' as i32 {
+        let cmd = self.statusbar_input.clone();
+        self.statusbar_input.clear();
+        return cmd;
+      }
+      // If Backspace is pressed
+      else if ch == KEY_BACKSPACE {
+        // Remove last character from string
+        let len = self.statusbar_input.len();
+        let new_len = len.saturating_sub(1);
+        self.statusbar_input.pop();
+
+        // Clear statusbar
+        nc::wmove(self.statusbar, 0, new_len as i32);
+        nc::wclrtoeol(self.statusbar);
+        nc::wrefresh(self.statusbar);
+      } else {
+        match char::from_u32(ch as u32) {
+          Some(c) => {
+            self.statusbar_input = format!("{}{}", self.statusbar_input, c);
+          }
+          None => {}
+        };
+      }
+    }
   }
 }
 

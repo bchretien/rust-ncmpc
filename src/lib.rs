@@ -19,9 +19,9 @@ pub mod constants;
 pub mod controller;
 pub mod format;
 pub mod help;
-pub mod server_info;
 pub mod model;
 pub mod parser;
+pub mod server_info;
 pub mod view;
 
 pub use cli::process_cli;

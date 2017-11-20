@@ -29,6 +29,7 @@ pub type CustomActions = HashMap<i32, Vec<String>>;
 /// Key bindings configuration.
 #[derive(Clone, PartialEq, Debug)]
 pub struct KeyConfig {
+  pub execute_command: ControlKeys,
   pub clear: ControlKeys,
   pub delete: ControlKeys,
   pub next_song: ControlKeys,
@@ -97,6 +98,7 @@ pub struct ConfigLoader {
 impl KeyConfig {
   pub fn new() -> KeyConfig {
     KeyConfig {
+      execute_command: vec![ControlKey::Char(':')],
       clear: vec![ControlKey::Char('c')],
       delete: vec![ControlKey::KeyCode(nc::KEY_DC)],
       next_song: vec![ControlKey::Char('>')],
@@ -142,6 +144,7 @@ impl KeyConfig {
   fn to_keys(&mut self, action: &str) -> Option<&mut ControlKeys> {
     return match action {
       // FIXME: find a way to automate this from class members
+      "execute_command" => Some(&mut self.execute_command),
       "clear" => Some(&mut self.clear),
       "delete" => Some(&mut self.delete),
       "next_song" => Some(&mut self.next_song),

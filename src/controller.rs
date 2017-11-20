@@ -58,6 +58,8 @@ impl<'c, 'm> Controller<'c, 'm> {
     // Set callbacks
     let mut callbacks = ControllerCallbacks::new();
 
+    // Execute a command
+    register_callback!(callbacks, config, execute_command, execute_command);
     // Clear the playlist
     register_callback!(callbacks, config, clear, playlist_clear);
     // Delete selected items
