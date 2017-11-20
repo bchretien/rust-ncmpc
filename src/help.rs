@@ -114,8 +114,8 @@ impl Help {
     self.newline();
     print_key!(stop, "Stop");
     print_key!(play_pause, "Pause");
-    print_key!(next_song, "Next track");
-    print_key!(previous_song, "Previous track");
+    print_key!(next, "Next track");
+    print_key!(previous, "Previous track");
     print_key!(
       volume_down,
       format!("Decrease volume by {}%%", self.config.params.volume_change_step).as_str()

@@ -69,9 +69,9 @@ impl<'c, 'm> Controller<'c, 'm> {
     // Stop
     register_callback!(callbacks, config, stop, playlist_stop);
     // Previous song
-    register_callback!(callbacks, config, previous_song, playlist_previous);
+    register_callback!(callbacks, config, previous, playlist_previous);
     // Next song
-    register_callback!(callbacks, config, next_song, playlist_next);
+    register_callback!(callbacks, config, next, playlist_next);
     // Increase volume
     register_callback!(callbacks, config, volume_up, volume_up);
     // Decrease volume
