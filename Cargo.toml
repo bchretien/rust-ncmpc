@@ -6,7 +6,7 @@ authors = ["Benjamin Chrétien <chretien.b@gmail.com>"]
 [dependencies]
 chrono = "0.4"
 mpd = "0.0.12"
-ncurses = "5.86.0"
+ncurses = "5.87.0"
 time = "0.1.38"
 rust-ini = "0.10.0"
 xdg = "2.1.0"

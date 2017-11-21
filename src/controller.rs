@@ -144,7 +144,12 @@ impl<'c, 'm> Controller<'c, 'm> {
       // TODO: debug only
       else {
         let mut model = self.model.lock().unwrap();
-        model.update_message(&format!("Pressed unmapped '{}' (keycode = {})", nc::keyname(ch), ch));
+        let name = nc::keyname(ch);
+        if name.is_some() {
+          model.update_message(&format!("Pressed unmapped '{}' (keycode = {})", name.unwrap(), ch));
+        } else {
+          model.update_message(&format!("Pressed unmapped key (keycode = {})", ch));
+        }
       }
       return ControlQuery::Command;
     } else {
