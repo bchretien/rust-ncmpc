@@ -214,7 +214,7 @@ impl View {
         ar
       },
       statusbar: nc::newwin(1, max_x, max_y - 1, 0),
-      statusbar_input: vec![String::new()],
+      statusbar_input: vec![],
       help: Help::new(main_win, config),
       server_info: ServerInfo::new(main_win, &config.params),
       status_scroller: Scroller::new(max_x as usize),
@@ -674,6 +674,10 @@ impl View {
     // Add new empty input
     self.statusbar_input.push(String::new());
 
+    // Number of inputs in vector
+    let n_inputs = self.statusbar_input.len();
+    let mut cur_input = n_inputs - 1;
+
     // While Enter was not pressed
     // FIXME: this blocks the rest of the UI
     loop {
@@ -685,13 +689,11 @@ impl View {
         0,
         format!(":{}", self.statusbar_input.last().unwrap().as_str()).as_str(),
       );
+      nc::wclrtoeol(self.statusbar);
       nc::wattroff(self.statusbar, color);
       nc::wrefresh(self.statusbar);
 
       let ch = nc::getch() as i32;
-
-      // Number of inputs in vector
-      let n_inputs = self.statusbar_input.len();
 
       // If Enter is preseed
       if ch == '\n' as i32 {
@@ -710,6 +712,46 @@ impl View {
         nc::wmove(self.statusbar, 0, new_len as i32);
         nc::wclrtoeol(self.statusbar);
         nc::wrefresh(self.statusbar);
+      }
+      // If Up is pressed
+      else if ch == nc::KEY_UP {
+        if cur_input > 0 {
+          cur_input = cur_input - 1;
+        }
+
+        // Copy content of previous input to last input
+        if cur_input < n_inputs - 1 {
+          let cmd = self.statusbar_input.get(cur_input).unwrap().clone();
+          if let Some(last_elem) = self.statusbar_input.get_mut(n_inputs - 1) {
+            *last_elem = cmd;
+          }
+        }
+        // If back to last input: clear string
+        else if cur_input == n_inputs - 1 {
+          if let Some(last_elem) = self.statusbar_input.get_mut(n_inputs - 1) {
+            last_elem.clear();
+          }
+        }
+      }
+      // If Down is pressed
+      else if ch == nc::KEY_DOWN {
+        if cur_input < n_inputs - 1 {
+          cur_input = cur_input + 1;
+        }
+
+        // Copy content of next input to last input
+        if cur_input < n_inputs - 1 {
+          let cmd = self.statusbar_input.get(cur_input).unwrap().clone();
+          if let Some(last_elem) = self.statusbar_input.get_mut(n_inputs - 1) {
+            *last_elem = cmd;
+          }
+        }
+        // If back to last input: clear string
+        else if cur_input == n_inputs - 1 {
+          if let Some(last_elem) = self.statusbar_input.get_mut(n_inputs - 1) {
+            last_elem.clear();
+          }
+        }
       } else {
         match char::from_u32(ch as u32) {
           Some(c) => {
