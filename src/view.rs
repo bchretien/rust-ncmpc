@@ -82,7 +82,7 @@ pub struct View {
   progressbar: nc::WINDOW,
   progressbar_look: Vec<String>,
   statusbar: nc::WINDOW,
-  statusbar_input: String,
+  statusbar_input: Vec<String>,
   pub help: Help,
   server_info: ServerInfo,
   status_scroller: Scroller,
@@ -214,7 +214,7 @@ impl View {
         ar
       },
       statusbar: nc::newwin(1, max_x, max_y - 1, 0),
-      statusbar_input: String::default(),
+      statusbar_input: vec![String::new()],
       help: Help::new(main_win, config),
       server_info: ServerInfo::new(main_win, &config.params),
       status_scroller: Scroller::new(max_x as usize),
@@ -539,10 +539,15 @@ impl View {
     nc::wmove(self.statusbar, 0, 0);
     nc::wclrtoeol(self.statusbar);
 
-    if !self.statusbar_input.is_empty() {
+    if !self.statusbar_input.is_empty() && !self.statusbar_input.last().unwrap().is_empty() {
       let color = get_color(COLOR_PAIR_DEFAULT);
       nc::wattron(self.statusbar, color);
-      nc::mvwprintw(self.statusbar, 0, 0, format!(":{}", self.statusbar_input.as_str()).as_str());
+      nc::mvwprintw(
+        self.statusbar,
+        0,
+        0,
+        format!(":{}", self.statusbar_input.last().unwrap().as_str()).as_str(),
+      );
       nc::wattroff(self.statusbar, color);
     } else {
       // Print mode.
@@ -666,29 +671,40 @@ impl View {
     nc::wmove(self.statusbar, 0, 0);
     nc::wclrtoeol(self.statusbar);
 
+    // Add new empty input
+    self.statusbar_input.push(String::new());
+
     // While Enter was not pressed
     // FIXME: this blocks the rest of the UI
     loop {
       let color = get_color(COLOR_PAIR_DEFAULT);
       nc::wattron(self.statusbar, color);
-      nc::mvwprintw(self.statusbar, 0, 0, format!(":{}", self.statusbar_input.as_str()).as_str());
+      nc::mvwprintw(
+        self.statusbar,
+        0,
+        0,
+        format!(":{}", self.statusbar_input.last().unwrap().as_str()).as_str(),
+      );
       nc::wattroff(self.statusbar, color);
       nc::wrefresh(self.statusbar);
 
       let ch = nc::getch() as i32;
 
+      // Number of inputs in vector
+      let n_inputs = self.statusbar_input.len();
+
       // If Enter is preseed
       if ch == '\n' as i32 {
-        let cmd = self.statusbar_input.clone();
-        self.statusbar_input.clear();
-        return cmd;
+        return self.statusbar_input.last().unwrap().clone();
       }
       // If Backspace is pressed
       else if ch == KEY_BACKSPACE {
-        // Remove last character from string
-        let len = self.statusbar_input.len();
-        let new_len = len.saturating_sub(1);
-        self.statusbar_input.pop();
+        let mut new_len = 0;
+        if let Some(last_elem) = self.statusbar_input.get_mut(n_inputs - 1) {
+          // Remove last character from string
+          last_elem.pop();
+          new_len = last_elem.len();
+        }
 
         // Clear statusbar
         nc::wmove(self.statusbar, 0, new_len as i32);
@@ -697,7 +713,7 @@ impl View {
       } else {
         match char::from_u32(ch as u32) {
           Some(c) => {
-            self.statusbar_input = format!("{}{}", self.statusbar_input, c);
+            self.statusbar_input.get_mut(n_inputs - 1).unwrap().push(c);
           }
           None => {}
         };

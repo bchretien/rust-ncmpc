@@ -246,7 +246,10 @@ impl<'m> Model<'m> {
     let cmd = self.read_input_command();
     let action_map = get_action_map();
     match action_map.get(cmd.as_str()) {
-      Some(ref action) => action.execute(self),
+      Some(ref action) => {
+        action.execute(self);
+        self.update_message(format!("Executing command \"{}\"", cmd).as_str())
+      }
       None => self.update_message(format!("No command named \"{}\"", cmd).as_str()),
     }
   }
