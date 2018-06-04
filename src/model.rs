@@ -1,5 +1,5 @@
-extern crate time;
 extern crate mpd;
+extern crate time;
 
 use action::Action;
 use config::*;
@@ -10,7 +10,7 @@ use std::collections::HashMap;
 use std::net::TcpStream;
 use std::process;
 use std::sync::{Arc, Mutex};
-use time::{Duration, get_time};
+use time::{get_time, Duration};
 use util::TimedValue;
 
 use view::*;
@@ -60,9 +60,7 @@ fn get_song_info(song: &Song, tag: &SongProperty) -> String {
 }
 
 fn get_song_time(status: &Status) -> (Duration, Duration) {
-  status.time.unwrap_or(
-    (Duration::seconds(0), Duration::seconds(0)),
-  )
+  status.time.unwrap_or((Duration::seconds(0), Duration::seconds(0)))
 }
 
 fn get_song_bitrate(status: &Status) -> u32 {
@@ -363,10 +361,9 @@ impl<'m> Model<'m> {
   fn reload_playlist_data(&mut self) {
     let queue = self.client.queue().unwrap_or(Vec::<Song>::default());
     self.snapshot.pl_data.size = queue.len() as u32;
-    let sum = queue.iter().fold(
-      0i64,
-      |sum, val| sum + val.duration.unwrap_or(Duration::seconds(0)).num_seconds(),
-    );
+    let sum = queue
+      .iter()
+      .fold(0i64, |sum, val| sum + val.duration.unwrap_or(Duration::seconds(0)).num_seconds());
     self.snapshot.pl_data.duration = Duration::seconds(sum);
   }
 
@@ -381,11 +378,7 @@ impl<'m> Model<'m> {
     if self.snapshot.pl_data.size == 0 {
       self.reload_playlist_data();
     }
-    self.view.display_header(
-      &self.active_window,
-      &self.snapshot.pl_data,
-      vol,
-    );
+    self.view.display_header(&self.active_window, &self.snapshot.pl_data, vol);
   }
 
   pub fn update_stateline(&mut self) {
@@ -404,16 +397,11 @@ impl<'m> Model<'m> {
     if status.consume {
       flags.push('c');
     }
-    if status
-      .crossfade
-      .unwrap_or(Duration::seconds(0))
-      .num_seconds() > 0
-    {
+    if status.crossfade.unwrap_or(Duration::seconds(0)).num_seconds() > 0 {
       flags.push('x');
     }
     self.view.display_stateline(&flags);
   }
-
 
   pub fn update_main_window(&mut self) {
     match self.active_window {
@@ -457,12 +445,7 @@ impl<'m> Model<'m> {
       cur_song = Some(song.unwrap().pos);
     }
 
-    self.view.display_main_playlist(
-      &columns,
-      grid,
-      &cur_song,
-      &self.selected_song,
-    );
+    self.view.display_main_playlist(&columns, grid, &cur_song, &self.selected_song);
   }
 
   pub fn update_progressbar(&mut self) {
@@ -483,9 +466,7 @@ impl<'m> Model<'m> {
     // If an info message has to be displayed
     if self.info_msg.is_some() {
       if get_time() < self.info_msg.as_ref().unwrap().timestamp + Duration::seconds(5) {
-        self.view.display_statusbar_msg(
-          &self.info_msg.as_ref().unwrap().value,
-        );
+        self.view.display_statusbar_msg(&self.info_msg.as_ref().unwrap().value);
         return;
       } else {
         self.info_msg = None;
