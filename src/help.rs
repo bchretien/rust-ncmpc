@@ -1,6 +1,9 @@
+use std::cmp;
+
 use config::{Config, ControlKeys};
 use ncurses as nc;
 
+use model::get_action_map;
 use view::{bold, get_color};
 
 pub struct Help {
@@ -48,20 +51,20 @@ impl Help {
   }
 
   fn print_entry(&self, name: &str, desc: &str) {
+    let col_size = cmp::max(self.key_col_size, name.len() as i32);
     nc::mvwprintw(self.pad, self.current_row, 2 * self.tab_size, &name);
-    nc::mvwprintw(self.pad, self.current_row, 2 * self.tab_size + self.key_col_size, ": ");
-    nc::mvwprintw(self.pad, self.current_row, 2 * self.tab_size + self.key_col_size + 2, &desc);
+    nc::mvwprintw(self.pad, self.current_row, 2 * self.tab_size + col_size, ": ");
+    nc::mvwprintw(self.pad, self.current_row, 2 * self.tab_size + col_size + 2, &desc);
   }
 
   fn keys(&self, keys: &ControlKeys, desc: &str) {
-    let keys_s: String = keys.iter().fold(
-      String::default(),
-      |acc, &x| if acc.is_empty() {
+    let keys_s: String = keys.iter().fold(String::default(), |acc, &x| {
+      if acc.is_empty() {
         format!("{}", x)
       } else {
         acc + format!(" {}", x).as_str()
-      },
-    );
+      }
+    });
     self.print_entry(keys_s.as_str(), desc);
   }
 
@@ -143,6 +146,16 @@ impl Help {
     self.newline();
     print_text!("Left click", "Select pointed item");
     print_text!("Right click", "Play");
+
+    self.newline();
+    self.section("List of available commands");
+    self.newline();
+
+    let action_map = get_action_map();
+    for (name, _) in &action_map {
+      // FIXME: generate action description
+      print_text!(name, "Missing description");
+    }
 
     self.newline();
     self.section("List of available colors");
