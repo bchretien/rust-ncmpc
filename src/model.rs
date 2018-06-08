@@ -186,6 +186,8 @@ pub struct Model<'m> {
   snapshot: Snapshot,
   /// Temporary info message.
   info_msg: Option<TimedValue<String>>,
+  /// Map action names to action functions.
+  action_map: HashMap<String, Action<'m>>,
 }
 
 impl<'m> Model<'m> {
@@ -209,6 +211,7 @@ impl<'m> Model<'m> {
       selected_song: None,
       snapshot: snapshot,
       info_msg: None,
+      action_map: get_action_map(),
     }
   }
 
@@ -244,8 +247,14 @@ impl<'m> Model<'m> {
 
   pub fn execute_command(&mut self) {
     let cmd = self.read_input_command();
-    let action_map = get_action_map();
-    match action_map.get(cmd.as_str()) {
+
+    // Copy action to satisfy borrow checker
+    let opt_action: Option<Action<'m>> = match self.action_map.get(cmd.as_str()) {
+      Some(action) => Some(action.clone()),
+      None => None,
+    };
+
+    match opt_action {
       Some(ref action) => {
         action.execute(self);
         self.update_message(format!("Executing command \"{}\"", cmd).as_str())
