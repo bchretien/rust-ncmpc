@@ -6,7 +6,7 @@ use config::*;
 use format::*;
 use mpd::song::Song;
 use mpd::status::{State, Status};
-use std::collections::HashMap;
+use std::collections::BTreeMap;
 use std::net::TcpStream;
 use std::process;
 use std::sync::{Arc, Mutex};
@@ -109,7 +109,7 @@ register_actions!(
 macro_rules! actions_to_map(
   ($($fun:ident), *) => (
     {
-      let mut action_map: HashMap<String, Action<'m>> = HashMap::new();
+      let mut action_map: BTreeMap<String, Action<'m>> = BTreeMap::new();
       $(
         let name: &str = stringify!($fun);
         action_map.insert(name.to_string(), Action::new(name, $fun));
@@ -119,7 +119,7 @@ macro_rules! actions_to_map(
   )
 );
 
-pub fn get_action_map<'m>() -> HashMap<String, Action<'m>> {
+pub fn get_action_map<'m>() -> BTreeMap<String, Action<'m>> {
   let action_map = actions_to_map!(
     execute_command,
     playlist_play,
@@ -187,7 +187,7 @@ pub struct Model<'m> {
   /// Temporary info message.
   info_msg: Option<TimedValue<String>>,
   /// Map action names to action functions.
-  action_map: HashMap<String, Action<'m>>,
+  action_map: BTreeMap<String, Action<'m>>,
 }
 
 impl<'m> Model<'m> {
