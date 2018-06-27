@@ -131,11 +131,7 @@ pub fn parse_bindings_configuration(path: &PathBuf) -> Result<Vec<(String, Vec<S
 }
 
 fn to_width(s: &str) -> Result<(i32, bool), ParserError> {
-  let is_fixed = if s.chars().last().unwrap_or(' ') == 'f' {
-    true
-  } else {
-    false
-  };
+  let is_fixed = s.chars().last().unwrap_or(' ') == 'f';
   let width = if is_fixed {
     // TODO: return error if parsing fails
     s[..s.len() - 1].parse::<i32>().unwrap_or(1)

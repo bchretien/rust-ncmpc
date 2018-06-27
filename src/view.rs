@@ -29,6 +29,12 @@ impl PlaylistData {
   }
 }
 
+impl Default for PlaylistData {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
 impl Display for PlaylistData {
   fn fmt(&self, f: &mut Formatter) -> fmt::Result {
     if self.size == 0 {
@@ -120,7 +126,7 @@ fn init_colors(colors: &ColorConfig, params: &ParamConfig) {
   nc::init_pair(COLOR_PAIR_TRACK, nc::COLOR_BLACK, color_bg);
   nc::init_pair(COLOR_PAIR_WINDOW_BORDER, colors.window_border, color_bg);
 
-  let ref columns_fmt = params.song_columns_list_format;
+  let columns_fmt = &params.song_columns_list_format;
   assert!(columns_fmt.len() <= MAX_NUM_COLUMNS);
   for (i, col) in columns_fmt.iter().enumerate() {
     nc::init_pair(COLOR_PAIR_COLUMNS[i as usize], col.color, color_bg);
@@ -205,8 +211,8 @@ impl View {
       progressbar_look: {
         let mut iter = config.params.progressbar_look.chars();
         let mut ar = vec![String::default(); 3];
-        for i in 0..3 {
-          ar[i] = match iter.next() {
+        for elt in ar.iter_mut().take(3) {
+          *elt = match iter.next() {
             Some(c) => c.to_string(),
             None => String::default(),
           }
@@ -297,9 +303,9 @@ impl View {
   // TODO: data should not be mutable
   pub fn display_main_playlist(
     &mut self,
-    desc: &Vec<Column>,
+    desc: &[Column],
     data: &mut [&mut [String]],
-    current_song: &Option<u32>,
+    current_song: Option<u32>,
     selected_song: &Option<TimedValue<u32>>,
   ) {
     // Get the screen bounds.
@@ -405,7 +411,7 @@ impl View {
         }
 
         // Print song
-        nc::mvwprintw(self.main_win, pl_start_row + row, x, &format!("{}", data[idx as usize][i as usize]));
+        nc::mvwprintw(self.main_win, pl_start_row + row, x, &data[idx as usize][i as usize].to_string());
 
         // If it's not the last column
         if i < desc.len() - 1 {
@@ -489,7 +495,7 @@ impl View {
     nc::wrefresh(self.progressbar);
   }
 
-  pub fn display_stateline(&mut self, flags: &Vec<char>) {
+  pub fn display_stateline(&mut self, flags: &[char]) {
     // Clear line.
     nc::wmove(self.state, 0, 0);
     nc::wclrtoeol(self.state);
@@ -716,12 +722,12 @@ impl View {
       // If Up is pressed
       else if ch == nc::KEY_UP {
         if cur_input > 0 {
-          cur_input = cur_input - 1;
+          cur_input -= 1;
         }
 
         // Copy content of previous input to last input
         if cur_input < n_inputs - 1 {
-          let cmd = self.statusbar_input.get(cur_input).unwrap().clone();
+          let cmd = self.statusbar_input[cur_input].clone();
           if let Some(last_elem) = self.statusbar_input.get_mut(n_inputs - 1) {
             *last_elem = cmd;
           }
@@ -736,12 +742,12 @@ impl View {
       // If Down is pressed
       else if ch == nc::KEY_DOWN {
         if cur_input < n_inputs - 1 {
-          cur_input = cur_input + 1;
+          cur_input += 1;
         }
 
         // Copy content of next input to last input
         if cur_input < n_inputs - 1 {
-          let cmd = self.statusbar_input.get(cur_input).unwrap().clone();
+          let cmd = self.statusbar_input[cur_input].clone();
           if let Some(last_elem) = self.statusbar_input.get_mut(n_inputs - 1) {
             *last_elem = cmd;
           }
@@ -753,12 +759,9 @@ impl View {
           }
         }
       } else {
-        match char::from_u32(ch as u32) {
-          Some(c) => {
-            self.statusbar_input.get_mut(n_inputs - 1).unwrap().push(c);
-          }
-          None => {}
-        };
+        if let Some(c) = char::from_u32(ch as u32) {
+          self.statusbar_input[n_inputs - 1].push(c);
+        }
       }
     }
   }

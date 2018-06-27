@@ -288,17 +288,11 @@ impl<'m> Model<'m> {
   }
 
   pub fn playlist_delete_items(&mut self) {
-    match self.selected_song {
-      Some(ref s) => self.client.delete(s.value).unwrap_or({}),
-      None => {}
-    }
+    if let Some(ref s) = self.selected_song { self.client.delete(s.value).unwrap_or(()) };
   }
 
   pub fn play_selected(&mut self) {
-    match self.selected_song {
-      Some(ref s) => self.client.switch(s.value).unwrap_or({}),
-      None => {}
-    };
+    if let Some(ref s) = self.selected_song { self.client.switch(s.value).unwrap_or(()) };
   }
 
   pub fn get_volume(&mut self) -> i8 {
@@ -371,11 +365,11 @@ impl<'m> Model<'m> {
   }
 
   fn reload_playlist_data(&mut self) {
-    let queue = self.client.queue().unwrap_or(Vec::<Song>::default());
+    let queue = self.client.queue().unwrap_or_default();
     self.snapshot.pl_data.size = queue.len() as u32;
     let sum = queue
       .iter()
-      .fold(0i64, |sum, val| sum + val.duration.unwrap_or(Duration::seconds(0)).num_seconds());
+      .fold(0i64, |sum, val| sum + val.duration.unwrap_or_else(|| Duration::seconds(0)).num_seconds());
     self.snapshot.pl_data.duration = Duration::seconds(sum);
   }
 
@@ -409,7 +403,7 @@ impl<'m> Model<'m> {
     if status.consume {
       flags.push('c');
     }
-    if status.crossfade.unwrap_or(Duration::seconds(0)).num_seconds() > 0 {
+    if status.crossfade.unwrap_or_else(|| Duration::seconds(0)).num_seconds() > 0 {
       flags.push('x');
     }
     self.view.display_stateline(&flags);
@@ -436,7 +430,7 @@ impl<'m> Model<'m> {
     // Get playlist
     let playlist = self.client.queue().unwrap();
 
-    let ref columns = self.config.params.song_columns_list_format;
+    let columns = &self.config.params.song_columns_list_format;
     let n_cols = columns.len();
     let n_entries = playlist.len();
     let mut grid_raw = vec![String::from("a"); n_cols * n_entries];
@@ -446,18 +440,15 @@ impl<'m> Model<'m> {
     // Fill data grid
     for i in 0..n_entries {
       for j in 0..n_cols {
-        grid[i][j] = get_song_info(&playlist[i], &columns.get(j).unwrap().column_type);
+        grid[i][j] = get_song_info(&playlist[i], &columns[j].column_type);
       }
     }
 
     // Get index of current song
     let song = self.snapshot.status.song;
-    let mut cur_song: Option<u32> = None;
-    if song.is_some() {
-      cur_song = Some(song.unwrap().pos);
-    }
+    let cur_song = if song.is_some() { Some(song.unwrap().pos) } else { None };
 
-    self.view.display_main_playlist(&columns, grid, &cur_song, &self.selected_song);
+    self.view.display_main_playlist(&columns, grid, cur_song, &self.selected_song);
   }
 
   pub fn update_progressbar(&mut self) {
@@ -465,10 +456,7 @@ impl<'m> Model<'m> {
     let elapsed = e.num_seconds();
     let duration = d.num_seconds();
 
-    let mut pct: f32 = 0.;
-    if duration > 0 {
-      pct = (100 * elapsed / duration) as f32;
-    }
+    let pct = if duration > 0 { (100 * elapsed / duration) as f32 } else { 0. };
     self.view.display_progressbar(pct);
   }
 
@@ -510,7 +498,7 @@ impl<'m> Model<'m> {
         let song = data.unwrap();
         let artist = get_song_info(&song, &SongProperty::Artist);
         let album = get_song_info(&song, &SongProperty::Album);
-        let title = song.title.unwrap_or("Unknown title".to_string());
+        let title = song.title.unwrap_or_else(|| "Unknown title".to_string());
         msg = format!("{} - {} - {}", artist, title, album);
 
         let mut bitrate = String::default();

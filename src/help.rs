@@ -1,6 +1,6 @@
 use std::cmp;
 
-use config::{Config, ControlKeys};
+use config::{Config, ControlKey};
 use ncurses as nc;
 
 use model::get_action_map;
@@ -57,7 +57,7 @@ impl Help {
     nc::mvwprintw(self.pad, self.current_row, 2 * self.tab_size + col_size + 2, &desc);
   }
 
-  fn keys(&self, keys: &ControlKeys, desc: &str) {
+  fn keys(&self, keys: &[ControlKey], desc: &str) {
     let keys_s: String = keys.iter().fold(String::default(), |acc, &x| {
       if acc.is_empty() {
         format!("{}", x)

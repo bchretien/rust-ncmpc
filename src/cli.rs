@@ -5,7 +5,7 @@ use config::{Config, ConfigLoader};
 use getopts::Options;
 use std::path::PathBuf;
 
-fn print_usage(program: &str, opts: Options) {
+fn print_usage(program: &str, opts: &Options) {
   let brief = format!("Usage: {} [options]...", program);
   print!("{}", opts.usage(&brief));
 }
@@ -16,7 +16,7 @@ fn print_version() {
 }
 
 /// Process command-line options, and return the config.
-pub fn process_cli(args: &Vec<String>) -> Option<Config> {
+pub fn process_cli(args: &[String]) -> Option<Config> {
   let mut opts = Options::new();
   opts.optopt("h", "host", "connect to server at host", "arg (=localhost)");
   opts.optopt("p", "port", "connect to server at port", "arg (=6600)");
@@ -36,7 +36,7 @@ pub fn process_cli(args: &Vec<String>) -> Option<Config> {
   }
 
   if matches.opt_present("?") {
-    print_usage(&args[0].clone(), opts);
+    print_usage(&args[0].clone(), &opts);
     return None;
   }
 
@@ -51,7 +51,7 @@ pub fn process_cli(args: &Vec<String>) -> Option<Config> {
 
   // Load config.
   let config_loader = ConfigLoader::new();
-  let mut config = config_loader.load(opt_config, opt_bindings);
+  let mut config = config_loader.load(&opt_config, &opt_bindings);
 
   if matches.opt_present("h") {
     config.params.mpd_host = matches.opt_str("h").unwrap();

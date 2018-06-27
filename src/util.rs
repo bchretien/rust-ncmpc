@@ -109,15 +109,13 @@ impl Scroller {
 
       // Separator
       let mut free_len: i32 = self.width as i32 - self.temp.len() as i32;
-      let mut start_sep: i32 = 0;
-      if self.pos >= self.text.len() {
-        start_sep = self.pos as i32 - self.text.len() as i32;
-      }
+      let start_sep: i32 = if self.pos >= self.text.len() { self.pos as i32 - self.text.len() as i32 } else {
+        0 };
       if free_len < self.separator.len() as i32 - start_sep as i32 {
         self.temp.push_str(
           &self.separator[start_sep as usize..
-                            free_len as usize],
-        );
+          free_len as usize],
+          );
       } else {
         self.temp.push_str(&self.separator[start_sep as usize..]);
       }

@@ -22,21 +22,21 @@ fn format_duration(duration: &Duration) -> String {
   }
 
   if hours > 0 {
-    if s.len() > 0 {
+    if !s.is_empty() {
       s.push_str(", ");
     }
     s.push_str(&format!("{}h", hours));
   }
 
   if minutes > 0 {
-    if s.len() > 0 {
+    if !s.is_empty() {
       s.push_str(", ");
     }
     s.push_str(&format!("{}m", minutes));
   }
 
   if seconds > 0 {
-    if s.len() > 0 {
+    if !s.is_empty() {
       s.push_str(", ");
     }
     s.push_str(&format!("{}s", seconds));
@@ -63,7 +63,7 @@ fn format_duration_time(duration: &Duration) -> String {
 /// 11/26/2014 07:51:29 PM
 fn format_date(ts: &Timespec) -> String {
   let date: DateTime<Local> = Local.timestamp(ts.sec, ts.nsec as u32);
-  return format!("{}", date.format("%m/%d/%Y %I:%M:%S %p").to_string());
+  return date.format("%m/%d/%Y %I:%M:%S %p").to_string();
 }
 
 pub struct ServerInfo {
@@ -130,7 +130,7 @@ impl ServerInfo {
     nc::wclear(self.pad);
     self.current_row = 0;
 
-    let stats: &mpd::Stats = &client.stats().unwrap_or(mpd::Stats::default());
+    let stats: &mpd::Stats = &client.stats().unwrap_or_default();
 
     // Draw box around pad
     nc::wattron(self.border_pad, self.border_color);

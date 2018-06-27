@@ -27,7 +27,7 @@ pub type ControlKeys = Vec<ControlKey>;
 pub type CustomActions = HashMap<i32, Vec<String>>;
 
 /// Key bindings configuration.
-#[derive(Clone, PartialEq, Debug)]
+#[derive(Clone, PartialEq, Debug, Default)]
 pub struct KeyConfig {
   pub execute_command: ControlKeys,
   pub clear: ControlKeys,
@@ -53,7 +53,7 @@ pub struct KeyConfig {
   pub custom: CustomActions,
 }
 
-#[derive(Clone, Copy, PartialEq, Debug)]
+#[derive(Clone, Copy, PartialEq, Debug, Default)]
 pub struct ColorConfig {
   pub color1: Color,
   pub color2: Color,
@@ -69,7 +69,7 @@ pub struct ColorConfig {
   pub window_border: Color,
 }
 
-#[derive(Clone, PartialEq, Debug)]
+#[derive(Clone, PartialEq, Debug, Default)]
 pub struct ParamConfig {
   pub cyclic_scrolling: bool,
   pub display_bitrate: bool,
@@ -83,13 +83,14 @@ pub struct ParamConfig {
   pub volume_change_step: i8,
 }
 
-#[derive(Clone, PartialEq, Debug)]
+#[derive(Clone, PartialEq, Debug, Default)]
 pub struct Config {
   pub colors: ColorConfig,
   pub keys: KeyConfig,
   pub params: ParamConfig,
 }
 
+#[derive(Default)]
 pub struct ConfigLoader {
   default_config_path: Option<PathBuf>,
   default_bindings_path: Option<PathBuf>,
@@ -176,7 +177,7 @@ fn to_keycode(key: &str) -> i32 {
   } else {
     // ctrl-?
     if key.len() == 6 && (key.starts_with("ctrl_") || key.starts_with("ctrl-")) {
-      let next: char = key.chars().skip(5).next().unwrap();
+      let next: char = key.chars().nth(5).unwrap();
       if next >= 'a' && next <= 'z' {
         return 1 + (next as i32 - 'a' as i32);
       } else if next == '[' {
@@ -199,7 +200,7 @@ fn to_keycode(key: &str) -> i32 {
       return nc::KEY_UP;
     }
     // f?
-    else if key.starts_with("f") {
+    else if key.starts_with('f') {
       let mut iter = key.chars();
       iter.by_ref().nth(0);
       // TODO: return error if required
@@ -455,7 +456,7 @@ fn assign(key: &str, val: &str, config: &mut Config) -> bool {
     "progressbar_look" => config.params.progressbar_look = String::from(val),
     "volume_change_step" => config.params.volume_change_step = parse_int(val),
     // Formats
-    "song_columns_list_format" => config.params.song_columns_list_format = generate_columns(val).unwrap_or(Vec::<Column>::default()),
+    "song_columns_list_format" => config.params.song_columns_list_format = generate_columns(val).unwrap_or_default(),
     _ => return false,
   }
   return true;
@@ -474,7 +475,7 @@ impl ConfigLoader {
     }
   }
 
-  pub fn load(&self, user_config: Option<PathBuf>, bindings: Option<PathBuf>) -> Config {
+  pub fn load(&self, user_config: &Option<PathBuf>, bindings: &Option<PathBuf>) -> Config {
     let opt_config = if user_config.is_some() {
       user_config.clone()
     } else {
