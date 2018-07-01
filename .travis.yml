@@ -7,42 +7,29 @@ addons:
       - libelf-dev
       - libdw-dev
       - binutils-dev
+      - libssl-dev
+cache: cargo
 rust:
   - stable
   - nightly
 env:
   global:
-    - TRAVIS_CARGO_NIGHTLY_FEATURE=""
-    - secure: j2q12XpkDF7bWHqblb/d8Qh6I2SKb7fJl12Z2JMGSTRWSmlSP1Cq7tbBcAyIYoB0RG9RfJpzrayQyk95Gi9EpiA2tQS4cdz+oFt/XJg/XtpEiWBcxjys6h4pDilEJiRH3UIcVBaN+dP0IsQGSByHgRqHRB3KuZL2B+jU2fqF4JqLnZ200K9CvOucTfbaBKP29k0T3RQVDHb1Ubjcvso8Z+Zug0jqdhdadK9u0xLpOq/ENPFkWUyR4H3QecywmZ5aj6Ya/FuZ/Q5IGpeZRVCKnClufgM+NtsZWNdXISc02bKVn789Efw1J3uzBPbjcP4uciX5lXpGDELPwxtb5E2XppyrZxb+OXNDr5vZQIis7adUD3sbaukrRs8L3tVbp5usPVbX3ZkpXWH9gAa42k2CwzuUVUQIZe8V+2VTc8qJlsxKvt+L32PzojTVYE+Kz340nseZHg92nMxPi+L57E1JtWInYysGFHQI2VXF5ok+smlaIUiLIBC+549ua8tUFCuoCJRi0JShOmp6PMjPL52Gyvxciij8SCGYcnSAJpBdDUI52fomX8lp7JQIjLIKBUW71TFGuU9DhkGm3/9OD5oON89Na1mNv0A62jXbLWaXRSa+EAZdGUFjfnh2+LMJsfOQJrFOaTiUb+rGX1kxiS8jTDgJzU0zZJraQM0mD5IEevA=
+    - secure: "Gl2X2WmpUX/VKK1lXtiOP3NSl2EYS/nARUUEPCTNeR2KuIQNq/qf8/PEYAZCPO70tJKURmHxA84Zlb39YNMOkr3OfaYprlFfsChjI2FSwIFCDqmgruLAHDxpF9hMek+j3aUuRVxJoZLLdn0/uAZGabUIztZn9fUwBeVcjCzndWXu8x/A5M7zg+Gy2Gyy6ZN7LYIdQ2548wOz7QSS7gNFSktW+d7tK6+WArFwA+3WkF6iKXrEInV84K7EZg0+rE3l8ToscsGEsp/Lp96zDGR3vhKPSdqS2Sb6NkYgwbP8zr5HlwyA6QYGiMNd4O8mYhUrgMu2AmdBYBiOk1N/TuohGwwbCgtF+4yEIuhKG+9OeZXT1hp1B6ebcWLSQ37Vr2JIhteeQE2agEZ0Sb4T9QON0vzr30LCs+QtNpZpO46D9heYBzVgQpVyRPRXCAOA2nFV4vDb8GeW52r9pMMd5oYWg0NZonYCpDPaiBy7L612xSS2S/DlirbZTwjm77GeDWO7Iy2ccryxh6Rv+jXA5ZaFY+P8288CcNHlTbA6gMrKz32q9YI6nfdj3ObOgS1DWtnbmb3ldx+zaNz8H0/ktl2rxQEWG3uo4gePiNL/N2XBDo9+4JsASniy4/LBm8vF3lZlJygK7XfTijvulo63Dk0qZWS/jrYNkpu7N0rqwgyfGFQ="
 before_script:
   - sudo apt-get update -qq
   - sudo apt-get install -y mpd
   - /usr/bin/mpd --version
-  - |
-    pip install 'travis-cargo<0.2' --user &&
-    export PATH=$HOME/.local/bin:$PATH
-  - |
-    if [[ "$TRAVIS_RUST_VERSION" == "nightly" ]]; then
-      ( ( travis-cargo install clippy && export CLIPPY=true ) || export CLIPPY=false );
-    fi
   - export PATH=$PATH:~/.cargo/bin
 script:
-  - travis-cargo build
-  - travis-cargo test
-  - travis-cargo bench
-  - travis-cargo --only stable doc
-  - |
-    if [[ "$TRAVIS_RUST_VERSION" == "nightly" && $CLIPPY ]]; then
-      travis-cargo clippy
-    fi
+  - cargo build
+  - cargo test
+  - cargo bench
 after_success:
   - |
-    if [[ "$TRAVIS_OS_NAME" == "linux" && "$TRAVIS_RUST_VERSION" == "stable" ]]; then
-      travis-cargo --only stable doc-upload --branch master
-    fi
-  - |
-    if [[ "$TRAVIS_OS_NAME" == "linux" && "$TRAVIS_RUST_VERSION" == "stable" ]]; then
-      travis-cargo coveralls --no-sudo --verify
+    if [[ "${TRAVIS_RUST_VERSION}" == stable ]]; then
+      `RUSTFLAGS="--cfg procmacro2_semver_exempt" cargo install cargo-tarpaulin` 
+      cargo tarpaulin --out Xml
+      bash <(curl -s https://codecov.io/bash)
     fi
 matrix:
   allow_failures:
