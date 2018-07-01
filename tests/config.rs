@@ -34,7 +34,7 @@ fn load_default_config() {
   use ncmpc::{ConfigLoader, ParamConfig};
   let config_loader = ConfigLoader::new();
   let config_path = get_config_path("default_config");
-  let config = config_loader.load(Some(config_path), None);
+  let config = config_loader.load(&Some(config_path), &None);
 
   let params = ParamConfig::new();
   assert_eq!(config.params, params);
@@ -50,7 +50,7 @@ fn load_custom_config() {
   use ncmpc::{Column, ConfigLoader, ParamConfig, SongProperty};
   let config_loader = ConfigLoader::new();
   let config_path = get_config_path("custom_config");
-  let config = config_loader.load(Some(config_path), None);
+  let config = config_loader.load(&Some(config_path), &None);
 
   let mut params = ParamConfig::new();
   params.cyclic_scrolling = true;
@@ -85,7 +85,7 @@ fn mpd_socket_addr() {
   use ncmpc::{ConfigLoader, ParamConfig};
   let config_loader = ConfigLoader::new();
   let config_path = get_config_path("custom_config");
-  let config = config_loader.load(Some(config_path), None);
+  let config = config_loader.load(&Some(config_path), &None);
 
   let _params = ParamConfig::new();
   let addr: SocketAddr = "127.0.0.1:7700".parse().unwrap();
