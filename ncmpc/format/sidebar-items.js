@@ -1,0 +1,1 @@
+initSidebarItems({"enum":[["Expression","Expression used for song formats."],["Format","Format flags used by ncurses."],["SongProperty","Column type for playlist display."]],"fn":[["generate_columns",""],["get_format",""]],"struct":[["Column","Column used to display the current playlist."]]});

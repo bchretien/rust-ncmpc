@@ -1,0 +1,1 @@
+initSidebarItems({"struct":[["Scroller","Utility structure used to define an horizontal scrolling area."],["TimedValue","Utility structure that associates a timestamp with a value."]]});

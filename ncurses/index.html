@@ -1,0 +1,2715 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="API documentation for the Rust `ncurses` crate."><meta name="keywords" content="rust, rustlang, rust-lang, ncurses"><title>ncurses - Rust</title><link rel="stylesheet" type="text/css" href="../normalize.css"><link rel="stylesheet" type="text/css" href="../rustdoc.css" id="mainThemeStyle"><link rel="stylesheet" type="text/css" href="../dark.css"><link rel="stylesheet" type="text/css" href="../light.css" id="themeStyle"><script src="../storage.js"></script></head><body class="rustdoc mod"><!--[if lte IE 8]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="sidebar-menu">&#9776;</div><p class='location'>Crate ncurses</p><div class="sidebar-elems"><div class="block items"><ul><li><a href="#reexports">Re-exports</a></li><li><a href="#modules">Modules</a></li><li><a href="#enums">Enums</a></li><li><a href="#functions">Functions</a></li><li><a href="#types">Type Definitions</a></li></ul></div><p class='location'></p><script>window.sidebarCurrent = {name: 'ncurses', ty: 'mod', relpath: '../'};</script></div></nav><div class="theme-picker"><button id="theme-picker" aria-label="Pick another theme!"><img src="../brush.svg" width="18" alt="Pick another theme!"></button><div id="theme-choices"></div></div><script src="../theme.js"></script><nav class="sub"><form class="search-form js-only"><div class="search-container"><input class="search-input" name="search" autocomplete="off" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><a id="settings-menu" href="../settings.html"><img src="../wheel.svg" width="18" alt="Change settings"></a></div></form></nav><section id="main" class="content"><h1 class='fqn'><span class='in-band'>Crate <a class="mod" href=''>ncurses</a></span><span class='out-of-band'><span id='render-detail'><a id="toggle-all-docs" href="javascript:void(0)" title="collapse all docs">[<span class='inner'>&#x2212;</span>]</a></span><a class='srclink' href='../src/ncurses/lib.rs.html#11-2019' title='goto source code'>[src]</a></span></h1><h2 id='reexports' class='section-header'><a href="#reexports">Re-exports</a></h2>
+<table><tr><td><code>pub use self::<a class="mod" href="../ncurses/constants/index.html" title="mod ncurses::constants">constants</a>::*;</code></td></tr><tr><td><code>pub use self::panel::<a class="mod" href="../ncurses/panel/wrapper/index.html" title="mod ncurses::panel::wrapper">wrapper</a>::*;</code></td></tr><tr><td><code>pub use self::menu::<a class="mod" href="../ncurses/menu/wrapper/index.html" title="mod ncurses::menu::wrapper">wrapper</a>::*;</code></td></tr><tr><td><code>pub use self::menu::<a class="mod" href="../ncurses/menu/constants/index.html" title="mod ncurses::menu::constants">constants</a>::*;</code></td></tr></table><h2 id='modules' class='section-header'><a href="#modules">Modules</a></h2>
+<table>
+                       <tr class=' module-item'>
+                           <td><a class="mod" href="constants/index.html"
+                                  title='mod ncurses::constants'>constants</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="mod" href="ll/index.html"
+                                  title='mod ncurses::ll'>ll</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="mod" href="menu/index.html"
+                                  title='mod ncurses::menu'>menu</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="mod" href="panel/index.html"
+                                  title='mod ncurses::panel'>panel</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr></table><h2 id='enums' class='section-header'><a href="#enums">Enums</a></h2>
+<table>
+                       <tr class=' module-item'>
+                           <td><a class="enum" href="enum.CURSOR_VISIBILITY.html"
+                                  title='enum ncurses::CURSOR_VISIBILITY'>CURSOR_VISIBILITY</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="enum" href="enum.WchResult.html"
+                                  title='enum ncurses::WchResult'>WchResult</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr></table><h2 id='functions' class='section-header'><a href="#functions">Functions</a></h2>
+<table>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.ACS_BBSS.html"
+                                  title='fn ncurses::ACS_BBSS'>ACS_BBSS</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.ACS_BLOCK.html"
+                                  title='fn ncurses::ACS_BLOCK'>ACS_BLOCK</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.ACS_BOARD.html"
+                                  title='fn ncurses::ACS_BOARD'>ACS_BOARD</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.ACS_BSBS.html"
+                                  title='fn ncurses::ACS_BSBS'>ACS_BSBS</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.ACS_BSSB.html"
+                                  title='fn ncurses::ACS_BSSB'>ACS_BSSB</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.ACS_BSSS.html"
+                                  title='fn ncurses::ACS_BSSS'>ACS_BSSS</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.ACS_BTEE.html"
+                                  title='fn ncurses::ACS_BTEE'>ACS_BTEE</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.ACS_BULLET.html"
+                                  title='fn ncurses::ACS_BULLET'>ACS_BULLET</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.ACS_CKBOARD.html"
+                                  title='fn ncurses::ACS_CKBOARD'>ACS_CKBOARD</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.ACS_DARROW.html"
+                                  title='fn ncurses::ACS_DARROW'>ACS_DARROW</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.ACS_DEGREE.html"
+                                  title='fn ncurses::ACS_DEGREE'>ACS_DEGREE</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.ACS_DIAMOND.html"
+                                  title='fn ncurses::ACS_DIAMOND'>ACS_DIAMOND</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.ACS_GEQUAL.html"
+                                  title='fn ncurses::ACS_GEQUAL'>ACS_GEQUAL</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.ACS_HLINE.html"
+                                  title='fn ncurses::ACS_HLINE'>ACS_HLINE</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.ACS_LANTERN.html"
+                                  title='fn ncurses::ACS_LANTERN'>ACS_LANTERN</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.ACS_LARROW.html"
+                                  title='fn ncurses::ACS_LARROW'>ACS_LARROW</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.ACS_LEQUAL.html"
+                                  title='fn ncurses::ACS_LEQUAL'>ACS_LEQUAL</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.ACS_LLCORNER.html"
+                                  title='fn ncurses::ACS_LLCORNER'>ACS_LLCORNER</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.ACS_LRCORNER.html"
+                                  title='fn ncurses::ACS_LRCORNER'>ACS_LRCORNER</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.ACS_LTEE.html"
+                                  title='fn ncurses::ACS_LTEE'>ACS_LTEE</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.ACS_NEQUAL.html"
+                                  title='fn ncurses::ACS_NEQUAL'>ACS_NEQUAL</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.ACS_PI.html"
+                                  title='fn ncurses::ACS_PI'>ACS_PI</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.ACS_PLMINUS.html"
+                                  title='fn ncurses::ACS_PLMINUS'>ACS_PLMINUS</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.ACS_PLUS.html"
+                                  title='fn ncurses::ACS_PLUS'>ACS_PLUS</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.ACS_RARROW.html"
+                                  title='fn ncurses::ACS_RARROW'>ACS_RARROW</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.ACS_RTEE.html"
+                                  title='fn ncurses::ACS_RTEE'>ACS_RTEE</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.ACS_S1.html"
+                                  title='fn ncurses::ACS_S1'>ACS_S1</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.ACS_S3.html"
+                                  title='fn ncurses::ACS_S3'>ACS_S3</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.ACS_S7.html"
+                                  title='fn ncurses::ACS_S7'>ACS_S7</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.ACS_S9.html"
+                                  title='fn ncurses::ACS_S9'>ACS_S9</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.ACS_SBBS.html"
+                                  title='fn ncurses::ACS_SBBS'>ACS_SBBS</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.ACS_SBSB.html"
+                                  title='fn ncurses::ACS_SBSB'>ACS_SBSB</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.ACS_SBSS.html"
+                                  title='fn ncurses::ACS_SBSS'>ACS_SBSS</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.ACS_SSBB.html"
+                                  title='fn ncurses::ACS_SSBB'>ACS_SSBB</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.ACS_SSBS.html"
+                                  title='fn ncurses::ACS_SSBS'>ACS_SSBS</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.ACS_SSSB.html"
+                                  title='fn ncurses::ACS_SSSB'>ACS_SSSB</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.ACS_SSSS.html"
+                                  title='fn ncurses::ACS_SSSS'>ACS_SSSS</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.ACS_STERLING.html"
+                                  title='fn ncurses::ACS_STERLING'>ACS_STERLING</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.ACS_TTEE.html"
+                                  title='fn ncurses::ACS_TTEE'>ACS_TTEE</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.ACS_UARROW.html"
+                                  title='fn ncurses::ACS_UARROW'>ACS_UARROW</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.ACS_ULCORNER.html"
+                                  title='fn ncurses::ACS_ULCORNER'>ACS_ULCORNER</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.ACS_URCORNER.html"
+                                  title='fn ncurses::ACS_URCORNER'>ACS_URCORNER</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.ACS_VLINE.html"
+                                  title='fn ncurses::ACS_VLINE'>ACS_VLINE</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.A_ALTCHARSET.html"
+                                  title='fn ncurses::A_ALTCHARSET'>A_ALTCHARSET</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.A_ATTRIBUTES.html"
+                                  title='fn ncurses::A_ATTRIBUTES'>A_ATTRIBUTES</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.A_BLINK.html"
+                                  title='fn ncurses::A_BLINK'>A_BLINK</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.A_BOLD.html"
+                                  title='fn ncurses::A_BOLD'>A_BOLD</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.A_CHARTEXT.html"
+                                  title='fn ncurses::A_CHARTEXT'>A_CHARTEXT</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.A_COLOR.html"
+                                  title='fn ncurses::A_COLOR'>A_COLOR</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.A_DIM.html"
+                                  title='fn ncurses::A_DIM'>A_DIM</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.A_HORIZONTAL.html"
+                                  title='fn ncurses::A_HORIZONTAL'>A_HORIZONTAL</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.A_INVIS.html"
+                                  title='fn ncurses::A_INVIS'>A_INVIS</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.A_ITALIC.html"
+                                  title='fn ncurses::A_ITALIC'>A_ITALIC</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.A_LEFT.html"
+                                  title='fn ncurses::A_LEFT'>A_LEFT</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.A_LOW.html"
+                                  title='fn ncurses::A_LOW'>A_LOW</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.A_NORMAL.html"
+                                  title='fn ncurses::A_NORMAL'>A_NORMAL</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.A_PROTECT.html"
+                                  title='fn ncurses::A_PROTECT'>A_PROTECT</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.A_REVERSE.html"
+                                  title='fn ncurses::A_REVERSE'>A_REVERSE</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.A_RIGHT.html"
+                                  title='fn ncurses::A_RIGHT'>A_RIGHT</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.A_STANDOUT.html"
+                                  title='fn ncurses::A_STANDOUT'>A_STANDOUT</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.A_TOP.html"
+                                  title='fn ncurses::A_TOP'>A_TOP</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.A_UNDERLINE.html"
+                                  title='fn ncurses::A_UNDERLINE'>A_UNDERLINE</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.A_VERTICAL.html"
+                                  title='fn ncurses::A_VERTICAL'>A_VERTICAL</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.COLOR_PAIR.html"
+                                  title='fn ncurses::COLOR_PAIR'>COLOR_PAIR</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.KEY_F.html"
+                                  title='fn ncurses::KEY_F'>KEY_F</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.NCURSES_ACS.html"
+                                  title='fn ncurses::NCURSES_ACS'>NCURSES_ACS</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.NCURSES_BITS.html"
+                                  title='fn ncurses::NCURSES_BITS'>NCURSES_BITS</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.PAIR_NUMBER.html"
+                                  title='fn ncurses::PAIR_NUMBER'>PAIR_NUMBER</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.addch.html"
+                                  title='fn ncurses::addch'>addch</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.addchnstr.html"
+                                  title='fn ncurses::addchnstr'>addchnstr</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.addchstr.html"
+                                  title='fn ncurses::addchstr'>addchstr</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.addnstr.html"
+                                  title='fn ncurses::addnstr'>addnstr</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.addstr.html"
+                                  title='fn ncurses::addstr'>addstr</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.assume_default_colors.html"
+                                  title='fn ncurses::assume_default_colors'>assume_default_colors</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.attr_get.html"
+                                  title='fn ncurses::attr_get'>attr_get</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.attr_off.html"
+                                  title='fn ncurses::attr_off'>attr_off</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.attr_on.html"
+                                  title='fn ncurses::attr_on'>attr_on</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.attr_set.html"
+                                  title='fn ncurses::attr_set'>attr_set</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.attroff.html"
+                                  title='fn ncurses::attroff'>attroff</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.attron.html"
+                                  title='fn ncurses::attron'>attron</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.attrset.html"
+                                  title='fn ncurses::attrset'>attrset</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.baudrate.html"
+                                  title='fn ncurses::baudrate'>baudrate</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.beep.html"
+                                  title='fn ncurses::beep'>beep</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.bkgd.html"
+                                  title='fn ncurses::bkgd'>bkgd</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.bkgdset.html"
+                                  title='fn ncurses::bkgdset'>bkgdset</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.border.html"
+                                  title='fn ncurses::border'>border</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.box_.html"
+                                  title='fn ncurses::box_'>box_</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.can_change_color.html"
+                                  title='fn ncurses::can_change_color'>can_change_color</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.cbreak.html"
+                                  title='fn ncurses::cbreak'>cbreak</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.chgat.html"
+                                  title='fn ncurses::chgat'>chgat</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.clear.html"
+                                  title='fn ncurses::clear'>clear</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.clearok.html"
+                                  title='fn ncurses::clearok'>clearok</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.clrtobot.html"
+                                  title='fn ncurses::clrtobot'>clrtobot</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.clrtoeol.html"
+                                  title='fn ncurses::clrtoeol'>clrtoeol</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.color_content.html"
+                                  title='fn ncurses::color_content'>color_content</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.color_set.html"
+                                  title='fn ncurses::color_set'>color_set</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.copywin.html"
+                                  title='fn ncurses::copywin'>copywin</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.curs_set.html"
+                                  title='fn ncurses::curs_set'>curs_set</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.def_prog_mode.html"
+                                  title='fn ncurses::def_prog_mode'>def_prog_mode</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.def_shell_mode.html"
+                                  title='fn ncurses::def_shell_mode'>def_shell_mode</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.delay_output.html"
+                                  title='fn ncurses::delay_output'>delay_output</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.delch.html"
+                                  title='fn ncurses::delch'>delch</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.deleteln.html"
+                                  title='fn ncurses::deleteln'>deleteln</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.delscreen.html"
+                                  title='fn ncurses::delscreen'>delscreen</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.delwin.html"
+                                  title='fn ncurses::delwin'>delwin</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.derwin.html"
+                                  title='fn ncurses::derwin'>derwin</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.doupdate.html"
+                                  title='fn ncurses::doupdate'>doupdate</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.dupwin.html"
+                                  title='fn ncurses::dupwin'>dupwin</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.echo.html"
+                                  title='fn ncurses::echo'>echo</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.echochar.html"
+                                  title='fn ncurses::echochar'>echochar</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.endwin.html"
+                                  title='fn ncurses::endwin'>endwin</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.erase.html"
+                                  title='fn ncurses::erase'>erase</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.erasechar.html"
+                                  title='fn ncurses::erasechar'>erasechar</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.filter.html"
+                                  title='fn ncurses::filter'>filter</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.flash.html"
+                                  title='fn ncurses::flash'>flash</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.flushinp.html"
+                                  title='fn ncurses::flushinp'>flushinp</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.get_wch.html"
+                                  title='fn ncurses::get_wch'>get_wch</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.getattrs.html"
+                                  title='fn ncurses::getattrs'>getattrs</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.getbegx.html"
+                                  title='fn ncurses::getbegx'>getbegx</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.getbegy.html"
+                                  title='fn ncurses::getbegy'>getbegy</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.getbegyx.html"
+                                  title='fn ncurses::getbegyx'>getbegyx</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.getbkgd.html"
+                                  title='fn ncurses::getbkgd'>getbkgd</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.getch.html"
+                                  title='fn ncurses::getch'>getch</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.getcurx.html"
+                                  title='fn ncurses::getcurx'>getcurx</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.getcury.html"
+                                  title='fn ncurses::getcury'>getcury</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.getmaxx.html"
+                                  title='fn ncurses::getmaxx'>getmaxx</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.getmaxy.html"
+                                  title='fn ncurses::getmaxy'>getmaxy</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.getmaxyx.html"
+                                  title='fn ncurses::getmaxyx'>getmaxyx</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.getmouse.html"
+                                  title='fn ncurses::getmouse'>getmouse</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.getnstr.html"
+                                  title='fn ncurses::getnstr'>getnstr</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.getparx.html"
+                                  title='fn ncurses::getparx'>getparx</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.getpary.html"
+                                  title='fn ncurses::getpary'>getpary</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.getparyx.html"
+                                  title='fn ncurses::getparyx'>getparyx</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.getstr.html"
+                                  title='fn ncurses::getstr'>getstr</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.getsyx.html"
+                                  title='fn ncurses::getsyx'>getsyx</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.getwin.html"
+                                  title='fn ncurses::getwin'>getwin</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.getyx.html"
+                                  title='fn ncurses::getyx'>getyx</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.halfdelay.html"
+                                  title='fn ncurses::halfdelay'>halfdelay</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.has_colors.html"
+                                  title='fn ncurses::has_colors'>has_colors</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.has_ic.html"
+                                  title='fn ncurses::has_ic'>has_ic</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.has_il.html"
+                                  title='fn ncurses::has_il'>has_il</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.has_mouse.html"
+                                  title='fn ncurses::has_mouse'>has_mouse</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.hline.html"
+                                  title='fn ncurses::hline'>hline</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.idcok.html"
+                                  title='fn ncurses::idcok'>idcok</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.idlok.html"
+                                  title='fn ncurses::idlok'>idlok</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.immedok.html"
+                                  title='fn ncurses::immedok'>immedok</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.inch.html"
+                                  title='fn ncurses::inch'>inch</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.inchnstr.html"
+                                  title='fn ncurses::inchnstr'>inchnstr</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.inchstr.html"
+                                  title='fn ncurses::inchstr'>inchstr</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.init_color.html"
+                                  title='fn ncurses::init_color'>init_color</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.init_pair.html"
+                                  title='fn ncurses::init_pair'>init_pair</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.initscr.html"
+                                  title='fn ncurses::initscr'>initscr</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.innstr.html"
+                                  title='fn ncurses::innstr'>innstr</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.insch.html"
+                                  title='fn ncurses::insch'>insch</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.insdelln.html"
+                                  title='fn ncurses::insdelln'>insdelln</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.insertln.html"
+                                  title='fn ncurses::insertln'>insertln</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.insnstr.html"
+                                  title='fn ncurses::insnstr'>insnstr</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.insstr.html"
+                                  title='fn ncurses::insstr'>insstr</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.instr.html"
+                                  title='fn ncurses::instr'>instr</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.intrflush.html"
+                                  title='fn ncurses::intrflush'>intrflush</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.is_cleared.html"
+                                  title='fn ncurses::is_cleared'>is_cleared</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.is_idcok.html"
+                                  title='fn ncurses::is_idcok'>is_idcok</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.is_idlok.html"
+                                  title='fn ncurses::is_idlok'>is_idlok</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.is_immedok.html"
+                                  title='fn ncurses::is_immedok'>is_immedok</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.is_keypad.html"
+                                  title='fn ncurses::is_keypad'>is_keypad</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.is_leaveok.html"
+                                  title='fn ncurses::is_leaveok'>is_leaveok</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.is_linetouched.html"
+                                  title='fn ncurses::is_linetouched'>is_linetouched</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.is_nodelay.html"
+                                  title='fn ncurses::is_nodelay'>is_nodelay</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.is_notimeout.html"
+                                  title='fn ncurses::is_notimeout'>is_notimeout</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.is_scrollok.html"
+                                  title='fn ncurses::is_scrollok'>is_scrollok</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.is_syncok.html"
+                                  title='fn ncurses::is_syncok'>is_syncok</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.is_term_resized.html"
+                                  title='fn ncurses::is_term_resized'>is_term_resized</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.is_wintouched.html"
+                                  title='fn ncurses::is_wintouched'>is_wintouched</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.isendwin.html"
+                                  title='fn ncurses::isendwin'>isendwin</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.keyname.html"
+                                  title='fn ncurses::keyname'>keyname</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.keypad.html"
+                                  title='fn ncurses::keypad'>keypad</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.killchar.html"
+                                  title='fn ncurses::killchar'>killchar</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.leaveok.html"
+                                  title='fn ncurses::leaveok'>leaveok</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.longname.html"
+                                  title='fn ncurses::longname'>longname</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.meta.html"
+                                  title='fn ncurses::meta'>meta</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.mouse_trafo.html"
+                                  title='fn ncurses::mouse_trafo'>mouse_trafo</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.mouseinterval.html"
+                                  title='fn ncurses::mouseinterval'>mouseinterval</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.mousemask.html"
+                                  title='fn ncurses::mousemask'>mousemask</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.mv.html"
+                                  title='fn ncurses::mv'>mv</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.mvaddch.html"
+                                  title='fn ncurses::mvaddch'>mvaddch</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.mvaddchnstr.html"
+                                  title='fn ncurses::mvaddchnstr'>mvaddchnstr</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.mvaddchstr.html"
+                                  title='fn ncurses::mvaddchstr'>mvaddchstr</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.mvaddnstr.html"
+                                  title='fn ncurses::mvaddnstr'>mvaddnstr</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.mvaddstr.html"
+                                  title='fn ncurses::mvaddstr'>mvaddstr</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.mvchgat.html"
+                                  title='fn ncurses::mvchgat'>mvchgat</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.mvcur.html"
+                                  title='fn ncurses::mvcur'>mvcur</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.mvdelch.html"
+                                  title='fn ncurses::mvdelch'>mvdelch</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.mvderwin.html"
+                                  title='fn ncurses::mvderwin'>mvderwin</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.mvget_wch.html"
+                                  title='fn ncurses::mvget_wch'>mvget_wch</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.mvgetch.html"
+                                  title='fn ncurses::mvgetch'>mvgetch</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.mvgetnstr.html"
+                                  title='fn ncurses::mvgetnstr'>mvgetnstr</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.mvgetstr.html"
+                                  title='fn ncurses::mvgetstr'>mvgetstr</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.mvhline.html"
+                                  title='fn ncurses::mvhline'>mvhline</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.mvinch.html"
+                                  title='fn ncurses::mvinch'>mvinch</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.mvinchnstr.html"
+                                  title='fn ncurses::mvinchnstr'>mvinchnstr</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.mvinchstr.html"
+                                  title='fn ncurses::mvinchstr'>mvinchstr</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.mvinnstr.html"
+                                  title='fn ncurses::mvinnstr'>mvinnstr</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.mvinsch.html"
+                                  title='fn ncurses::mvinsch'>mvinsch</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.mvinsnstr.html"
+                                  title='fn ncurses::mvinsnstr'>mvinsnstr</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.mvinsstr.html"
+                                  title='fn ncurses::mvinsstr'>mvinsstr</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.mvinstr.html"
+                                  title='fn ncurses::mvinstr'>mvinstr</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.mvprintw.html"
+                                  title='fn ncurses::mvprintw'>mvprintw</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.mvvline.html"
+                                  title='fn ncurses::mvvline'>mvvline</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.mvwaddch.html"
+                                  title='fn ncurses::mvwaddch'>mvwaddch</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.mvwaddchnstr.html"
+                                  title='fn ncurses::mvwaddchnstr'>mvwaddchnstr</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.mvwaddchstr.html"
+                                  title='fn ncurses::mvwaddchstr'>mvwaddchstr</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.mvwaddnstr.html"
+                                  title='fn ncurses::mvwaddnstr'>mvwaddnstr</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.mvwaddstr.html"
+                                  title='fn ncurses::mvwaddstr'>mvwaddstr</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.mvwchgat.html"
+                                  title='fn ncurses::mvwchgat'>mvwchgat</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.mvwdelch.html"
+                                  title='fn ncurses::mvwdelch'>mvwdelch</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.mvwget_wch.html"
+                                  title='fn ncurses::mvwget_wch'>mvwget_wch</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.mvwgetch.html"
+                                  title='fn ncurses::mvwgetch'>mvwgetch</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.mvwgetnstr.html"
+                                  title='fn ncurses::mvwgetnstr'>mvwgetnstr</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.mvwgetstr.html"
+                                  title='fn ncurses::mvwgetstr'>mvwgetstr</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.mvwhline.html"
+                                  title='fn ncurses::mvwhline'>mvwhline</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.mvwin.html"
+                                  title='fn ncurses::mvwin'>mvwin</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.mvwinch.html"
+                                  title='fn ncurses::mvwinch'>mvwinch</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.mvwinchnstr.html"
+                                  title='fn ncurses::mvwinchnstr'>mvwinchnstr</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.mvwinchstr.html"
+                                  title='fn ncurses::mvwinchstr'>mvwinchstr</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.mvwinnstr.html"
+                                  title='fn ncurses::mvwinnstr'>mvwinnstr</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.mvwinsch.html"
+                                  title='fn ncurses::mvwinsch'>mvwinsch</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.mvwinsnstr.html"
+                                  title='fn ncurses::mvwinsnstr'>mvwinsnstr</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.mvwinsstr.html"
+                                  title='fn ncurses::mvwinsstr'>mvwinsstr</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.mvwinstr.html"
+                                  title='fn ncurses::mvwinstr'>mvwinstr</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.mvwprintw.html"
+                                  title='fn ncurses::mvwprintw'>mvwprintw</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.mvwvline.html"
+                                  title='fn ncurses::mvwvline'>mvwvline</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.napms.html"
+                                  title='fn ncurses::napms'>napms</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.newpad.html"
+                                  title='fn ncurses::newpad'>newpad</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.newterm.html"
+                                  title='fn ncurses::newterm'>newterm</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.newwin.html"
+                                  title='fn ncurses::newwin'>newwin</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.nl.html"
+                                  title='fn ncurses::nl'>nl</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.nocbreak.html"
+                                  title='fn ncurses::nocbreak'>nocbreak</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.nodelay.html"
+                                  title='fn ncurses::nodelay'>nodelay</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.noecho.html"
+                                  title='fn ncurses::noecho'>noecho</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.nonl.html"
+                                  title='fn ncurses::nonl'>nonl</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.noqiflush.html"
+                                  title='fn ncurses::noqiflush'>noqiflush</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.noraw.html"
+                                  title='fn ncurses::noraw'>noraw</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.notimeout.html"
+                                  title='fn ncurses::notimeout'>notimeout</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.overlay.html"
+                                  title='fn ncurses::overlay'>overlay</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.overwrite.html"
+                                  title='fn ncurses::overwrite'>overwrite</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.pair_content.html"
+                                  title='fn ncurses::pair_content'>pair_content</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.pechochar.html"
+                                  title='fn ncurses::pechochar'>pechochar</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.pnoutrefresh.html"
+                                  title='fn ncurses::pnoutrefresh'>pnoutrefresh</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.prefresh.html"
+                                  title='fn ncurses::prefresh'>prefresh</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.printw.html"
+                                  title='fn ncurses::printw'>printw</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.putp.html"
+                                  title='fn ncurses::putp'>putp</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.putwin.html"
+                                  title='fn ncurses::putwin'>putwin</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.qiflush.html"
+                                  title='fn ncurses::qiflush'>qiflush</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.raw.html"
+                                  title='fn ncurses::raw'>raw</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.redrawwin.html"
+                                  title='fn ncurses::redrawwin'>redrawwin</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.refresh.html"
+                                  title='fn ncurses::refresh'>refresh</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.reset_prog_mode.html"
+                                  title='fn ncurses::reset_prog_mode'>reset_prog_mode</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.reset_shell_mode.html"
+                                  title='fn ncurses::reset_shell_mode'>reset_shell_mode</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.resetty.html"
+                                  title='fn ncurses::resetty'>resetty</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.resize_term.html"
+                                  title='fn ncurses::resize_term'>resize_term</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.resizeterm.html"
+                                  title='fn ncurses::resizeterm'>resizeterm</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.savetty.html"
+                                  title='fn ncurses::savetty'>savetty</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.scr_dump.html"
+                                  title='fn ncurses::scr_dump'>scr_dump</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.scr_init.html"
+                                  title='fn ncurses::scr_init'>scr_init</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.scr_restore.html"
+                                  title='fn ncurses::scr_restore'>scr_restore</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.scr_set.html"
+                                  title='fn ncurses::scr_set'>scr_set</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.scrl.html"
+                                  title='fn ncurses::scrl'>scrl</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.scroll.html"
+                                  title='fn ncurses::scroll'>scroll</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.scrollok.html"
+                                  title='fn ncurses::scrollok'>scrollok</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.set_escdelay.html"
+                                  title='fn ncurses::set_escdelay'>set_escdelay</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.set_tabsize.html"
+                                  title='fn ncurses::set_tabsize'>set_tabsize</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.set_term.html"
+                                  title='fn ncurses::set_term'>set_term</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.setlocale.html"
+                                  title='fn ncurses::setlocale'>setlocale</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.setscrreg.html"
+                                  title='fn ncurses::setscrreg'>setscrreg</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.setsyx.html"
+                                  title='fn ncurses::setsyx'>setsyx</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.slk_attr.html"
+                                  title='fn ncurses::slk_attr'>slk_attr</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.slk_attr_set.html"
+                                  title='fn ncurses::slk_attr_set'>slk_attr_set</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.slk_attroff.html"
+                                  title='fn ncurses::slk_attroff'>slk_attroff</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.slk_attron.html"
+                                  title='fn ncurses::slk_attron'>slk_attron</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.slk_attrset.html"
+                                  title='fn ncurses::slk_attrset'>slk_attrset</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.slk_clear.html"
+                                  title='fn ncurses::slk_clear'>slk_clear</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.slk_color.html"
+                                  title='fn ncurses::slk_color'>slk_color</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.slk_init.html"
+                                  title='fn ncurses::slk_init'>slk_init</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.slk_label.html"
+                                  title='fn ncurses::slk_label'>slk_label</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.slk_noutrefresh.html"
+                                  title='fn ncurses::slk_noutrefresh'>slk_noutrefresh</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.slk_refresh.html"
+                                  title='fn ncurses::slk_refresh'>slk_refresh</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.slk_restore.html"
+                                  title='fn ncurses::slk_restore'>slk_restore</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.slk_set.html"
+                                  title='fn ncurses::slk_set'>slk_set</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.slk_touch.html"
+                                  title='fn ncurses::slk_touch'>slk_touch</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.standend.html"
+                                  title='fn ncurses::standend'>standend</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.standout.html"
+                                  title='fn ncurses::standout'>standout</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.start_color.html"
+                                  title='fn ncurses::start_color'>start_color</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.subpad.html"
+                                  title='fn ncurses::subpad'>subpad</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.subwin.html"
+                                  title='fn ncurses::subwin'>subwin</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.syncok.html"
+                                  title='fn ncurses::syncok'>syncok</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.termattrs.html"
+                                  title='fn ncurses::termattrs'>termattrs</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.termname.html"
+                                  title='fn ncurses::termname'>termname</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.tigetflag.html"
+                                  title='fn ncurses::tigetflag'>tigetflag</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.tigetnum.html"
+                                  title='fn ncurses::tigetnum'>tigetnum</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.tigetstr.html"
+                                  title='fn ncurses::tigetstr'>tigetstr</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.timeout.html"
+                                  title='fn ncurses::timeout'>timeout</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.touchline.html"
+                                  title='fn ncurses::touchline'>touchline</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.touchwin.html"
+                                  title='fn ncurses::touchwin'>touchwin</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.tparm.html"
+                                  title='fn ncurses::tparm'>tparm</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.typeahead.html"
+                                  title='fn ncurses::typeahead'>typeahead</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.unget_wch.html"
+                                  title='fn ncurses::unget_wch'>unget_wch</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.ungetch.html"
+                                  title='fn ncurses::ungetch'>ungetch</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.ungetmouse.html"
+                                  title='fn ncurses::ungetmouse'>ungetmouse</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.untouchwin.html"
+                                  title='fn ncurses::untouchwin'>untouchwin</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.use_default_colors.html"
+                                  title='fn ncurses::use_default_colors'>use_default_colors</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.use_env.html"
+                                  title='fn ncurses::use_env'>use_env</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.vidattr.html"
+                                  title='fn ncurses::vidattr'>vidattr</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.vline.html"
+                                  title='fn ncurses::vline'>vline</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.waddch.html"
+                                  title='fn ncurses::waddch'>waddch</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.waddchnstr.html"
+                                  title='fn ncurses::waddchnstr'>waddchnstr</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.waddchstr.html"
+                                  title='fn ncurses::waddchstr'>waddchstr</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.waddnstr.html"
+                                  title='fn ncurses::waddnstr'>waddnstr</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.waddstr.html"
+                                  title='fn ncurses::waddstr'>waddstr</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.wattr_get.html"
+                                  title='fn ncurses::wattr_get'>wattr_get</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.wattr_off.html"
+                                  title='fn ncurses::wattr_off'>wattr_off</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.wattr_on.html"
+                                  title='fn ncurses::wattr_on'>wattr_on</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.wattr_set.html"
+                                  title='fn ncurses::wattr_set'>wattr_set</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.wattroff.html"
+                                  title='fn ncurses::wattroff'>wattroff</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.wattron.html"
+                                  title='fn ncurses::wattron'>wattron</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.wattrset.html"
+                                  title='fn ncurses::wattrset'>wattrset</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.wbkgd.html"
+                                  title='fn ncurses::wbkgd'>wbkgd</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.wbkgdset.html"
+                                  title='fn ncurses::wbkgdset'>wbkgdset</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.wborder.html"
+                                  title='fn ncurses::wborder'>wborder</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.wchgat.html"
+                                  title='fn ncurses::wchgat'>wchgat</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.wclear.html"
+                                  title='fn ncurses::wclear'>wclear</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.wclrtobot.html"
+                                  title='fn ncurses::wclrtobot'>wclrtobot</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.wclrtoeol.html"
+                                  title='fn ncurses::wclrtoeol'>wclrtoeol</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.wcolor_set.html"
+                                  title='fn ncurses::wcolor_set'>wcolor_set</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.wcursyncup.html"
+                                  title='fn ncurses::wcursyncup'>wcursyncup</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.wdelch.html"
+                                  title='fn ncurses::wdelch'>wdelch</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.wdeleteln.html"
+                                  title='fn ncurses::wdeleteln'>wdeleteln</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.wechochar.html"
+                                  title='fn ncurses::wechochar'>wechochar</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.wenclose.html"
+                                  title='fn ncurses::wenclose'>wenclose</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.werase.html"
+                                  title='fn ncurses::werase'>werase</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.wget_wch.html"
+                                  title='fn ncurses::wget_wch'>wget_wch</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.wgetch.html"
+                                  title='fn ncurses::wgetch'>wgetch</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.wgetnstr.html"
+                                  title='fn ncurses::wgetnstr'>wgetnstr</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.wgetparent.html"
+                                  title='fn ncurses::wgetparent'>wgetparent</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.wgetscrreg.html"
+                                  title='fn ncurses::wgetscrreg'>wgetscrreg</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.wgetstr.html"
+                                  title='fn ncurses::wgetstr'>wgetstr</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.whline.html"
+                                  title='fn ncurses::whline'>whline</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.winch.html"
+                                  title='fn ncurses::winch'>winch</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.winchnstr.html"
+                                  title='fn ncurses::winchnstr'>winchnstr</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.winchstr.html"
+                                  title='fn ncurses::winchstr'>winchstr</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.winnstr.html"
+                                  title='fn ncurses::winnstr'>winnstr</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.winsch.html"
+                                  title='fn ncurses::winsch'>winsch</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.winsdelln.html"
+                                  title='fn ncurses::winsdelln'>winsdelln</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.winsertln.html"
+                                  title='fn ncurses::winsertln'>winsertln</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.winsnstr.html"
+                                  title='fn ncurses::winsnstr'>winsnstr</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.winsstr.html"
+                                  title='fn ncurses::winsstr'>winsstr</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.winstr.html"
+                                  title='fn ncurses::winstr'>winstr</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.wmouse_trafo.html"
+                                  title='fn ncurses::wmouse_trafo'>wmouse_trafo</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.wmove.html"
+                                  title='fn ncurses::wmove'>wmove</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.wnoutrefresh.html"
+                                  title='fn ncurses::wnoutrefresh'>wnoutrefresh</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.wprintw.html"
+                                  title='fn ncurses::wprintw'>wprintw</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.wredrawln.html"
+                                  title='fn ncurses::wredrawln'>wredrawln</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.wrefresh.html"
+                                  title='fn ncurses::wrefresh'>wrefresh</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.wresize.html"
+                                  title='fn ncurses::wresize'>wresize</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.wscrl.html"
+                                  title='fn ncurses::wscrl'>wscrl</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.wsetscrreg.html"
+                                  title='fn ncurses::wsetscrreg'>wsetscrreg</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.wstandend.html"
+                                  title='fn ncurses::wstandend'>wstandend</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.wstandout.html"
+                                  title='fn ncurses::wstandout'>wstandout</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.wsyncdown.html"
+                                  title='fn ncurses::wsyncdown'>wsyncdown</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.wsyncup.html"
+                                  title='fn ncurses::wsyncup'>wsyncup</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.wtimeout.html"
+                                  title='fn ncurses::wtimeout'>wtimeout</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.wtouchln.html"
+                                  title='fn ncurses::wtouchln'>wtouchln</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.wvline.html"
+                                  title='fn ncurses::wvline'>wvline</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr></table><h2 id='types' class='section-header'><a href="#types">Type Definitions</a></h2>
+<table>
+                       <tr class=' module-item'>
+                           <td><a class="type" href="type.MEVENT.html"
+                                  title='type ncurses::MEVENT'>MEVENT</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="type" href="type.NCURSES_ATTR_T.html"
+                                  title='type ncurses::NCURSES_ATTR_T'>NCURSES_ATTR_T</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="type" href="type.SCREEN.html"
+                                  title='type ncurses::SCREEN'>SCREEN</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="type" href="type.WINDOW.html"
+                                  title='type ncurses::WINDOW'>WINDOW</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="type" href="type.attr_t.html"
+                                  title='type ncurses::attr_t'>attr_t</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="type" href="type.chtype.html"
+                                  title='type ncurses::chtype'>chtype</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="type" href="type.mmask_t.html"
+                                  title='type ncurses::mmask_t'>mmask_t</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="type" href="type.mmaskt.html"
+                                  title='type ncurses::mmaskt'>mmaskt</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="type" href="type.winttype.html"
+                                  title='type ncurses::winttype'>winttype</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr></table></section><section id="search" class="content hidden"></section><section class="footer"></section><aside id="help" class="hidden"><div><h1 class="hidden">Help</h1><div class="shortcuts"><h2>Keyboard Shortcuts</h2><dl><dt><kbd>?</kbd></dt><dd>Show this help dialog</dd><dt><kbd>S</kbd></dt><dd>Focus the search field</dd><dt><kbd>↑</kbd></dt><dd>Move up in search results</dd><dt><kbd>↓</kbd></dt><dd>Move down in search results</dd><dt><kbd>↹</kbd></dt><dd>Switch tab</dd><dt><kbd>&#9166;</kbd></dt><dd>Go to active search result</dd><dt><kbd>+</kbd></dt><dd>Expand all sections</dd><dt><kbd>-</kbd></dt><dd>Collapse all sections</dd></dl></div><div class="infos"><h2>Search Tricks</h2><p>Prefix searches with a type followed by a colon (e.g. <code>fn:</code>) to restrict the search to a given type.</p><p>Accepted types are: <code>fn</code>, <code>mod</code>, <code>struct</code>, <code>enum</code>, <code>trait</code>, <code>type</code>, <code>macro</code>, and <code>const</code>.</p><p>Search functions by type signature (e.g. <code>vec -> usize</code> or <code>* -> vec</code>)</p><p>Search multiple things at once by splitting your query with comma (e.g. <code>str,u8</code> or <code>String,struct:Vec,test</code>)</p></div></div></aside><script>window.rootPath = "../";window.currentCrate = "ncurses";</script><script src="../aliases.js"></script><script src="../main.js"></script><script defer src="../search-index.js"></script></body></html>

@@ -1,0 +1,1 @@
+initSidebarItems({"enum":[["ControlKey",""]],"struct":[["ColorConfig",""],["Config",""],["ConfigLoader",""],["KeyConfig","Key bindings configuration."],["ParamConfig",""]],"trait":[["ToKeyCode",""]],"type":[["ControlKeys",""],["CustomActions",""]]});

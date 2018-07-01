@@ -1,0 +1,1 @@
+initSidebarItems({"enum":[["ParserError",""]],"fn":[["get_columns_format",""],["parse_bindings_configuration","Load bindings configuration from a given path."]]});
