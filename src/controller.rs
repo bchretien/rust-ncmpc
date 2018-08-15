@@ -29,8 +29,9 @@ macro_rules! register_callback {
   ($callbacks: ident, $config: ident, $action: ident, $callback: ident) => {
     {
       let name: &str = stringify!($action);
+      let desc: &str = ACTION_DESCRIPTION.get(&name).unwrap_or(&"Missing description");
       for key in &$config.keys.$action {
-        $callbacks.insert(key.keycode(), vec![Action::new(name, $callback)]);
+        $callbacks.insert(key.keycode(), vec![Action::new(name, desc, $callback)]);
       }
     }
   };
@@ -38,7 +39,8 @@ macro_rules! register_callback {
   ($callbacks: ident, $key:expr, $callback: ident) => {
     {
       let name: &str = stringify!($action);
-      $callbacks.insert($key, vec![Action::new(name, $callback)]);
+      let desc: &str = ACTION_DESCRIPTION.get(&name).unwrap_or(&"Missing description");
+      $callbacks.insert($key, vec![Action::new(name, desc, $callback)]);
     }
   };
   // For custom actions

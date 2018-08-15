@@ -9,6 +9,9 @@ extern crate nom;
 #[macro_use]
 pub mod util;
 
+#[macro_use]
+extern crate lazy_static;
+
 extern crate ncurses;
 extern crate mpd;
 extern crate time;

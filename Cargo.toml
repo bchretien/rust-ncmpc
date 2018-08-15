@@ -5,13 +5,14 @@ authors = ["Benjamin Chrétien <chretien.b@gmail.com>"]
 
 [dependencies]
 chrono = "0.4.0"
+getopts = "0.2.15"
+lazy_static = "1.1.0"
 mpd = "0.0.12"
 ncurses = "5.87.0"
-time = "0.1.38"
-rust-ini = "0.10.0"
-xdg = "2.1.0"
 nom = "3.2.1"
-getopts = "0.2.15"
+rust-ini = "0.10.0"
+time = "0.1.38"
+xdg = "2.1.0"
 
 [lib]
 name = "ncmpc"

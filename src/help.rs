@@ -3,7 +3,7 @@ use std::cmp;
 use config::{Config, ControlKey};
 use ncurses as nc;
 
-use model::get_action_map;
+use model::ACTION_DESCRIPTION;
 use view::{bold, get_color};
 
 pub struct Help {
@@ -151,10 +151,8 @@ impl Help {
     self.section("List of available commands");
     self.newline();
 
-    let action_map = get_action_map();
-    for (name, _) in &action_map {
-      // FIXME: generate action description
-      print_text!(name, "Missing description");
+    for (name, desc) in ACTION_DESCRIPTION.iter() {
+      print_text!(name, desc);
     }
 
     self.newline();

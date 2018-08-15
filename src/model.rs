@@ -1,3 +1,5 @@
+extern crate lazy_static;
+
 extern crate mpd;
 extern crate time;
 
@@ -16,6 +18,37 @@ use util::TimedValue;
 use view::*;
 
 pub type SharedModel<'m> = Arc<Mutex<Model<'m>>>;
+
+// Static map containing the description of every action
+lazy_static! {
+  pub static ref ACTION_DESCRIPTION: BTreeMap<&'static str, &'static str> = {
+    let mut m = BTreeMap::new();
+    m.insert("execute_command", "Execute a command");
+    m.insert("playlist_play", "Play the playlist");
+    m.insert("playlist_pause", "Pause the playlist");
+    m.insert("playlist_stop", "Stop the playlist");
+    m.insert("playlist_clear", "Clear the playlist");
+    m.insert("playlist_delete_items", "Delete songs from the playlist");
+    m.insert("playlist_previous", "Play the playlist's previous song");
+    m.insert("playlist_next", "Play the playlist's next song");
+    m.insert("play_selected", "Play the selected song");
+    m.insert("process_mouse", "Process mouse events");
+    m.insert("resize_windows", "Resize the windows");
+    m.insert("scroll_down", "Scroll down in a list");
+    m.insert("scroll_up", "Scroll up in a list");
+    m.insert("move_home", "Move to the start of a list");
+    m.insert("move_end", "Move to the end of a list");
+    m.insert("show_help", "Show the help view");
+    m.insert("show_playlist", "Show the playlist view");
+    m.insert("show_server_info", "Show the MPD server information");
+    m.insert("toggle_bitrate_visibility", "Toggle the bitrate visibility");
+    m.insert("toggle_random", "Toggle the \"random\" mode");
+    m.insert("toggle_repeat", "Toggle the \"repeat\" mode");
+    m.insert("volume_down", "Lower the volume");
+    m.insert("volume_up", "Raise the volume");
+    m
+  };
+}
 
 fn start_client(config: &Config) -> Result<mpd::Client, mpd::error::Error> {
   mpd::Client::connect(config.socket_addr())
@@ -104,50 +137,51 @@ register_actions!(
   toggle_repeat,
   volume_down,
   volume_up
-);
-
-macro_rules! actions_to_map(
-  ($($fun:ident), *) => (
-    {
-      let mut action_map: BTreeMap<String, Action<'m>> = BTreeMap::new();
-      $(
-        let name: &str = stringify!($fun);
-        action_map.insert(name.to_string(), Action::new(name, $fun));
-      )*
-      action_map
-    }
-  )
-);
-
-pub fn get_action_map<'m>() -> BTreeMap<String, Action<'m>> {
-  let action_map = actions_to_map!(
-    execute_command,
-    playlist_play,
-    playlist_pause,
-    playlist_stop,
-    playlist_clear,
-    playlist_delete_items,
-    playlist_previous,
-    playlist_next,
-    play_selected,
-    process_mouse,
-    resize_windows,
-    scroll_down,
-    scroll_up,
-    move_home,
-    move_end,
-    show_help,
-    show_playlist,
-    show_server_info,
-    toggle_bitrate_visibility,
-    toggle_random,
-    toggle_repeat,
-    volume_down,
-    volume_up
   );
 
-  return action_map;
-}
+  macro_rules! actions_to_map(
+    ($($fun:ident), *) => (
+      {
+        let mut action_map: BTreeMap<String, Action<'m>> = BTreeMap::new();
+        $(
+          let name: &str = stringify!($fun);
+          let desc: &str = ACTION_DESCRIPTION.get(&name).unwrap_or(&"Missing description");
+          action_map.insert(name.to_string(), Action::new(name, desc, $fun));
+        )*
+          action_map
+      }
+    )
+  );
+
+  pub fn get_action_map<'m>() -> BTreeMap<String, Action<'m>> {
+    let action_map = actions_to_map!(
+      execute_command,
+      playlist_play,
+      playlist_pause,
+      playlist_stop,
+      playlist_clear,
+      playlist_delete_items,
+      playlist_previous,
+      playlist_next,
+      play_selected,
+      process_mouse,
+      resize_windows,
+      scroll_down,
+      scroll_up,
+      move_home,
+      move_end,
+      show_help,
+      show_playlist,
+      show_server_info,
+      toggle_bitrate_visibility,
+      toggle_random,
+      toggle_repeat,
+      volume_down,
+      volume_up
+        );
+
+    return action_map;
+  }
 
 struct Snapshot {
   /// Current MPD status.
