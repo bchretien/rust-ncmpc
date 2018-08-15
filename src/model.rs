@@ -137,9 +137,9 @@ register_actions!(
   toggle_repeat,
   volume_down,
   volume_up
-  );
+);
 
-  macro_rules! actions_to_map(
+macro_rules! actions_to_map(
     ($($fun:ident), *) => (
       {
         let mut action_map: BTreeMap<String, Action<'m>> = BTreeMap::new();
@@ -153,35 +153,35 @@ register_actions!(
     )
   );
 
-  pub fn get_action_map<'m>() -> BTreeMap<String, Action<'m>> {
-    let action_map = actions_to_map!(
-      execute_command,
-      playlist_play,
-      playlist_pause,
-      playlist_stop,
-      playlist_clear,
-      playlist_delete_items,
-      playlist_previous,
-      playlist_next,
-      play_selected,
-      process_mouse,
-      resize_windows,
-      scroll_down,
-      scroll_up,
-      move_home,
-      move_end,
-      show_help,
-      show_playlist,
-      show_server_info,
-      toggle_bitrate_visibility,
-      toggle_random,
-      toggle_repeat,
-      volume_down,
-      volume_up
-        );
+pub fn get_action_map<'m>() -> BTreeMap<String, Action<'m>> {
+  let action_map = actions_to_map!(
+    execute_command,
+    playlist_play,
+    playlist_pause,
+    playlist_stop,
+    playlist_clear,
+    playlist_delete_items,
+    playlist_previous,
+    playlist_next,
+    play_selected,
+    process_mouse,
+    resize_windows,
+    scroll_down,
+    scroll_up,
+    move_home,
+    move_end,
+    show_help,
+    show_playlist,
+    show_server_info,
+    toggle_bitrate_visibility,
+    toggle_random,
+    toggle_repeat,
+    volume_down,
+    volume_up
+  );
 
-    return action_map;
-  }
+  return action_map;
+}
 
 struct Snapshot {
   /// Current MPD status.
@@ -322,11 +322,15 @@ impl<'m> Model<'m> {
   }
 
   pub fn playlist_delete_items(&mut self) {
-    if let Some(ref s) = self.selected_song { self.client.delete(s.value).unwrap_or(()) };
+    if let Some(ref s) = self.selected_song {
+      self.client.delete(s.value).unwrap_or(())
+    };
   }
 
   pub fn play_selected(&mut self) {
-    if let Some(ref s) = self.selected_song { self.client.switch(s.value).unwrap_or(()) };
+    if let Some(ref s) = self.selected_song {
+      self.client.switch(s.value).unwrap_or(())
+    };
   }
 
   pub fn get_volume(&mut self) -> i8 {
@@ -401,9 +405,9 @@ impl<'m> Model<'m> {
   fn reload_playlist_data(&mut self) {
     let queue = self.client.queue().unwrap_or_default();
     self.snapshot.pl_data.size = queue.len() as u32;
-    let sum = queue
-      .iter()
-      .fold(0i64, |sum, val| sum + val.duration.unwrap_or_else(|| Duration::seconds(0)).num_seconds());
+    let sum = queue.iter().fold(0i64, |sum, val| {
+      sum + val.duration.unwrap_or_else(|| Duration::seconds(0)).num_seconds()
+    });
     self.snapshot.pl_data.duration = Duration::seconds(sum);
   }
 

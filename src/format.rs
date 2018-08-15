@@ -3,7 +3,7 @@ extern crate nom;
 
 use constants::Color;
 use ncurses as nc;
-use parser::{ParserError, get_columns_format};
+use parser::{get_columns_format, ParserError};
 use std::fmt;
 
 /// Column type for playlist display.

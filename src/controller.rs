@@ -26,33 +26,28 @@ pub struct Controller<'c, 'm: 'c> {
 
 macro_rules! register_callback {
   // If the keycode is part of the configuration
-  ($callbacks: ident, $config: ident, $action: ident, $callback: ident) => {
-    {
-      let name: &str = stringify!($action);
-      let desc: &str = ACTION_DESCRIPTION.get(&name).unwrap_or(&"Missing description");
-      for key in &$config.keys.$action {
-        $callbacks.insert(key.keycode(), vec![Action::new(name, desc, $callback)]);
-      }
+  ($callbacks: ident, $config: ident, $action: ident, $callback: ident) => {{
+    let name: &str = stringify!($action);
+    let desc: &str = ACTION_DESCRIPTION.get(&name).unwrap_or(&"Missing description");
+    for key in &$config.keys.$action {
+      $callbacks.insert(key.keycode(), vec![Action::new(name, desc, $callback)]);
     }
-  };
+  }};
   // For special keycodes
-  ($callbacks: ident, $key:expr, $callback: ident) => {
-    {
-      let name: &str = stringify!($action);
-      let desc: &str = ACTION_DESCRIPTION.get(&name).unwrap_or(&"Missing description");
-      $callbacks.insert($key, vec![Action::new(name, desc, $callback)]);
-    }
-  };
+  ($callbacks: ident, $key:expr, $callback: ident) => {{
+    let name: &str = stringify!($action);
+    let desc: &str = ACTION_DESCRIPTION.get(&name).unwrap_or(&"Missing description");
+    $callbacks.insert($key, vec![Action::new(name, desc, $callback)]);
+  }};
   // For custom actions
-  ($callbacks: ident, $map: ident, $key:expr, actions => $actions: ident) => {
-    {
-      let user_actions = $actions.iter()
-        .filter_map(|ref name| $map.get(name.as_str()))
-        .cloned()
-        .collect::<Vec<Action<'m>>>();
-      $callbacks.insert($key.clone(), user_actions);
-    }
-  };
+  ($callbacks: ident, $map: ident, $key:expr, actions => $actions: ident) => {{
+    let user_actions = $actions
+      .iter()
+      .filter_map(|ref name| $map.get(name.as_str()))
+      .cloned()
+      .collect::<Vec<Action<'m>>>();
+    $callbacks.insert($key.clone(), user_actions);
+  }};
 }
 
 impl<'c, 'm> Controller<'c, 'm> {
@@ -111,12 +106,7 @@ impl<'c, 'm> Controller<'c, 'm> {
       register_callback!(callbacks, action_map, keycode, actions => actions);
     }
 
-    let quit_keycodes = config
-      .keys
-      .quit
-      .iter()
-      .map(|&key| key.keycode())
-      .collect::<Vec<i32>>();
+    let quit_keycodes = config.keys.quit.iter().map(|&key| key.keycode()).collect::<Vec<i32>>();
 
     Controller {
       model: model,
