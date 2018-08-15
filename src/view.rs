@@ -758,10 +758,8 @@ impl View {
             last_elem.clear();
           }
         }
-      } else {
-        if let Some(c) = char::from_u32(ch as u32) {
+      } else if let Some(c) = char::from_u32(ch as u32) {
           self.statusbar_input[n_inputs - 1].push(c);
-        }
       }
     }
   }

@@ -1,3 +1,7 @@
+//! Clippy lints
+
+#![cfg_attr(feature = "cargo-clippy", allow(needless_return, redundant_field_names))]
+
 //! MPD ncurses client for Rust
 #[macro_use]
 extern crate nom;

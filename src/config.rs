@@ -126,7 +126,7 @@ impl KeyConfig {
 
   /// Assign a key to an action (given as a string).
   pub fn assign(&mut self, action: &str, key: ControlKey) -> bool {
-    let opt_keys = self.to_keys(action);
+    let opt_keys = self.action_to_keys(action);
     return match opt_keys {
       None => false,
       Some(keys) => {
@@ -142,7 +142,7 @@ impl KeyConfig {
   }
 
   /// Map from string to class members.
-  fn to_keys(&mut self, action: &str) -> Option<&mut ControlKeys> {
+  fn action_to_keys(&mut self, action: &str) -> Option<&mut ControlKeys> {
     return match action {
       // FIXME: find a way to automate this from class members
       "execute_command" => Some(&mut self.execute_command),

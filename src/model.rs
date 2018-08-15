@@ -438,9 +438,9 @@ impl<'m> Model<'m> {
     let grid: &mut [&mut [String]] = grid_base.as_mut_slice();
 
     // Fill data grid
-    for i in 0..n_entries {
-      for j in 0..n_cols {
-        grid[i][j] = get_song_info(&playlist[i], &columns[j].column_type);
+    for (i, row) in grid.iter_mut().enumerate() {
+      for (j, cell) in row.iter_mut().enumerate() {
+        *cell = get_song_info(&playlist[i], &columns[j].column_type);
       }
     }
 
