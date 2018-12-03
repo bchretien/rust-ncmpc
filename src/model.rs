@@ -13,7 +13,7 @@ use std::net::TcpStream;
 use std::process;
 use std::sync::{Arc, Mutex};
 use time::{get_time, Duration};
-use util::TimedValue;
+use util::{CachedValue, TimedValue};
 
 use view::*;
 
@@ -188,6 +188,8 @@ struct Snapshot {
   pub status: mpd::Status,
   /// Data relative to the current playlist.
   pub pl_data: PlaylistData,
+  /// Queue (current playlist).
+  pub queue: CachedValue<Vec<mpd::Song>>,
 }
 
 impl Snapshot {
@@ -195,10 +197,14 @@ impl Snapshot {
     Snapshot {
       status: mpd::Status::default(),
       pl_data: PlaylistData::new(),
+      queue: CachedValue::new(Vec::new(), Duration::milliseconds(500)),
     }
   }
 
   pub fn update(&mut self, client: &mut mpd::Client) {
+    // TODO: Update queue only when necessary
+    self.queue.get_or(|| client.queue().unwrap());
+
     self.status = client.status().unwrap().clone();
   }
 }
@@ -232,9 +238,9 @@ impl<'m> Model<'m> {
       println!("MPD not running. Exiting...");
       process::exit(2);
     }
-    let client = res.unwrap();
-
-    let snapshot = Snapshot::new();
+    let mut client = res.unwrap();
+    let mut snapshot = Snapshot::new();
+    snapshot.queue.set(client.queue().unwrap());
 
     Model {
       client: client,
@@ -465,12 +471,9 @@ impl<'m> Model<'m> {
   }
 
   pub fn update_playlist(&mut self) {
-    // Get playlist
-    let playlist = self.client.queue().unwrap();
-
     let columns = &self.config.params.song_columns_list_format;
     let n_cols = columns.len();
-    let n_entries = playlist.len();
+    let n_entries = (*self.snapshot.queue).len();
     let mut grid_raw = vec![String::from("a"); n_cols * n_entries];
     let mut grid_base: Vec<_> = grid_raw.as_mut_slice().chunks_mut(n_cols).collect();
     let grid: &mut [&mut [String]] = grid_base.as_mut_slice();
@@ -478,7 +481,7 @@ impl<'m> Model<'m> {
     // Fill data grid
     for (i, row) in grid.iter_mut().enumerate() {
       for (j, cell) in row.iter_mut().enumerate() {
-        *cell = get_song_info(&playlist[i], &columns[j].column_type);
+        *cell = get_song_info(&(*self.snapshot.queue)[i], &columns[j].column_type);
       }
     }
 

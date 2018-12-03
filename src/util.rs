@@ -1,3 +1,4 @@
+use std::ops::Deref;
 use time::{get_time, Duration, Timespec};
 
 /// Print to stderr.
@@ -17,16 +18,71 @@ pub struct TimedValue<T> {
   pub timestamp: Timespec,
 }
 
-impl<T: Clone> TimedValue<T> {
+impl<T> TimedValue<T> {
   pub fn new(value: T) -> TimedValue<T> {
     TimedValue::<T> {
-      value: value.clone(),
+      value: value,
       timestamp: get_time(),
     }
   }
 
   pub fn bump(&mut self) {
     self.timestamp = get_time();
+  }
+}
+
+/// Utility structure that allows to use a cached value based on a timestamp.
+#[derive(Clone, Copy)]
+pub struct CachedValue<T> {
+  pub value: T,
+  pub timestamp: Timespec,
+  pub max_duration: Duration,
+}
+
+impl<T> CachedValue<T> {
+  pub fn new(value: T, max_duration: Duration) -> CachedValue<T> {
+    CachedValue::<T> {
+      value: value,
+      timestamp: get_time(),
+      max_duration: max_duration,
+    }
+  }
+
+  /// Get the current cached value, or evaluate it.
+  pub fn get_or<F>(&mut self, f: F) -> &T
+  where
+    F: FnOnce() -> T,
+  {
+    // Get the current timestamp
+    let ts = get_time();
+
+    if ts > self.timestamp + self.max_duration {
+      self.timestamp = ts;
+      self.value = f();
+    }
+
+    return &self.value;
+  }
+
+  /// Get the current cached value.
+  #[inline]
+  pub fn get(&self) -> &T {
+    return &self.value;
+  }
+
+  /// Set the current cached value.
+  #[inline]
+  pub fn set(&mut self, value: T) {
+    self.value = value;
+    self.timestamp = get_time();
+  }
+}
+
+impl<T> Deref for CachedValue<T> {
+  type Target = T;
+
+  fn deref(&self) -> &T {
+    &self.value
   }
 }
 
@@ -129,4 +185,17 @@ impl Scroller {
       return &self.temp;
     }
   }
+}
+
+#[test]
+fn check_cached_value() {
+  use std::{thread, time};
+
+  let mut v = CachedValue::new(1, Duration::milliseconds(100));
+  assert_eq!(*v.get(), 1);
+  assert_eq!(*v.get_or(|| 2), 1);
+  thread::sleep(time::Duration::from_millis(200));
+  assert_eq!(*v.get(), 1);
+  assert_eq!(*v.get_or(|| 2), 2);
+  assert_eq!(*v.get(), 2);
 }
