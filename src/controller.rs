@@ -1,8 +1,8 @@
 extern crate ncurses;
 
-use action::Action;
-use config::*;
-use model::*;
+use crate::action::Action;
+use crate::config::*;
+use crate::model::*;
 use ncurses as nc;
 
 use std::collections::HashMap;

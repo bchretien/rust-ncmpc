@@ -1,7 +1,7 @@
 extern crate getopts;
 
 
-use config::{Config, ConfigLoader};
+use crate::config::{Config, ConfigLoader};
 use getopts::Options;
 use std::path::PathBuf;
 

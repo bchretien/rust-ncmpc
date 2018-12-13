@@ -1,19 +1,19 @@
 extern crate mpd;
 extern crate ncurses;
 
-use config::{ColorConfig, Config, ParamConfig};
+use crate::config::{ColorConfig, Config, ParamConfig};
 
-use constants::*;
-use format::*;
-use help::*;
+use crate::constants::*;
+use crate::format::*;
+use crate::help::*;
 use ncurses as nc;
-use server_info::*;
+use crate::server_info::*;
 
 use std::fmt::{self, Display, Formatter};
 use std::net::TcpStream;
 use std::{char, cmp, mem};
 use time::{get_time, Duration, Timespec};
-use util::{Scroller, TimedValue};
+use crate::util::{Scroller, TimedValue};
 
 pub struct PlaylistData {
   pub size: u32,

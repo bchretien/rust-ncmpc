@@ -105,9 +105,9 @@ named!(key_actions_aggregator<&str, Vec<(&str,Vec<&str>)> >, many0!(key_actions)
 
 /// Load bindings configuration from a given path.
 pub fn parse_bindings_configuration(path: &PathBuf) -> Result<Vec<(String, Vec<String>)>, ParserError> {
-  let mut f = try!(File::open(path).map_err(ParserError::Io));
+  let mut f = r#try!(File::open(path).map_err(ParserError::Io));
   let mut s = String::default();
-  try!(f.read_to_string(&mut s).map_err(ParserError::Io));
+  r#try!(f.read_to_string(&mut s).map_err(ParserError::Io));
 
   let data = key_actions_aggregator(s.as_str());
   match data {

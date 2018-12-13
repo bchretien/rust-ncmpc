@@ -1,9 +1,9 @@
 extern crate ncurses;
 extern crate nom;
 
-use constants::Color;
+use crate::constants::Color;
 use ncurses as nc;
-use parser::{get_columns_format, ParserError};
+use crate::parser::{get_columns_format, ParserError};
 use std::fmt;
 
 /// Column type for playlist display.
@@ -29,7 +29,7 @@ pub enum SongProperty {
 
 impl fmt::Display for SongProperty {
   fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-    use format::SongProperty::*;
+    use crate::format::SongProperty::*;
     write!(
       f,
       "{}",
@@ -137,7 +137,7 @@ pub fn generate_columns(format: &str) -> Result<Vec<Column>, ParserError> {
       let mut columns = Vec::<Column>::default();
       for c in o {
         columns.push(Column {
-          column_type: try!(get_column_type(c.3)),
+          column_type: r#try!(get_column_type(c.3)),
           width: c.0,
           is_fixed: c.1,
           color: get_color(c.2),

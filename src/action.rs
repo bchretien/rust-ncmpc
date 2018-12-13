@@ -1,4 +1,4 @@
-use model::Model;
+use crate::model::Model;
 
 pub type ActionCallback<'m> = fn(&mut Model<'m>);
 

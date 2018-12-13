@@ -1,12 +1,12 @@
 extern crate mpd;
 
 use chrono::{DateTime, Local, TimeZone};
-use config::ParamConfig;
-use constants::*;
+use crate::config::ParamConfig;
+use crate::constants::*;
 use ncurses as nc;
 use std::net::TcpStream;
 use time::{Duration, Timespec};
-use view::bold;
+use crate::view::bold;
 
 /// Format duration for server info, e.g.:
 /// 34d, 5h, 57m, 53s

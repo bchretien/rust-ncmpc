@@ -1,10 +1,10 @@
 use std::cmp;
 
-use config::{Config, ControlKey};
+use crate::config::{Config, ControlKey};
 use ncurses as nc;
 
-use model::ACTION_DESCRIPTION;
-use view::{bold, get_color};
+use crate::model::ACTION_DESCRIPTION;
+use crate::view::{bold, get_color};
 
 pub struct Help {
   pad: nc::WINDOW,

@@ -3,9 +3,9 @@ extern crate lazy_static;
 extern crate mpd;
 extern crate time;
 
-use action::Action;
-use config::*;
-use format::*;
+use crate::action::Action;
+use crate::config::*;
+use crate::format::*;
 use mpd::song::Song;
 use mpd::status::{State, Status};
 use std::collections::BTreeMap;
@@ -13,9 +13,9 @@ use std::net::TcpStream;
 use std::process;
 use std::sync::{Arc, Mutex};
 use time::{get_time, Duration};
-use util::{CachedValue, TimedValue};
+use crate::util::{CachedValue, TimedValue};
 
-use view::*;
+use crate::view::*;
 
 pub type SharedModel<'m> = Arc<Mutex<Model<'m>>>;
 

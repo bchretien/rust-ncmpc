@@ -2,12 +2,12 @@ extern crate ncurses;
 extern crate ini;
 extern crate xdg;
 
-use constants::*;
-use format::{Column, generate_columns};
+use crate::constants::*;
+use crate::format::{Column, generate_columns};
 
 use ini::Ini;
 use ncurses as nc;
-use parser::parse_bindings_configuration;
+use crate::parser::parse_bindings_configuration;
 use std::char;
 use std::collections::HashMap;
 use std::env;
