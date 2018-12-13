@@ -5,9 +5,8 @@ use std::sync::{Arc, Mutex};
 use std::thread::sleep;
 use std::time::Duration;
 
-
 fn main() {
-  use ncmpc::{ControlQuery, Controller, Model, View, process_cli};
+  use ncmpc::{process_cli, ControlQuery, Controller, Model, View};
 
   // Process CLI options and return config.
   let args: Vec<String> = env::args().collect();

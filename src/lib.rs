@@ -1,9 +1,8 @@
 //! Clippy lints
 
-#![cfg_attr(feature = "cargo-clippy", allow(needless_return, redundant_field_names))]
+#![cfg_attr(feature = "cargo-clippy", allow(clippy::needless_return, clippy::redundant_field_names))]
 
 //! MPD ncurses client for Rust
-#[macro_use]
 extern crate nom;
 
 #[macro_use]
@@ -12,12 +11,12 @@ pub mod util;
 #[macro_use]
 extern crate lazy_static;
 
-extern crate ncurses;
-extern crate mpd;
-extern crate time;
-extern crate ini;
-extern crate getopts;
 extern crate chrono;
+extern crate getopts;
+extern crate ini;
+extern crate mpd;
+extern crate ncurses;
+extern crate time;
 
 pub mod action;
 pub mod cli;

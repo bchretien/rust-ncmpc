@@ -22,3 +22,10 @@ path = "src/lib.rs"
 name = "ncmpc"
 path = "src/main.rs"
 doc = false
+
+[profile.release]
+lto = true
+debug = true
+
+[profile.bench]
+lto = true
