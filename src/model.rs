@@ -470,11 +470,11 @@ impl<'m> Model<'m> {
     self.view.display_server_info(&mut self.client);
   }
 
-  pub fn update_playlist(&mut self) {
-    let columns = &self.config.params.song_columns_list_format;
+  pub fn fill_grid_data(&self, columns: &Vec<Column>) -> Vec<String>
+  {
     let n_cols = columns.len();
     let n_entries = (*self.snapshot.queue).len();
-    let mut grid_raw = vec![String::from("a"); n_cols * n_entries];
+    let mut grid_raw = vec![String::new(); n_cols * n_entries];
     let mut grid_base: Vec<_> = grid_raw.as_mut_slice().chunks_mut(n_cols).collect();
     let grid: &mut [&mut [String]] = grid_base.as_mut_slice();
 
@@ -485,11 +485,23 @@ impl<'m> Model<'m> {
       }
     }
 
+    return grid_raw;
+  }
+
+  pub fn update_playlist(&mut self) {
+    // Get grid data and convert to 2D slices
+    let columns = &self.config.params.song_columns_list_format;
+    let n_cols = columns.len();
+    // TODO: reuse data rather than reallocating for every call
+    let grid_data = self.fill_grid_data(&columns);
+    let grid_base: Vec<_> = grid_data.as_slice().chunks(n_cols).collect();
+    let grid: &[&[String]] = grid_base.as_slice();
+
     // Get index of current song
     let song = self.snapshot.status.song;
     let cur_song = if song.is_some() { Some(song.unwrap().pos) } else { None };
 
-    self.view.display_main_playlist(&columns, grid, cur_song, &self.selected_song);
+    self.view.display_main_playlist(&columns, &grid, cur_song, &self.selected_song);
   }
 
   pub fn update_progressbar(&mut self) {

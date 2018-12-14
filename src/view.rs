@@ -303,7 +303,7 @@ impl View {
   pub fn display_main_playlist(
     &self,
     desc: &[Column],
-    data: &mut [&mut [String]],
+    data: &[&[String]],
     current_song: Option<u32>,
     selected_song: &Option<TimedValue<u32>>,
   ) {
