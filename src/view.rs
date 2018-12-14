@@ -300,9 +300,8 @@ impl View {
     self.server_info.print(client);
   }
 
-  // TODO: data should not be mutable
   pub fn display_main_playlist(
-    &mut self,
+    &self,
     desc: &[Column],
     data: &mut [&mut [String]],
     current_song: Option<u32>,
@@ -386,8 +385,9 @@ impl View {
     };
 
     // For each song
-    let mut row = 0;
-    for idx in start_idx..height + start_idx {
+    for (urow, ref item) in data.iter().skip(start_idx as usize).take(height as usize).enumerate() {
+      let row: i32 = urow as i32;
+      let idx: i32 = start_idx + row;
       // For each column
       x = 0;
       for i in 0..desc.len() as usize {
@@ -411,7 +411,7 @@ impl View {
         }
 
         // Print song
-        nc::mvwprintw(self.main_win, pl_start_row + row, x, &data[idx as usize][i as usize].to_string());
+        nc::mvwprintw(self.main_win, pl_start_row + row, x, &item[i as usize].to_string());
 
         // If it's not the last column
         if i < desc.len() - 1 {
@@ -421,7 +421,7 @@ impl View {
 
         if is_selected {
           // Fill with whitespace for ncmpcpp-style highlighting
-          let len = data[idx as usize][i as usize].chars().count() as i32;
+          let len = item[i as usize].chars().count() as i32;
           nc::mvwhline(self.main_win, pl_start_row + row, x + len, ' ' as nc::chtype, widths[i] - len);
 
           // Stop highlighting
@@ -439,7 +439,6 @@ impl View {
         // TODO: handle variable width
         x += widths[i] as i32;
       }
-      row += 1;
     }
 
     // Clear the rest of the lines
@@ -512,7 +511,7 @@ impl View {
 
     if !flags.is_empty() {
       let s: String = flags.iter().fold("".to_string(), |mut vec, val| {
-        vec.push(val.clone());
+        vec.push(*val);
         vec
       });
 
