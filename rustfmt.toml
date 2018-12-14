@@ -1,7 +1,4 @@
 newline_style = "Unix"
 max_width = 140
-fn_call_width = 80
 tab_spaces = 2
-fn_args_density = "Compressed"
 reorder_imports = true
-chain_indent = "Block"
