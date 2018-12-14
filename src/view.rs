@@ -6,14 +6,14 @@ use crate::config::{ColorConfig, Config, ParamConfig};
 use crate::constants::*;
 use crate::format::*;
 use crate::help::*;
-use ncurses as nc;
 use crate::server_info::*;
+use ncurses as nc;
 
+use crate::util::{Scroller, TimedValue};
 use std::fmt::{self, Display, Formatter};
 use std::net::TcpStream;
 use std::{char, cmp, mem};
 use time::{get_time, Duration, Timespec};
-use crate::util::{Scroller, TimedValue};
 
 pub struct PlaylistData {
   pub size: u32,
@@ -30,9 +30,9 @@ impl PlaylistData {
 }
 
 impl Default for PlaylistData {
-    fn default() -> Self {
-        Self::new()
-    }
+  fn default() -> Self {
+    Self::new()
+  }
 }
 
 impl Display for PlaylistData {
@@ -411,7 +411,7 @@ impl View {
         }
 
         // Print song
-        nc::mvwprintw(self.main_win, pl_start_row + row, x, &item[i as usize].to_string());
+        nc::mvwprintw(self.main_win, pl_start_row + row, x, &item[i as usize]);
 
         // If it's not the last column
         if i < desc.len() - 1 {
@@ -758,7 +758,7 @@ impl View {
           }
         }
       } else if let Some(c) = char::from_u32(ch as u32) {
-          self.statusbar_input[n_inputs - 1].push(c);
+        self.statusbar_input[n_inputs - 1].push(c);
       }
     }
   }
