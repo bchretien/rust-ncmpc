@@ -64,6 +64,13 @@ impl<T> CachedValue<T> {
     return &self.value;
   }
 
+  /// Whether the current cached value is valid.
+  #[inline]
+  pub fn is_cached(&self) -> bool {
+    let ts = get_time();
+    return ts > self.timestamp + self.max_duration;
+  }
+
   /// Get the current cached value.
   #[inline]
   pub fn get(&self) -> &T {

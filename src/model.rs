@@ -183,11 +183,33 @@ pub fn get_action_map<'m>() -> BTreeMap<String, Action<'m>> {
   return action_map;
 }
 
+/// Structure containing the status of changes to the model's data.
+pub struct DataChangeStatus {
+  /// Whether the current playlist was modified.
+  playlist: bool,
+  /// Whether the general status was modified.
+  status: bool,
+  /// Whether the current song was modified.
+  current_song: bool,
+}
+
+impl DataChangeStatus {
+  pub fn new() -> DataChangeStatus {
+    // Suppose that the data is uninitialized <=> has changed
+    DataChangeStatus {
+      playlist: true,
+      status: true,
+      current_song: true,
+    }
+  }
+}
+
+/// Structure containing the current MPD data.
 struct Snapshot {
   /// Current MPD status.
   pub status: mpd::Status,
   /// Data relative to the current playlist.
-  pub pl_data: PlaylistData,
+  pub pl_info: PlaylistInfo,
   /// Queue (current playlist).
   pub queue: CachedValue<Vec<mpd::Song>>,
 }
@@ -196,16 +218,24 @@ impl Snapshot {
   pub fn new() -> Snapshot {
     Snapshot {
       status: mpd::Status::default(),
-      pl_data: PlaylistData::new(),
+      pl_info: PlaylistInfo::new(),
       queue: CachedValue::new(Vec::new(), Duration::milliseconds(500)),
     }
   }
 
-  pub fn update(&mut self, client: &mut mpd::Client) {
-    // TODO: Update queue only when necessary
-    self.queue.get_or(|| client.queue().unwrap());
+  pub fn update(&mut self, client: &mut mpd::Client, change: &DataChangeStatus) {
+    if change.playlist {
+      self.queue.get_or(|| client.queue().unwrap());
+      self.pl_info.size = (*self.queue).len() as u32;
+      let sum = (*self.queue).iter().fold(0i64, |sum, val| {
+        sum + val.duration.unwrap_or_else(|| Duration::seconds(0)).num_seconds()
+      });
+      self.pl_info.duration = Duration::seconds(sum);
+    }
 
-    self.status = client.status().unwrap().clone();
+    if change.status {
+      self.status = client.status().unwrap();
+    }
   }
 }
 
@@ -228,6 +258,8 @@ pub struct Model<'m> {
   info_msg: Option<TimedValue<String>>,
   /// Map action names to action functions.
   action_map: BTreeMap<String, Action<'m>>,
+  /// Flags allowing to track changes to the model's data.
+  change_status: DataChangeStatus,
 }
 
 impl<'m> Model<'m> {
@@ -252,6 +284,7 @@ impl<'m> Model<'m> {
       snapshot: snapshot,
       info_msg: None,
       action_map: get_action_map(),
+      change_status: DataChangeStatus::new(),
     }
   }
 
@@ -259,6 +292,8 @@ impl<'m> Model<'m> {
     if self.client.play().is_err() {
       self.update_message("Error: play failed");
     }
+
+    self.change_status.current_song = true;
   }
 
   pub fn playlist_pause(&mut self) {
@@ -279,6 +314,8 @@ impl<'m> Model<'m> {
         // do nothing
       }
     }
+
+    self.change_status.status = true;
   }
 
   pub fn read_input_command(&mut self) -> String {
@@ -301,42 +338,61 @@ impl<'m> Model<'m> {
       }
       None => self.update_message(format!("No command named \"{}\"", cmd).as_str()),
     }
+
+    self.change_status.playlist = true;
+    self.change_status.status = true;
+    self.change_status.current_song = true;
   }
 
   pub fn playlist_stop(&mut self) {
     if self.client.stop().is_err() {
       self.update_message("Error: stop failed");
     }
+
+    self.change_status.status = true;
+    self.change_status.current_song = true;
   }
 
   pub fn playlist_previous(&mut self) {
     if self.client.prev().is_err() {
       self.update_message("Error: previous song failed");
     }
+
+    self.change_status.current_song = true;
   }
 
   pub fn playlist_next(&mut self) {
     if self.client.next().is_err() {
       self.update_message("Error: next song failed");
     }
+
+    self.change_status.current_song = true;
   }
 
   pub fn playlist_clear(&mut self) {
     if self.client.clear().is_err() {
       self.update_message("Error: playlist clear failed");
     }
+
+    self.change_status.playlist = true;
+    self.change_status.current_song = true;
   }
 
   pub fn playlist_delete_items(&mut self) {
     if let Some(ref s) = self.selected_song {
       self.client.delete(s.value).unwrap_or(())
     };
+
+    self.change_status.playlist = true;
   }
 
   pub fn play_selected(&mut self) {
     if let Some(ref s) = self.selected_song {
       self.client.switch(s.value).unwrap_or(())
     };
+
+    self.change_status.status = true;
+    self.change_status.current_song = true;
   }
 
   pub fn get_volume(&mut self) -> i8 {
@@ -353,10 +409,14 @@ impl<'m> Model<'m> {
     if self.client.volume(vol).is_err() {
       self.update_message("Error: volume set failed");
     }
+
+    self.change_status.status = true;
   }
 
   pub fn toggle_bitrate_visibility(&mut self) {
     self.params.display_bitrate = !self.params.display_bitrate;
+
+    self.change_status.status = true;
   }
 
   pub fn toggle_random(&mut self) {
@@ -364,6 +424,8 @@ impl<'m> Model<'m> {
     if self.client.random(!random).is_err() {
       self.update_message("Error: random toggle failed");
     }
+
+    self.change_status.status = true;
   }
 
   pub fn toggle_repeat(&mut self) {
@@ -371,6 +433,8 @@ impl<'m> Model<'m> {
     if self.client.repeat(!repeat).is_err() {
       self.update_message("Error: repeat toggle failed");
     }
+
+    self.change_status.status = true;
   }
 
   pub fn set_song_progress(&mut self, pct: f32) {
@@ -400,21 +464,16 @@ impl<'m> Model<'m> {
     let vol = self.get_volume();
     let step = self.config.params.volume_change_step;
     self.set_volume(vol + step);
+
+    self.change_status.status = true;
   }
 
   pub fn volume_down(&mut self) {
     let vol = self.get_volume();
     let step = self.config.params.volume_change_step;
     self.set_volume(vol - step);
-  }
 
-  fn reload_playlist_data(&mut self) {
-    let queue = self.client.queue().unwrap_or_default();
-    self.snapshot.pl_data.size = queue.len() as u32;
-    let sum = queue.iter().fold(0i64, |sum, val| {
-      sum + val.duration.unwrap_or_else(|| Duration::seconds(0)).num_seconds()
-    });
-    self.snapshot.pl_data.duration = Duration::seconds(sum);
+    self.change_status.status = true;
   }
 
   pub fn update_header(&mut self) {
@@ -424,11 +483,7 @@ impl<'m> Model<'m> {
       None
     };
 
-    // TODO: select when to reload data
-    if self.snapshot.pl_data.size == 0 {
-      self.reload_playlist_data();
-    }
-    self.view.display_header(&self.active_window, &self.snapshot.pl_data, vol);
+    self.view.display_header(&self.active_window, &self.snapshot.pl_info, vol);
   }
 
   pub fn update_stateline(&mut self) {
@@ -576,6 +631,7 @@ impl<'m> Model<'m> {
 
   pub fn update_message(&mut self, msg: &str) {
     self.info_msg = Some(TimedValue::<String>::new(String::from(msg)));
+    self.change_status.status = true;
   }
 
   pub fn resize_windows(&mut self) {
@@ -583,7 +639,7 @@ impl<'m> Model<'m> {
   }
 
   pub fn scroll_down_playlist(&mut self) {
-    let end = self.snapshot.pl_data.size;
+    let end = self.snapshot.pl_info.size;
     self.selected_song = Some(TimedValue::<u32>::new(match self.selected_song {
       Some(ref s) => {
         if s.value == end - 1 {
@@ -613,7 +669,7 @@ impl<'m> Model<'m> {
   }
 
   pub fn scroll_up_playlist(&mut self) {
-    let end = self.snapshot.pl_data.size;
+    let end = self.snapshot.pl_info.size;
     self.selected_song = Some(TimedValue::<u32>::new(match self.selected_song {
       Some(ref s) => {
         if s.value == 0 {
@@ -647,7 +703,7 @@ impl<'m> Model<'m> {
   }
 
   pub fn move_end(&mut self) {
-    let end = self.snapshot.pl_data.size;
+    let end = self.snapshot.pl_info.size;
     self.selected_song = Some(TimedValue::<u32>::new(end - 1));
   }
 
@@ -664,6 +720,8 @@ impl<'m> Model<'m> {
   }
 
   pub fn take_snapshot(&mut self) {
-    self.snapshot.update(&mut self.client);
+    self.snapshot.update(&mut self.client, &self.change_status);
+    // TODO: reset
+    self.change_status = DataChangeStatus::new();
   }
 }

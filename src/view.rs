@@ -15,27 +15,27 @@ use std::net::TcpStream;
 use std::{char, cmp, mem};
 use time::{get_time, Duration, Timespec};
 
-pub struct PlaylistData {
+pub struct PlaylistInfo {
   pub size: u32,
   pub duration: Duration,
 }
 
-impl PlaylistData {
-  pub fn new() -> PlaylistData {
-    PlaylistData {
+impl PlaylistInfo {
+  pub fn new() -> PlaylistInfo {
+    PlaylistInfo {
       size: 0,
       duration: Duration::seconds(0),
     }
   }
 }
 
-impl Default for PlaylistData {
+impl Default for PlaylistInfo {
   fn default() -> Self {
     Self::new()
   }
 }
 
-impl Display for PlaylistData {
+impl Display for PlaylistInfo {
   fn fmt(&self, f: &mut Formatter) -> fmt::Result {
     if self.size == 0 {
       write!(f, "0 item")
@@ -240,7 +240,7 @@ impl View {
     return view;
   }
 
-  pub fn display_header(&mut self, active_window: &ActiveWindow, pl_data: &PlaylistData, volume: Option<i8>) {
+  pub fn display_header(&mut self, active_window: &ActiveWindow, pl_info: &PlaylistInfo, volume: Option<i8>) {
     let mut max_x = 0;
     let mut max_y = 0;
     nc::getmaxyx(self.header, &mut max_y, &mut max_x);
@@ -278,7 +278,7 @@ impl View {
 
     if active_window == &ActiveWindow::Playlist {
       // Playlist details
-      let s = format!("({})", pl_data);
+      let s = format!("({})", pl_info);
       // TODO: only change text on playlist change
       self.header_scroller.set_text(&s);
       self.header_scroller.resize(free_size);
