@@ -2,8 +2,8 @@ extern crate ncurses;
 extern crate nom;
 
 use crate::constants::Color;
+use crate::parser::{cstr, get_columns_format, ParserError};
 use ncurses as nc;
-use crate::parser::{get_columns_format, ParserError};
 use std::fmt;
 
 /// Column type for playlist display.
@@ -131,16 +131,16 @@ fn get_color(s: &str) -> Color {
 }
 
 pub fn generate_columns(format: &str) -> Result<Vec<Column>, ParserError> {
-  let res = get_columns_format(format);
+  let res = get_columns_format(cstr(format));
   match res {
-    nom::IResult::Done(_i, o) => {
+    Ok((_i, o)) => {
       let mut columns = Vec::<Column>::default();
       for c in o {
         columns.push(Column {
-          column_type: r#try!(get_column_type(c.3)),
+          column_type: r#try!(get_column_type(*c.3)),
           width: c.0,
           is_fixed: c.1,
-          color: get_color(c.2),
+          color: get_color(*c.2),
         });
       }
       return Ok(columns);
