@@ -533,6 +533,7 @@ impl ConfigLoader {
 
 #[test]
 fn test_keycode() {
+  #![allow(clippy::cyclomatic_complexity)]
   assert_eq!(to_keycode("a"), 'a' as i32);
   assert_eq!(to_keycode("z"), 'z' as i32);
   assert_eq!(to_keycode("escape"), KEY_ESCAPE);

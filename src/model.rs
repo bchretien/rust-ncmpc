@@ -184,6 +184,7 @@ pub fn get_action_map<'m>() -> BTreeMap<String, Action<'m>> {
 }
 
 /// Structure containing the status of changes to the model's data.
+#[derive(Default)]
 pub struct DataChangeStatus {
   /// Whether the current playlist was modified.
   playlist: bool,
@@ -525,7 +526,7 @@ impl<'m> Model<'m> {
     self.view.display_server_info(&mut self.client);
   }
 
-  pub fn fill_grid_data(&self, columns: &Vec<Column>) -> Vec<String>
+  pub fn fill_grid_data(&self, columns: &[Column]) -> Vec<String>
   {
     let n_cols = columns.len();
     let n_entries = (*self.snapshot.queue).len();
