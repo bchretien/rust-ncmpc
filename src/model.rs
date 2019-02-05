@@ -563,7 +563,7 @@ impl<'m> Model<'m> {
 
         // Search for info in the map, or initialize it
         if let Some(id_value) = id {
-          let info = song_info_map.entry((id_value, col_type.clone())).or_insert(String::new());
+          let info = song_info_map.entry((id_value, col_type.clone())).or_insert_with(String::new);
           if info.is_empty() {
             *info = get_song_info(&(*self.snapshot.queue)[i], &col_type);
           }
