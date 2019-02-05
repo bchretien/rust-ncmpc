@@ -7,7 +7,7 @@ use ncurses as nc;
 use std::fmt;
 
 /// Column type for playlist display.
-#[derive(Clone, PartialEq, Debug)]
+#[derive(Clone, PartialEq, Eq, Hash, Debug)]
 pub enum SongProperty {
   Album,
   AlbumArtist,

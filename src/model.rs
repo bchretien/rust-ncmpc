@@ -6,14 +6,14 @@ extern crate time;
 use crate::action::Action;
 use crate::config::*;
 use crate::format::*;
+use crate::util::{CachedValue, TimedValue};
 use mpd::song::Song;
 use mpd::status::{State, Status};
-use std::collections::BTreeMap;
+use std::collections::{BTreeMap, HashMap};
 use std::net::TcpStream;
 use std::process;
 use std::sync::{Arc, Mutex};
 use time::{get_time, Duration};
-use crate::util::{CachedValue, TimedValue};
 
 use crate::view::*;
 
@@ -94,6 +94,11 @@ fn get_song_info(song: &Song, tag: &SongProperty) -> String {
 
 fn get_song_time(status: &Status) -> (Duration, Duration) {
   status.time.unwrap_or((Duration::seconds(0), Duration::seconds(0)))
+}
+
+/// Get a song's (hopefully unique) id.
+fn get_song_id(song: &mpd::Song) -> Option<SongId> {
+  return song.place.as_ref().map(|p| SongId::from(p.id));
 }
 
 fn get_song_bitrate(status: &Status) -> u32 {
@@ -205,6 +210,16 @@ impl DataChangeStatus {
   }
 }
 
+/// Song id.
+#[derive(Debug, Hash, Clone, Copy, PartialEq, Eq)]
+pub struct SongId(u32);
+
+impl From<mpd::Id> for SongId {
+  fn from(id: mpd::Id) -> Self {
+    SongId(id.0)
+  }
+}
+
 /// Structure containing the current MPD data.
 struct Snapshot {
   /// Current MPD status.
@@ -261,6 +276,8 @@ pub struct Model<'m> {
   action_map: BTreeMap<String, Action<'m>>,
   /// Flags allowing to track changes to the model's data.
   change_status: DataChangeStatus,
+  /// Cache of song infos, given their ids.
+  song_info_map: HashMap<(SongId, SongProperty), String>,
 }
 
 impl<'m> Model<'m> {
@@ -286,6 +303,7 @@ impl<'m> Model<'m> {
       info_msg: None,
       action_map: get_action_map(),
       change_status: DataChangeStatus::new(),
+      song_info_map: HashMap::default(),
     }
   }
 
@@ -526,18 +544,34 @@ impl<'m> Model<'m> {
     self.view.display_server_info(&mut self.client);
   }
 
-  pub fn fill_grid_data(&self, columns: &[Column]) -> Vec<String>
-  {
+  pub fn fill_grid_data(&mut self, columns: &[Column]) -> Vec<String> {
     let n_cols = columns.len();
     let n_entries = (*self.snapshot.queue).len();
     let mut grid_raw = vec![String::new(); n_cols * n_entries];
     let mut grid_base: Vec<_> = grid_raw.as_mut_slice().chunks_mut(n_cols).collect();
     let grid: &mut [&mut [String]] = grid_base.as_mut_slice();
+    // TODO: determine when to invalidate the cache
+    let song_info_map = &mut self.song_info_map;
 
     // Fill data grid
     for (i, row) in grid.iter_mut().enumerate() {
+      // Get song id
+      let id = get_song_id(&(*self.snapshot.queue)[i]);
+
       for (j, cell) in row.iter_mut().enumerate() {
-        *cell = get_song_info(&(*self.snapshot.queue)[i], &columns[j].column_type);
+        let col_type = &columns[j].column_type;
+
+        // Search for info in the map, or initialize it
+        if let Some(id_value) = id {
+          let info = song_info_map.entry((id_value, col_type.clone())).or_insert(String::new());
+          if info.is_empty() {
+            *info = get_song_info(&(*self.snapshot.queue)[i], &col_type);
+          }
+          *cell = info.clone();
+        } else {
+          // TODO: avoid code duplication
+          *cell = get_song_info(&(*self.snapshot.queue)[i], &col_type);
+        }
       }
     }
 
@@ -549,7 +583,7 @@ impl<'m> Model<'m> {
     let columns = &self.config.params.song_columns_list_format;
     let n_cols = columns.len();
     // TODO: reuse data rather than reallocating for every call
-    let grid_data = self.fill_grid_data(&columns);
+    let grid_data = &mut self.fill_grid_data(&columns);
     let grid_base: Vec<_> = grid_data.as_slice().chunks(n_cols).collect();
     let grid: &[&[String]] = grid_base.as_slice();
 
