@@ -36,6 +36,8 @@ lazy_static! {
     m.insert("resize_windows", "Resize the windows");
     m.insert("scroll_down", "Scroll down in a list");
     m.insert("scroll_up", "Scroll up in a list");
+    m.insert("page_down", "Page down in a list");
+    m.insert("page_up", "Page up in a list");
     m.insert("move_home", "Move to the start of a list");
     m.insert("move_end", "Move to the end of a list");
     m.insert("show_help", "Show the help view");
@@ -132,6 +134,8 @@ register_actions!(
   resize_windows,
   scroll_down,
   scroll_up,
+  page_down,
+  page_up,
   move_home,
   move_end,
   show_help,
@@ -173,6 +177,8 @@ pub fn get_action_map<'m>() -> BTreeMap<String, Action<'m>> {
     resize_windows,
     scroll_down,
     scroll_up,
+    page_down,
+    page_up,
     move_home,
     move_end,
     show_help,
@@ -673,62 +679,70 @@ impl<'m> Model<'m> {
     self.view.resize_windows();
   }
 
-  pub fn scroll_down_playlist(&mut self) {
-    let end = self.snapshot.pl_info.size;
+  pub fn scroll_playlist(&mut self, offset: i32) {
+    let end = self.snapshot.pl_info.size as i32;
     self.selected_song = Some(TimedValue::<u32>::new(match self.selected_song {
       Some(ref s) => {
-        if s.value == end - 1 {
+        let cur_pos = s.value as i32;
+        // If we're going past the end of the playlist
+        if cur_pos >= end - offset {
           if self.params.cyclic_scrolling {
-            0
+            (cur_pos + offset - end) as u32
           } else {
-            s.value
+            end as u32
           }
+        // If we're going past the start of the playlist
+        } else if cur_pos < -offset {
+          if self.params.cyclic_scrolling {
+            (end + cur_pos + offset) as u32
+          } else {
+            0
+          }
+        // We're staying within the playlist
         } else {
-          s.value + 1
+          (cur_pos + offset) as u32
         }
       }
       None => 0,
     }))
   }
 
-  pub fn scroll_down_help(&mut self) {
-    self.view.help.scroll(-1);
+  pub fn scroll_help(&mut self, offset: i32) {
+    self.view.help.scroll(offset);
   }
 
   pub fn scroll_down(&mut self) {
     match self.active_window {
-      ActiveWindow::Help => self.scroll_down_help(),
-      ActiveWindow::Playlist => self.scroll_down_playlist(),
+      ActiveWindow::Help => self.scroll_help(1),
+      ActiveWindow::Playlist => self.scroll_playlist(1),
       _ => {}
     }
   }
 
-  pub fn scroll_up_playlist(&mut self) {
-    let end = self.snapshot.pl_info.size;
-    self.selected_song = Some(TimedValue::<u32>::new(match self.selected_song {
-      Some(ref s) => {
-        if s.value == 0 {
-          if self.params.cyclic_scrolling {
-            end - 1
-          } else {
-            0
-          }
-        } else {
-          s.value - 1
-        }
-      }
-      None => 0,
-    }))
-  }
-
-  pub fn scroll_up_help(&mut self) {
-    self.view.help.scroll(1);
+  pub fn page_down(&mut self) {
+    let offset = self.view.get_main_playlist_height();
+    match self.active_window {
+      // TODO: use adaptative height
+      ActiveWindow::Help => self.scroll_help(offset),
+      ActiveWindow::Playlist => self.scroll_playlist(offset),
+      _ => {}
+    }
   }
 
   pub fn scroll_up(&mut self) {
     match self.active_window {
-      ActiveWindow::Help => self.scroll_up_help(),
-      ActiveWindow::Playlist => self.scroll_up_playlist(),
+      ActiveWindow::Help => self.scroll_help(-1),
+      ActiveWindow::Playlist => self.scroll_playlist(-1),
+      _ => {}
+    }
+  }
+
+  pub fn page_up(&mut self) {
+    let offset = -self.view.get_main_playlist_height();
+    match self.active_window {
+      // TODO: use adaptative height
+      ActiveWindow::Help => self.scroll_help(offset),
+      ActiveWindow::Playlist => self.scroll_playlist(offset),
       _ => {}
     }
   }

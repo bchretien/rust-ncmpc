@@ -762,6 +762,13 @@ impl View {
       }
     }
   }
+
+  pub fn get_main_playlist_height(&self) -> i32 {
+    let mut max_x = 0;
+    let mut max_y = 0;
+    nc::getmaxyx(nc::stdscr(), &mut max_y, &mut max_x);
+    return (max_y - self.static_rows - 2) as i32;
+  }
 }
 
 impl Drop for View {

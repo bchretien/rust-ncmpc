@@ -104,6 +104,8 @@ impl Help {
     self.newline();
     print_key!(scroll_up, "Move cursor up");
     print_key!(scroll_down, "Move cursor down");
+    print_key!(page_up, "Move page up");
+    print_key!(page_down, "Move page down");
     print_key!(move_home, "Home");
     print_key!(move_end, "End");
     self.newline();
