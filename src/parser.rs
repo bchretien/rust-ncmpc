@@ -241,7 +241,7 @@ fn parse_comment() {
   let files = ["# This is a comment", "### This is a title ###"];
   let file_remaining = "";
 
-  for f in files.into_iter() {
+  for f in files.iter() {
     let comment_res = comment(cstr(f));
     assert_eq!(comment_res, Ok((cstr(file_remaining), cstr(""))));
   }
@@ -257,7 +257,7 @@ fn parse_ignored_line() {
   ];
   let file_remaining = "";
 
-  for f in files.into_iter() {
+  for f in files.iter() {
     let comment_res = ignored_line(cstr(f));
     assert_eq!(comment_res, Ok((cstr(file_remaining), cstr(""))));
   }
